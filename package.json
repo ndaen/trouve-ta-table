@@ -1,0 +1,14 @@
+{
+  "name": "trouve-ta-table",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
+    "dev:api": "npm run dev --workspace=packages/ttt-api",
+    "dev:web": "npm run dev --workspace=packages/ttt-web",
+    "build": "npm run build --workspace=packages/ttt-api && npm run build --workspace=packages/ttt-web"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
