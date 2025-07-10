@@ -1,0 +1,30 @@
+{
+  "name": "@trouve-ta-table/shared",
+  "version": "1.0.0",
+  "description": "Types et utilitaires partagés pour Trouve Ta Table",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepublish": "npm run clean && npm run build"
+  },
+  "keywords": ["trouve-ta-table", "shared", "types"],
+  "author": "ndaen",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^18.0.0"
+  },
+  "dependencies": {
+    "luxon": "^3.4.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.5.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md"
+  ]
+}
