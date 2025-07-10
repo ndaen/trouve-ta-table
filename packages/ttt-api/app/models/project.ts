@@ -5,6 +5,7 @@ import {randomUUID} from "node:crypto";
 import type {BelongsTo, HasMany} from "@adonisjs/lucid/types/relations";
 import User from "#models/user";
 import Table from "#models/table";
+import Guest from "#models/guest";
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
@@ -48,6 +49,9 @@ export default class Project extends BaseModel {
 
   @hasMany(() => Table)
   declare tables: HasMany<typeof Table>
+
+  @hasMany(() => Guest)
+  declare guests: HasMany<typeof Guest>
 
   @beforeCreate()
   static assignId(project: Project) {
