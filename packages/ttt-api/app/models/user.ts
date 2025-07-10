@@ -1,9 +1,13 @@
 import { DateTime } from 'luxon'
-import {BaseModel, beforeCreate, column} from '@adonisjs/lucid/orm'
+import {BaseModel, beforeCreate, column, hasMany} from '@adonisjs/lucid/orm'
 import {randomUUID} from "node:crypto";
 import { compose } from '@adonisjs/core/helpers'
 import {withAuthFinder} from "@adonisjs/auth/mixins/lucid";
 import hash from "@adonisjs/core/services/hash";
+import type {UUID, UserRole, SubscriptionPlan} from "@trouve-ta-table/shared/types/index.js"
+import Project from "#models/project";
+import type {HasMany} from "@adonisjs/lucid/types/relations";
+
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['id', 'email'],
@@ -12,9 +16,9 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 
 export default class User extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  declare id: string
+  declare id: UUID
 
-  @column({ isPrimary: true })
+  @column()
   declare email: string
 
   @column({serializeAs: null})
@@ -27,10 +31,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare lastName: string
 
   @column({ serializeAs: 'role' })
-  declare role: 'admin' | 'user'
+  declare role: UserRole
 
   @column()
-  declare subscriptionPlan: 'free' | 'pro' | 'enterprise' | 'starter'
+  declare subscriptionPlan: SubscriptionPlan
 
   @column.dateTime()
   declare subscriptionExpiresAt: DateTime
@@ -43,6 +47,10 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  @hasMany(() => Project)
+  declare projects: HasMany<typeof Project>
+
 
   @beforeCreate()
   static assignUuid(user: User) {
