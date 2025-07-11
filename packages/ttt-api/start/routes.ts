@@ -3,6 +3,7 @@ import AuthController from "#controllers/auth_controller";
 import {middleware} from "#start/kernel";
 import UsersController from '#controllers/users_controller';
 import ProjectsController from "#controllers/projects_controller";
+import TablesController from "#controllers/tables_controller";
 
 router.group(() => {
   router.post('/auth/register', [AuthController, 'register'])
@@ -25,20 +26,41 @@ router.group(() => {
 }).prefix('/api')
 
 router.group(() => {
-  router.get('/', [UsersController, 'index'])
-  router.get('/:id', [UsersController, 'show'])
-  router.patch('/:id', [UsersController, 'update'])
-  router.delete('/:id', [UsersController, 'delete'])
-}).prefix('/api/users').middleware(middleware.auth())
 
-
-router.group(() => {
-  router.get('/', [ProjectsController, 'index'])
-  router.get('/:id', [ProjectsController, 'show'])
-  router.post('/', [ProjectsController, 'create'])
-  router.patch('/:id', [ProjectsController, 'update'])
-  router.delete('/:id', [ProjectsController, 'delete'])
+  /**
+   * Users Routes
+   */
   router.group(() => {
-    router.get('/all', [ProjectsController, 'showByUser'])
-  }).prefix('/user')
-}).prefix('/api/projects').middleware(middleware.auth())
+    router.get('/', [UsersController, 'index'])
+    router.get('/:id', [UsersController, 'show'])
+    router.patch('/:id', [UsersController, 'update'])
+    router.delete('/:id', [UsersController, 'delete'])
+  }).prefix('/users')
+
+  /**
+   * Projects Routes
+   */
+  router.group(() => {
+    router.get('/', [ProjectsController, 'index'])
+    router.get('/:id', [ProjectsController, 'show'])
+    router.post('/', [ProjectsController, 'create'])
+    router.patch('/:id', [ProjectsController, 'update'])
+    router.delete('/:id', [ProjectsController, 'delete'])
+    router.group(() => {
+      router.get('/all', [ProjectsController, 'showByUser'])
+    }).prefix('/user')
+  }).prefix('/projects')
+
+  /**
+   * Tables Routes
+   */
+  router.group(() => {
+    router.get('/', [TablesController, 'index'])
+    router.get('/:id', [TablesController, 'show'])
+    router.post('/', [TablesController, 'create'])
+    router.patch('/:id', [TablesController, 'update'])
+    router.delete('/:id', [TablesController, 'delete'])
+  }).prefix('/tables')
+
+
+}).prefix('/api').middleware(middleware.auth())

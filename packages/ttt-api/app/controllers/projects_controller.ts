@@ -3,7 +3,7 @@ import Project from "#models/project";
 
 export default class ProjectsController {
   public async index({ response}: HttpContext) {
-    const projects = await Project.query().preload('user');
+    const projects = await Project.query();
     if (projects.length === 0) {
       return response.status(404).json({ message: 'No projects found' })
     }
@@ -12,7 +12,12 @@ export default class ProjectsController {
 
   public async show({ params, response }: HttpContext) {
     const projectId = params.id
-    const project = await Project.query().where('id', projectId).preload('user').first();
+    const project = await Project
+      .query()
+      .where('id', projectId)
+      .preload('tables')
+      .preload('guests')
+      .first();
     if (!project) {
       return response.status(404).json({ message: 'Project not found' })
     }
