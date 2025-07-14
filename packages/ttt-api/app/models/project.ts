@@ -1,11 +1,11 @@
 import { DateTime } from 'luxon'
 import {BaseModel, beforeCreate, belongsTo, column, hasMany} from '@adonisjs/lucid/orm'
-import type {EventType, UUID} from '@trouve-ta-table/shared/types/index.js'
 import {randomUUID} from "node:crypto";
 import type {BelongsTo, HasMany} from "@adonisjs/lucid/types/relations";
 import User from "#models/user";
 import Table from "#models/table";
 import Guest from "#models/guest";
+import {EventType, type UUID} from "#types/project";
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })
