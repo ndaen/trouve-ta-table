@@ -1,47 +1,47 @@
 import type {HttpContext} from '@adonisjs/core/http'
 import User from '#models/user'
+import {UserService} from "#services/user_service";
 
 export default class UsersController {
+	private userService: UserService
+
+	constructor() {
+		this.userService = new UserService()
+	}
+
 	public async index({response}: HttpContext) {
-		const users = await User.all();
-		response.json({message: 'List of users', data: users})
+		const users = await this.userService.getAll();
+		return response.json({message: 'List of users', data: users})
 	}
 
 	public async show({params, response}: HttpContext) {
 		const userId = params.id
-		const user = await User.findBy('id', userId);
+		const user = await this.userService.getById(userId);
 		if (!user) {
 			return response.status(404).json({message: 'User not found'})
 		}
-		response.json({message: `User details for ID: ${userId}`, user})
+		return response.json({message: `User details for ID: ${userId}`, user})
 	}
 
 	public async update({params, request, response}: HttpContext) {
 		const userId = params.id
-		const user = await User.findBy('id', userId);
-		if (!user) {
-			return response.status(404).json({message: 'User not found'})
+		const result = await this.userService.updateUser(userId, request.only(['role', 'firstName', 'lastName', 'subscriptionPlan', 'subscriptionExpiresAt']));
+		if (!(result instanceof User)) {
+			return response.status(result.status || 500).json({message: result.error})
 		}
-
-		const payload = request.body()
-		user.merge(payload)
-		await user.save()
-
-		response.json({message: `User updated successfully`, user})
+		return response.json({message: `User updated successfully`, result})
 	}
 
 	public async delete({params, response, auth}: HttpContext) {
 		const userId = params.id
-		const user = await User.findBy('id', userId);
-		if (!user) {
-			return response.status(404).json({message: 'User not found'})
+		if (!auth.user) {
+			return response.status(401).json({message: 'Unauthorized'})
+		}
+		const result = await this.userService.deleteUser(userId, auth.user);
+		if (result.error) {
+			return response.status(result.status).json({message: result.error})
 		}
 
-		if (user.role === 'admin' && auth.user?.role !== 'admin') {
-			return response.status(403).json({message: 'Cannot delete an admin user'})
-		}
-
-		await user.delete()
 		response.json({message: `User with ID: ${userId} deleted successfully`})
 	}
 }
