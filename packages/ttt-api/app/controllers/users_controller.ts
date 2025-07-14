@@ -34,14 +34,10 @@ export default class UsersController {
 
 	public async delete({params, response, auth}: HttpContext) {
 		const userId = params.id
-		if (!auth.user) {
-			return response.status(401).json({message: 'Unauthorized'})
-		}
-		const result = await this.userService.deleteUser(userId, auth.user);
+		const result = await this.userService.deleteUser(userId, auth.user!);
 		if (result.error) {
 			return response.status(result.status).json({message: result.error})
 		}
-
-		response.json({message: `User with ID: ${userId} deleted successfully`})
+		return response.json({message: `User with ID: ${userId} deleted successfully`})
 	}
 }

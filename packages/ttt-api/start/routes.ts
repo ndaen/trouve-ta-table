@@ -50,6 +50,7 @@ router.group(() => {
 		router.group(() => {
 			router.get('/all', [ProjectsController, 'showByUser'])
 		}).prefix('/user')
+		router.get('/:id/guests/unassigned', [GuestsController, 'getUnassignedGuests'])
 	}).prefix('/projects')
 
 	/**
