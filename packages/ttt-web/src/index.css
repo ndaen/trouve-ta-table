@@ -203,6 +203,11 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
     padding: 0;
     line-height: var(--leading-normal);
 }
+
+#root {
+    margin-top: 80px;
+    padding: var(--space-4);
+}
 /* ==========================================================================
    GLOBAL STYLES - Colors, Borders, Shadows
    ========================================================================== */
@@ -446,8 +451,8 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 }
 
 .btn-secondary {
-    background-color: var(--secondary);
-    color: var(--secondary-foreground);
+    background-color: var(--secondary-foreground);
+    color: var(--secondary);
 }
 
 .btn-outline {
@@ -464,11 +469,6 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 .btn-ghost {
     background-color: transparent;
     color: var(--foreground);
-}
-
-.btn-ghost:hover {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
 }
 
 .btn-destructive {
@@ -611,6 +611,15 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
     background-color: transparent;
     border-color: var(--border);
     color: var(--foreground);
+}
+
+/* Link Component */
+.link {
+    color: var(--foreground);
+    text-decoration: none;
+    font-weight: var(--font-semibold);
+    font-size: var(--text-sm);
+    transition: var(--transition-colors);
 }
 
 /* ==========================================================================

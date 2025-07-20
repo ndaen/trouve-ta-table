@@ -1,18 +1,13 @@
 import Button from "@/components/buttons/Button.tsx";
 import ButtonIcon from "@/components/buttons/ButtonIcon.tsx";
-import {Moon, Sun} from "lucide-react";
-import {useEffect, useState} from "react";
 import Card from "@/components/cards/Card.tsx";
 import Badge from "@/components/Badge.tsx";
 import {Input} from "@/components/inputs/Input.tsx";
 import {CopyButton} from "@/components/buttons/CopyButton.tsx";
+import {useTheme} from "@/stores/themeStore.ts";
 
 const DesignSystemShowcase = () => {
-    const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
-    useEffect(() => {
-        document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
-    })
-
+    const {darkMode} = useTheme();
     const colourPalette = [
         {
             name: 'Background',
@@ -85,7 +80,7 @@ const DesignSystemShowcase = () => {
 
 
     return (
-        <div className={''}>
+        <div>
             {/* Header */}
             <div className="border-b p-6">
                 <div className="max-w-7xl mx-auto px-6 py-4">
@@ -98,10 +93,6 @@ const DesignSystemShowcase = () => {
                                 Components, tokens, and patterns for building consistent interfaces
                             </p>
                         </div>
-                        <Button variant="btn-outline" onClick={() => setDarkMode(!darkMode)}>
-                            {darkMode ? <Sun size={16}/> : <Moon size={16}/>}
-                            {darkMode ? 'Light' : 'Dark'}
-                        </Button>
                     </div>
                 </div>
             </div>
