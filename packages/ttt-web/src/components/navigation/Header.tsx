@@ -3,9 +3,14 @@ import {useTheme} from "@/stores/themeStore.ts";
 import './style.css';
 import Button from "@/components/buttons/Button.tsx";
 import {Link} from "@/components/buttons/Link.tsx";
+import {useEffect} from "react";
 
 export default function Header() {
-    const {darkMode} = useTheme();
+    const {darkMode, setDarkMode} = useTheme();
+
+    useEffect(() => {
+        setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }, [])
 
     return (
         <div className={'header-container'}>

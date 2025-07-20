@@ -5,6 +5,7 @@ import Badge from "@/components/Badge.tsx";
 import {Input} from "@/components/inputs/Input.tsx";
 import {CopyButton} from "@/components/buttons/CopyButton.tsx";
 import {useTheme} from "@/stores/themeStore.ts";
+import {useState} from "react";
 
 const DesignSystemShowcase = () => {
     const {darkMode} = useTheme();
@@ -77,6 +78,7 @@ const DesignSystemShowcase = () => {
 
         },
     ];
+    const [name, setName] = useState<string | number>('');
 
 
     return (
@@ -89,14 +91,13 @@ const DesignSystemShowcase = () => {
                             <h1 className="text-2xl font-bold text-foreground">
                                 Design System
                             </h1>
-                            <p className="text-sm mt-1 text-muted" >
+                            <p className="text-sm mt-1 text-muted">
                                 Components, tokens, and patterns for building consistent interfaces
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
-
 
 
             <div className={'p-6'}>
@@ -114,7 +115,8 @@ const DesignSystemShowcase = () => {
                                     <div className={'flex flex-direction-column gap-2'}>
                                         <p className={'text-lg font-bold'}>{colour.name}</p>
                                         <p className={'text-sm text-muted'}>{colour.description}</p>
-                                        <Input id={`input-${colour.value}`} value={colour.value} disabled aria-labelledby={`input-${colour.value}`}/>
+                                        <Input id={`input-${colour.value}`} value={colour.value} disabled
+                                               aria-labelledby={`input-${colour.value}`}/>
                                     </div>
                                 }
                                 header={
@@ -125,7 +127,6 @@ const DesignSystemShowcase = () => {
                                 }/>
                         ))}
                     </div>
-                    {/* Typography Scale */}
                 </section>
 
                 {/* Components Section */}
@@ -207,10 +208,18 @@ const DesignSystemShowcase = () => {
                         }
                         body={
                             <div className={'flex flex-direction-column gap-4'}>
-                                <Input placeholder={'Enter your name'}/>
-                                <Input placeholder={'Enter your email'} type={'email'}/>
-                                <Input placeholder={'Enter your password'} type={'password'}/>
-                                <Input placeholder={'Disabled'} disabled/>
+                                <Input
+                                    id={'input-name'}
+                                    value={name}
+                                    onChange={(val) => {
+                                        setName(val);
+                                    }}
+                                    placeholder={'Enter your name'}
+                                    label={'Input with label'}
+                                />
+                                <Input id={'input-email'} placeholder={'Enter your email'} type={'email'}/>
+                                <Input id={'input-password'} placeholder={'Enter your password'} type={'password'}/>
+                                <Input id={'input-disabled'} placeholder={'Disabled'} disabled/>
                             </div>
                         }
                     />
