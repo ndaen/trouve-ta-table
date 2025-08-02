@@ -10,6 +10,7 @@ import Auth from "@/pages/Auth.tsx"
 import {GuestOnlyRoute, ProtectedRoute} from '@/components/navigation/ProtectedRoutes.tsx'
 
 import {initializeAuth, useAuthStore} from "@/stores/useAuthStore.ts";
+import Page404 from "@/pages/Page404.tsx";
 
 function AppWithAuth() {
     useEffect(() => {
@@ -28,7 +29,7 @@ function AppWithAuth() {
             <Routes>
                 {/* Routes publiques */}
                 <Route path="/" element={<App/>}/>
-                <Route path="*" element={<div>Page non trouvée</div>}/>
+                <Route path="*" element={<Page404/>}/>
 
 
                 <Route path="/auth" element={
