@@ -14,6 +14,14 @@
     font-display: swap;
 }
 
+@font-face {
+    font-family: 'Clash Display';
+    src: url('./assets/fonts/ClashDisplay-Variable.ttf') format('truetype');
+    font-weight: 200 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 
 /* ==========================================================================
    ROOT VARIABLES - Design Tokens
@@ -55,6 +63,7 @@
     /* ===== Typography System ===== */
     /* Font Families */
     --font-family-primary: "Satoshi";
+    --font-title: "Clash Display", sans-serif;
 
     /* Font Sizes */
     --text-xs: 0.75rem; /* 12px */
@@ -318,6 +327,13 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 /* ==========================================================================
    TYPOGRAPHY CLASSES - Semantic Text Styles
    ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-title), sans-serif;
+    font-weight: var(--font-bold);
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-2);
+}
 
 .text-xs {
     font-size: var(--text-xs);
