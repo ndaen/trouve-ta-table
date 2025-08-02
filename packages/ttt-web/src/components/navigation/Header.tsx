@@ -3,7 +3,7 @@ import {useTheme} from "@/stores/themeStore.ts";
 import './style.css';
 import Button from "@/components/buttons/Button.tsx";
 import {Link} from "@/components/buttons/Link.tsx";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {useAuthStore, useIsAuthenticated} from "@/stores/useAuthStore.ts";
 
@@ -12,10 +12,26 @@ export default function Header() {
     const navigate = useNavigate()
     const {logout} = useAuthStore();
     const isAuthenticated = useIsAuthenticated()
+    const [isMobile, setIsMobile] = useState(false)
 
     useEffect(() => {
         setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
     }, [])
+
+    // get the size of the window to set a different logo based on the size
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setIsMobile(width < 768);
+        };
+
+        handleResize(); // Initial check
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <div className={'header-container'}>
@@ -26,7 +42,7 @@ export default function Header() {
                         :
                         <img src={'/TTT-logo-black.svg'} alt={'logo'} className={'header-logo'}/>
                     }
-                    <h1 className={'text-2xl'}>Trouve Ta Table</h1>
+                    {isMobile ? <h1 className={'m-0 p-0'}>TTT</h1> :<h1 className={'m-0 p-0'}>Trouve Ta Table</h1> }
                 </div>
                 <div className={'header-content'}>
                     <div className={'header-menu'}>

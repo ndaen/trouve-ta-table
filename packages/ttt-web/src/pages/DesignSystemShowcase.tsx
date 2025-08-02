@@ -11,79 +11,78 @@ const DesignSystemShowcase = () => {
     const {darkMode} = useTheme();
     const colourPalette = [
         {
-            name: 'Background',
+            name: 'Arrière-plan',
             value: darkMode ? '#FFFFFF' : '#000000',
             className: 'bg-background',
-            description: 'Primary background'
+            description: 'Arrière-plan principal'
         },
         {
-            name: 'Foreground',
+            name: 'Premier plan',
             value: darkMode ? '#FAFAFA' : '#09090B',
             className: 'bg-foreground',
-            description: 'Primary text'
+            description: 'Texte principal'
         },
         {
-            name: 'Card',
+            name: 'Carte',
             value: darkMode ? '#080808' : '#FFFFFF',
             className: 'bg-card',
-            description: 'Card background'
+            description: 'Arrière-plan de la carte'
         },
         {
-            name: 'Border',
+            name: 'Bordure',
             value: darkMode ? '#262626' : '#E4E4E7',
             className: 'bg-border',
-            description: 'Component borders',
+            description: 'Bordures des composants',
 
         },
         {
-            name: 'Primary',
+            name: 'Primaire',
             value: darkMode ? '#FAFAFA' : '#E0E0E5',
             className: 'bg-primary',
-            description: 'Primary actions',
+            description: 'Actions principales',
 
         },
         {
-            name: 'Secondary',
+            name: 'Secondaire',
             value: darkMode ? '#171717' : '#F4F4F5',
             className: 'bg-secondary',
-            description: 'Secondary actions',
+            description: 'Actions secondaires',
 
         },
         {
-            name: 'Success',
+            name: 'Succès',
             value: '#0D9488',
             className: 'bg-success',
-            description: 'Success states',
+            description: 'États de succès',
 
         },
         {
-            name: 'Warning',
+            name: 'Avertissement',
             value: '#FB923C',
             className: 'bg-warning',
-            description: 'Warning states',
+            description: 'États d’avertissement',
 
         },
         {
-            name: 'Error',
+            name: 'Erreur',
             value: '#BE123C',
             className: 'bg-error',
-            description: 'Error states',
+            description: 'États d’erreur',
 
         },
         {
             name: 'Info',
             value: '#334155',
             className: 'bg-info',
-            description: 'Informational states',
+            description: 'États informatifs',
 
         },
     ];
     const [name, setName] = useState<string>('');
 
-
     return (
         <div>
-            {/* Header */}
+            {/* En-tête */}
             <div className="border-b p-6">
                 <div className="max-w-7xl mx-auto px-6 py-4">
                     <div className="flex items-center justify-between">
@@ -92,21 +91,18 @@ const DesignSystemShowcase = () => {
                                 Design System
                             </h1>
                             <p className="text-sm mt-1 text-muted">
-                                Components, tokens, and patterns for building consistent interfaces
+                                Composants, tokens et patrons pour construire des interfaces cohérentes
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
 
-
             <div className={'p-6'}>
-
-                {/* Design Tokens Section */}
+                {/* Palette de couleurs */}
                 <section>
-                    {/* Colour Palette */}
-                    <h2 className="text-xl font-black m-v-4 m-h-2">
-                        Colour Palette
+                    <h2 className="m-v-4">
+                        Palette de couleurs
                     </h2>
                     <div className={'grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4'}>
                         {colourPalette.map((colour) => (
@@ -129,132 +125,169 @@ const DesignSystemShowcase = () => {
                     </div>
                 </section>
 
-                {/* Components Section */}
-                <section className={'flex flex-direction-column gap-4'}>
-                    <h2 className="text-xl font-black m-v-4 m-h-2">
-                        Components
+                {/* Section Typographie */}
+                <section>
+                    <h2 className="m-v-4">
+                        Typographie
                     </h2>
-                    {/* Buttons */}
-                    <Card
-                        body={
-                            <>
+                    <div className={'flex flex-direction-row gap-4'}>
+                        <Card
+                            body={
                                 <div>
-                                    <p>Variants</p>
-                                    <div className={'flex flex-wrap gap-4 mb-4'}>
-                                        <Button>
-                                            Default
-                                        </Button>
-                                        <Button variant={"btn-secondary"}>
-                                            Secondary
-                                        </Button>
-                                        <Button variant={"btn-outline"}>
-                                            Outline
-                                        </Button>
-                                        <Button variant={"btn-ghost"}>
-                                            Ghost
-                                        </Button>
-                                        <Button variant={"btn-destructive"}>
-                                            Destructive
-                                        </Button>
-                                    </div>
+                                    <h1>Titre de niveau 1</h1>
+                                    <h2>Titre de niveau 2</h2>
+                                    <h3>Titre de niveau 3</h3>
+                                    <h4>Titre de niveau 4</h4>
+                                    <h5>Titre de niveau 5</h5>
+                                    <h6>Titre de niveau 6</h6>
                                 </div>
+                            }
+                            header={<h3>Titres</h3>}/>
+                        <Card
+                            body={
                                 <div>
-                                    <p>Sizes</p>
-                                    <div className={'flex flex-wrap gap-4 mb-4'}>
-                                        <Button variant={"btn-primary"} size={"sm"}>
-                                            Small
-                                        </Button>
-                                        <Button variant={"btn-primary"} size={"default"}>
-                                            Default
-                                        </Button>
-                                        <Button variant={"btn-primary"} size={"lg"}>
-                                            Large
-                                        </Button>
-                                        <ButtonIcon icon={'settings'} iconSize={16}/>
-                                    </div>
+                                    <p className={'text-base'}>Texte par défaut</p>
+                                    <p className={'text-base text-muted'}>Texte atténué</p>
+                                    <p className={'text-base font-bold'}>Texte important</p>
+                                    <p className={'text-xs'}>Texte en petit</p>
+                                    <p className={'text-xl font-semibold'}>Texte plus grand</p>
                                 </div>
-                                <div>
-                                    <p>With Icon</p>
-                                    <div className={'flex flex-wrap gap-4 mb-4'}>
-                                        <Button icon={'download'}>Download</Button>
-                                        <Button variant={'btn-outline'} icon={'settings'}>Upload</Button>
-                                        <Button variant={'btn-ghost'} icon={'plus'}>Add item</Button>
-                                    </div>
-                                </div>
-                                <div>
-                                    <p>States</p>
-                                    <div className={'flex flex-wrap gap-4 mb-4'}>
-                                        <Button>Normal</Button>
-                                        <Button disabled>Disabled</Button>
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        header={
-                            <h3 className="card-title">
-                                Buttons
-                            </h3>
-                        }
-                        description={
-                            <p>
-                                A collection of button styles and variants.
-                            </p>
-                        }
-                    />
-                    {/* Form Controls */}
-                    <Card
-                        header={
-                            <h3>Form Controls</h3>
-                        }
-                        body={
-                            <div className={'flex flex-direction-column gap-4'}>
-                                <Input
-                                    id={'input-name'}
-                                    value={name}
-                                    onChange={(val) => {
-                                        setName(val);
-                                    }}
-                                    placeholder={'Enter your name'}
-                                    label={'Input with label'}
-                                />
-                                <Input id={'input-email'} placeholder={'Enter your email'} type={'email'}/>
-                                <Input id={'input-password'} placeholder={'Enter your password'} type={'password'}/>
-                                <Input id={'input-disabled'} placeholder={'Disabled'} disabled/>
-                            </div>
-                        }
-                    />
-
-                    {/* Badges */}
-                    <Card header={
-                        <h3>Badges</h3>
-                    }
-                          body={
-                              <div className={'flex flex-wrap gap-4 mb-4'}>
-                                  <Badge>Default </Badge>
-                                  <Badge variant={'badge-secondary'}>Secondary </Badge>
-                                  <Badge variant={'badge-success'}>Success </Badge>
-                                  <Badge variant={'badge-warning'}>Warning </Badge>
-                                  <Badge variant={'badge-error'}>Error </Badge>
-                                  <Badge variant={'badge-info'}>Info </Badge>
-                                  <Badge variant={'badge-outline'}>Outline </Badge>
-                              </div>
-                          }
-                    />
-                    {/* Cards */}
-                    <Card header={
-                        <h3>Cards</h3>
-                    }
-                          body={
-                              <div className={'flex flex-wrap gap-4 mb-4'}>
-                                  <Card header={<h4>Card 1</h4>} body={<p>This is the body of card 1.</p>}/>
-                                  <Card header={<h4>Card 2</h4>} body={<p>This is the body of card 2.</p>}/>
-                                  <Card header={<h4>Card 3</h4>} body={<p>This is the body of card 3.</p>}/>
-                              </div>
-                          }/>
+                            }
+                            header={<h3>Textes et paragraphes</h3>}/>
+                    </div>
 
                 </section>
 
-                {/* Usage Guidelines */
+                {/* Section Composants */}
+                <section className={'flex flex-direction-column'}>
+                    <h2 className="m-v-4">
+                        Composants
+                    </h2>
+                    <div className={'flex flex-direction-column gap-4'}>
+
+                        {/* Boutons */}
+                        <Card
+                            body={
+                                <>
+                                    <div>
+                                        <p>Variantes</p>
+                                        <div className={'flex flex-wrap gap-4 mb-4'}>
+                                            <Button>
+                                                Par défaut
+                                            </Button>
+                                            <Button variant={"btn-secondary"}>
+                                                Secondaire
+                                            </Button>
+                                            <Button variant={"btn-outline"}>
+                                                Contour
+                                            </Button>
+                                            <Button variant={"btn-ghost"}>
+                                                Fantôme
+                                            </Button>
+                                            <Button variant={"btn-destructive"}>
+                                                Destructif
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p>Tailles</p>
+                                        <div className={'flex flex-wrap gap-4 mb-4'}>
+                                            <Button variant={"btn-primary"} size={"sm"}>
+                                                Petit
+                                            </Button>
+                                            <Button variant={"btn-primary"} size={"default"}>
+                                                Par défaut
+                                            </Button>
+                                            <Button variant={"btn-primary"} size={"lg"}>
+                                                Grand
+                                            </Button>
+                                            <ButtonIcon icon={'settings'} iconSize={16}/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p>Avec icône</p>
+                                        <div className={'flex flex-wrap gap-4 mb-4'}>
+                                            <Button icon={'download'}>Télécharger</Button>
+                                            <Button variant={'btn-outline'} icon={'settings'}>Téléverser</Button>
+                                            <Button variant={'btn-ghost'} icon={'plus'}>Ajouter un élément</Button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p>États</p>
+                                        <div className={'flex flex-wrap gap-4 mb-4'}>
+                                            <Button>Normal</Button>
+                                            <Button disabled>Désactivé</Button>
+                                        </div>
+                                    </div>
+                                </>
+                            }
+                            header={
+                                <h3 className="card-title">
+                                    Boutons
+                                </h3>
+                            }
+                            description={
+                                <p>
+                                    Une collection de styles et variantes de boutons.
+                                </p>
+                            }
+                        />
+                        {/* Contrôles de formulaire */}
+                        <Card
+                            header={
+                                <h3>Contrôles de formulaire</h3>
+                            }
+                            body={
+                                <div className={'flex flex-direction-column gap-4'}>
+                                    <Input
+                                        id={'input-name'}
+                                        value={name}
+                                        onChange={(val) => {
+                                            setName(val);
+                                        }}
+                                        placeholder={'Entrez votre nom'}
+                                        label={'Champ avec label'}
+                                    />
+                                    <Input id={'input-email'} placeholder={'Entrez votre email'} type={'email'}/>
+                                    <Input id={'input-password'} placeholder={'Entrez votre mot de passe'}
+                                           type={'password'}/>
+                                    <Input id={'input-disabled'} placeholder={'Désactivé'} disabled/>
+                                </div>
+                            }
+                        />
+
+                        {/* Badges */}
+                        <Card header={
+                            <h3>Badges</h3>
+                        }
+                              body={
+                                  <div className={'flex flex-wrap gap-4 mb-4'}>
+                                      <Badge>Défaut </Badge>
+                                      <Badge variant={'badge-secondary'}>Secondaire </Badge>
+                                      <Badge variant={'badge-success'}>Succès </Badge>
+                                      <Badge variant={'badge-warning'}>Avertissement </Badge>
+                                      <Badge variant={'badge-error'}>Erreur </Badge>
+                                      <Badge variant={'badge-info'}>Info </Badge>
+                                      <Badge variant={'badge-outline'}>Contour </Badge>
+                                  </div>
+                              }
+                        />
+                        {/* Cards */}
+                        <Card header={
+                            <h3>Cards</h3>
+                        }
+                              body={
+                                  <div className={'flex flex-wrap gap-4 mb-4'}>
+                                      <Card header={<h4>Carte 1</h4>} body={<p>Voici le contenu de la carte 1.</p>}/>
+                                      <Card header={<h4>Carte 2</h4>} body={<p>Voici le contenu de la carte 2.</p>}/>
+                                      <Card header={<h4>Carte 3</h4>} body={<p>Voici le contenu de la carte 3.</p>}/>
+                                  </div>
+                              }/>
+                    </div>
+
+                </section>
+
+                {/* Consignes d'utilisation */
                 }
             </div>
         </div>

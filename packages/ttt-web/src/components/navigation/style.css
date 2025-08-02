@@ -26,8 +26,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: 24px;
-    font-weight: bold;
+    cursor: pointer;
 }
 
 .header-content {
