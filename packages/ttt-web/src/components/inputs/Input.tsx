@@ -6,9 +6,9 @@ interface InputProps {
     type?: 'text' | 'password' | 'email' | 'number';
     className?: string;
     disabled?: boolean;
-    value?: string | number;
+    value?: string;
     label?: string;
-    onChange?: (value: string | number) => void;
+    onChange?: (value: string) => void;
 
     [key: string]: any;
 }

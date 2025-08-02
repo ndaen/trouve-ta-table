@@ -78,7 +78,7 @@ const DesignSystemShowcase = () => {
 
         },
     ];
-    const [name, setName] = useState<string | number>('');
+    const [name, setName] = useState<string>('');
 
 
     return (

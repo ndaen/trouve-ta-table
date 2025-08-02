@@ -134,7 +134,7 @@
     /* Pure Black Foundation */
     --background: #000000; /* Pure black base */
     --foreground: #FAFAFA;
-    --card: #080808; /* Near-black surfaces */
+    --card: #101010; /* Near-black surfaces */
     --card-foreground: #FAFAFA; /* Pure white on cards */
     --popover: #080808; /* Near-black popover */
     --popover-foreground: #FAFAFA; /* Pure white in popover */
@@ -207,6 +207,7 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 #root {
     margin-top: 80px;
     padding: var(--space-4);
+    min-height: calc(100vh - var(--header-height));
 }
 /* ==========================================================================
    GLOBAL STYLES - Colors, Borders, Shadows

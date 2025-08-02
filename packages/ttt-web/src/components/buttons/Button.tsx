@@ -8,9 +8,10 @@ interface ButtonProps {
     size?: 'sm' | 'default' | 'lg';
     disabled?: boolean;
     icon?: IconName | null;
+    type?: 'button' | 'submit' | 'reset';
 }
 
-export default function Button({ children, onClick, variant = 'btn-primary', size = 'default', disabled = false, icon = null }: ButtonProps) {
+export default function Button({ children, onClick, variant = 'btn-primary', size = 'default', disabled = false, icon = null, type = 'button' }: ButtonProps) {
     const sizes = {
         sm: 'btn-sm',
         default: 'btn-md',
@@ -22,6 +23,7 @@ export default function Button({ children, onClick, variant = 'btn-primary', siz
             onClick={onClick}
             className={`btn ${variant} ${sizes[size]}`}
             disabled={disabled}
+            type={type}
         >
             {icon && <DynamicIcon name={icon} size={size === 'sm' ? 14 : size === 'lg' ? 18 : 16} />}
             {children}

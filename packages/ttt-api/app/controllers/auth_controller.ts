@@ -2,6 +2,7 @@ import type {HttpContext} from '@adonisjs/core/http'
 import {loginValidator, registerValidator} from "#validators/auth";
 import User from "#models/user";
 import {DateTime} from "luxon";
+import JwtService from "#services/jwt_service";
 
 export default class AuthController {
 	async register({request, response, auth}: HttpContext) {
@@ -18,15 +19,11 @@ export default class AuthController {
 
 			await auth.use('web').login(user)
 
+			const token = JwtService.generateToken(user);
+
 			return response.status(201).json({
 				message: 'Inscription réussie',
-				user: {
-					id: user.id,
-					email: user.email,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					fullName: user.fullName
-				}
+				token
 			})
 		} catch (error) {
 			return response.status(422).json({
@@ -47,15 +44,10 @@ export default class AuthController {
 
 			await auth.use('web').login(user, !!rememberMe)
 
+			const token = JwtService.generateToken(user)
 			return response.json({
 				message: 'Connexion réussie',
-				user: {
-					id: user.id,
-					email: user.email,
-					firstName: user.firstName,
-					lastName: user.lastName,
-					fullName: user.fullName
-				}
+				token
 			})
 		} catch (error) {
 			return response.status(422).json({
@@ -91,13 +83,7 @@ export default class AuthController {
 
 		return response.json({
 			isAuthenticated: isLoggedIn,
-			user: isLoggedIn ? {
-				id: auth.user!.id,
-				email: auth.user!.email,
-				firstName: auth.user!.firstName,
-				lastName: auth.user!.lastName,
-				fullName: auth.user!.fullName
-			} : null
+			token: isLoggedIn ? JwtService.generateToken(auth.user!) : null
 		})
 	}
 }

@@ -4,9 +4,14 @@ import './style.css';
 import Button from "@/components/buttons/Button.tsx";
 import {Link} from "@/components/buttons/Link.tsx";
 import {useEffect} from "react";
+import {useNavigate} from "react-router";
+import {useAuthStore, useIsAuthenticated} from "@/stores/useAuthStore.ts";
 
 export default function Header() {
     const {darkMode, setDarkMode} = useTheme();
+    const navigate = useNavigate()
+    const {logout} = useAuthStore();
+    const isAuthenticated = useIsAuthenticated()
 
     useEffect(() => {
         setDarkMode(window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -15,7 +20,7 @@ export default function Header() {
     return (
         <div className={'header-container'}>
             <div className={'header border rounded-md'}>
-                <div className={'header-left'}>
+                <div className={'header-left'} onClick={() => navigate('/')}>
                     {darkMode ?
                         <img src={'/TTT-logo-white.svg'} alt={'logo'} className={'header-logo'}/>
                         :
@@ -28,8 +33,17 @@ export default function Header() {
                         <Link href={'/'}>Accueil</Link>
                     </div>
                     <div className={'header-buttons'}>
-                        <Button variant={'btn-outline'}>Connexion</Button>
-                        <Button variant={'btn-secondary'}>Inscription</Button>
+                        {
+                            isAuthenticated ?
+                                <>
+                                    <Button variant={'btn-outline'} onClick={() => logout()}>Déconnexion</Button>
+                                </>
+                                :
+                                <>
+                                    <Button variant={'btn-outline'} onClick={() => navigate('/auth')} >Connexion</Button>
+                                    <Button variant={'btn-secondary'} onClick={() =>  navigate('/auth?tab=register')}>Inscription</Button>
+                                </>
+                        }
                         <ThemeToggleButton/>
                     </div>
                 </div>
