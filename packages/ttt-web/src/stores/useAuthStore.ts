@@ -1,7 +1,10 @@
 import { create } from 'zustand'
 import { parseJWT } from '@/utils/jwt'
 import { authApi } from '@/services/authApi'
-import type { LoginWithRememberInput, RegisterInput } from '@/schemas/auth'
+import {
+    type LoginWithRememberInput,
+    type RegisterWithConfirmInput,
+} from '@/schemas/auth'
 
 interface User {
     sub: string
@@ -18,7 +21,7 @@ interface AuthState {
     loading: boolean
     initialize: () => Promise<void>
     login: (credentials: LoginWithRememberInput) => Promise<void>
-    register: (userData: RegisterInput) => Promise<void>
+    register: (userData: RegisterWithConfirmInput) => Promise<void>
     logout: () => Promise<void>
     isAuth: () => boolean
     getToken: () => string | null
@@ -89,7 +92,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.setItem("userToken", response.token)
             set({ user })
         } catch (error) {
-            throw error
+            throw error;
         }
     },
 

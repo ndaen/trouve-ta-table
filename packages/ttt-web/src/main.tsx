@@ -11,6 +11,7 @@ import {GuestOnlyRoute, ProtectedRoute} from '@/components/navigation/ProtectedR
 
 import {initializeAuth, useAuthStore} from "@/stores/useAuthStore.ts";
 import Page404 from "@/pages/Page404.tsx";
+import ToastContainer from '@/components/toast/ToastContainer.tsx'
 
 function AppWithAuth() {
     useEffect(() => {
@@ -26,6 +27,7 @@ function AppWithAuth() {
     return (
         <>
             <Header/>
+            <ToastContainer/>
             <Routes>
                 {/* Routes publiques */}
                 <Route path="/" element={<App/>}/>
