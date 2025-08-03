@@ -6,6 +6,7 @@ import {Input} from "@/components/inputs/Input.tsx";
 import {CopyButton} from "@/components/buttons/CopyButton.tsx";
 import {useTheme} from "@/stores/themeStore.ts";
 import {useState} from "react";
+import {type ToastPosition, useToast} from "@/stores/useToastStore.ts";
 
 const DesignSystemShowcase = () => {
     const {darkMode} = useTheme();
@@ -79,6 +80,51 @@ const DesignSystemShowcase = () => {
         },
     ];
     const [name, setName] = useState<string>('');
+    const [position, setPosition] = useState<ToastPosition>('top-right');
+    const TOAST_POSITIONS: ToastPosition[] = [ 'top-left', 'top-center', 'top-right', 'center-left', 'center', 'center-right', 'bottom-left', 'bottom-center', 'bottom-right' ];
+
+
+    const toast = useToast()
+
+    const handleSuccess = () => {
+        toast.success("Invité ajouté avec succès !", {
+            title: "Succès"
+        })
+    }
+
+    const handleError = () => {
+        toast.error("Impossible de sauvegarder les données", {
+            title: "Erreur",
+            duration: 0
+        })
+    }
+
+    const handleWarning = () => {
+        toast.warning("Cette action ne peut pas être annulée", {
+            title: "Attention",
+            duration: 7000
+        })
+    }
+
+    const handleInfo = () => {
+        toast.info("Synchronisation en cours...", {
+            position: 'bottom-right'
+        })
+    }
+
+    const handlePositionChange = () => {
+        const currentIndex = TOAST_POSITIONS.indexOf(position);
+        const nextIndex = (currentIndex + 1) % TOAST_POSITIONS.length;
+        setPosition(TOAST_POSITIONS[nextIndex]);
+        toast.setPosition(position)
+        toast.success(`Position changée vers ${position}`)
+    }
+
+    const handleMultiple = () => {
+        toast.success("Premier toast")
+        setTimeout(() => toast.warning("Deuxième toast"), 500)
+        setTimeout(() => toast.info("Troisième toast"), 1000)
+    }
 
     return (
         <div>
@@ -283,12 +329,46 @@ const DesignSystemShowcase = () => {
                                       <Card header={<h4>Carte 3</h4>} body={<p>Voici le contenu de la carte 3.</p>}/>
                                   </div>
                               }/>
+
+                        {/* Toast */}
+                        <Card header={
+                            <h3>Toast</h3>
+                        }
+                              body={
+                                  <div style={{ padding: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                      <Button variant={'btn-primary'} onClick={handleSuccess}>
+                                          Toast Succès
+                                      </Button>
+
+                                      <Button variant="btn-destructive" onClick={handleError}>
+                                          Toast Erreur
+                                      </Button>
+
+                                      <Button variant="btn-outline" onClick={handleWarning}>
+                                          Toast Warning
+                                      </Button>
+
+                                      <Button variant="btn-secondary" onClick={handleInfo}>
+                                          Toast Info
+                                      </Button>
+
+                                      <Button variant="btn-ghost" onClick={handlePositionChange}>
+                                          Changer Position
+                                      </Button>
+
+                                      <Button variant="btn-outline" onClick={handleMultiple}>
+                                          Plusieurs Toasts
+                                      </Button>
+
+                                      <Button variant="btn-outline" onClick={() => toast.clear()}>
+                                          Effacer Tous
+                                      </Button>
+                                  </div>
+                              }
+                        />
                     </div>
 
                 </section>
-
-                {/* Consignes d'utilisation */
-                }
             </div>
         </div>
     )
