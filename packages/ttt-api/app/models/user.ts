@@ -7,6 +7,7 @@ import hash from "@adonisjs/core/services/hash";
 import type {SubscriptionPlan, UserRole, UUID} from "@trouve-ta-table/shared/types/index.js"
 import Project from "#models/project";
 import type {HasMany} from "@adonisjs/lucid/types/relations";
+import {DbRememberMeTokensProvider} from "@adonisjs/auth/session";
 
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
@@ -51,6 +52,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
 	@hasMany(() => Project)
 	declare projects: HasMany<typeof Project>
 
+	static rememberMeTokens = DbRememberMeTokensProvider.forModel(User)
+
 	get fullName() {
 		return `${this.firstName} ${this.lastName}`
 	}
@@ -59,4 +62,5 @@ export default class User extends compose(BaseModel, AuthFinder) {
 	static assignUuid(user: User) {
 		user.id = randomUUID()
 	}
+
 }

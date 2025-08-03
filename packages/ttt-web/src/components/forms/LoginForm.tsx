@@ -4,6 +4,7 @@ import Button from "@/components/buttons/Button";
 import {GoogleButton} from "@/components/buttons/GoogleButton";
 import {useAuthStore} from "@/stores/useAuthStore";
 import {useNavigate} from "react-router";
+import {InputPassword} from "@/components/inputs/InputPassword.tsx";
 
 export default function LoginForm() {
     const {login} = useAuthStore();
@@ -16,19 +17,13 @@ export default function LoginForm() {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await login({...loginData, rememberMe: false});
+        await login({...loginData, rememberMe: rememberMe});
         navigate('/')
-        // if (response.status) {
-        //     console.log(response.message);
-        //     navigate('/')
-        // } else {
-        //     console.error('Erreur de connexion:', response.message);
-        // }
     }
 
     return (
         <form onSubmit={(event) =>  handleSubmit(event)} className={'flex flex-direction-column gap-4'}>
-            <h2 className={'text-2xl'}>Bon retour !</h2>
+            <h2>Bon retour !</h2>
             <p className={'text-lg text-muted'}>Connectez-vous à votre compte</p>
             <Input
                 id={'input-email'}
@@ -36,14 +31,14 @@ export default function LoginForm() {
                 onChange={(value) => setLoginData({...loginData, email: value})}
                 placeholder={'Email'}
                 type={'email'}
+                leftIcon={'mail'}
                 required
             />
-            <Input
+            <InputPassword
                 id={'input-password'}
                 value={loginData.password}
                 onChange={(value) => setLoginData({...loginData, password: value})}
                 placeholder={'Mot de passe'}
-                type={'password'}
                 required
             />
             <div className={'flex flex-direction-row gap-2 align-items-center'}>

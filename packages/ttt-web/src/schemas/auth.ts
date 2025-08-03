@@ -35,12 +35,12 @@ export const RegisterSchema = z.object({
 })
 
 export const RegisterWithConfirmSchema = RegisterSchema.extend({
-  confirmPassword: z.string()
+    passwordConfirmation: z.string()
 }).refine(
-    (data) => data.password === data.confirmPassword,
+    (data) => data.password === data.passwordConfirmation,
     {
       message: 'Les mots de passe ne correspondent pas',
-      path: ['confirmPassword']
+      path: ['passwordConfirmation']
     }
 )
 

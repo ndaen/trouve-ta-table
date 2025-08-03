@@ -1,4 +1,5 @@
 import * as React from "react";
+import {DynamicIcon, type IconName} from "lucide-react/dynamic";
 
 interface InputProps {
     id: string;
@@ -9,6 +10,7 @@ interface InputProps {
     value?: string;
     label?: string;
     onChange?: (value: string) => void;
+    leftIcon?: IconName;
 
     [key: string]: any;
 }
@@ -22,6 +24,7 @@ export const Input = ({
                           value = '',
                           label,
                           onChange,
+                          leftIcon,
                           ...props
                       }: InputProps) => {
 
@@ -34,19 +37,26 @@ export const Input = ({
     return (
         <div className={`input-container`}>
             {label && <label htmlFor={id} className={`input-label`}>{label}</label>}
-            <input
-                id={id}
-                autoCapitalize="none"
-                type={type}
-                placeholder={placeholder}
-                className={`${className} input`}
-                disabled={disabled}
-                value={value}
-                onChange={(e) => {
-                    handleChange(e)
-                }}
-                {...props}
-            />
+            <div className="input-wrapper">
+                {leftIcon && (
+                    <div
+                        className={`input-icon input-icon-left`}
+                    >
+                        <DynamicIcon name={leftIcon} size={16}/>
+                    </div>
+                )}
+                <input
+                    id={id}
+                    autoCapitalize="none"
+                    type={type}
+                    placeholder={placeholder}
+                    className={`${className} input ${leftIcon ? 'input-with-left-icon' : ''}`}
+                    disabled={disabled}
+                    value={value}
+                    onChange={handleChange}
+                    {...props}
+                />
+            </div>
         </div>
     )
 };

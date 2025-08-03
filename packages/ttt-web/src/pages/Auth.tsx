@@ -1,6 +1,7 @@
 import {useSearchParams} from "react-router";
 import LoginForm from "@/components/forms/LoginForm.tsx";
 import '@/assets/styles/auth.css'
+import RegisterForm from "@/components/forms/RegisterForm.tsx";
 
 export default function Auth() {
     const [searchParams, setSearchParams] = useSearchParams()
@@ -16,15 +17,12 @@ export default function Auth() {
                 <div className={'auth-card-body'}>
                     {activeTab === 'login' && (
                         <div>
-                            <LoginForm />
+                            <LoginForm/>
                         </div>
                     )}
                     {activeTab === 'register' && (
                         <div>
-                            {/* Register Form Component */}
-                            <h2 className={'text-2xl'}>Bienvenue !</h2>
-                            <p className={'text-lg text-muted'}>Créez votre compte pour commencer</p>
-                            {/* RegisterForm component would go here */}
+                            <RegisterForm/>
                         </div>
                     )}
                 </div>

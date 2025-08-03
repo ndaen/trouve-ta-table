@@ -6,7 +6,6 @@ import JwtService from "#services/jwt_service";
 
 export default class AuthController {
 	async register({request, response, auth}: HttpContext) {
-
 		try {
 			const payload = await request.validateUsing(registerValidator)
 
