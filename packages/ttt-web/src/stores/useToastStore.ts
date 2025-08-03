@@ -1,4 +1,5 @@
 import {create} from 'zustand'
+import * as crypto from "node:crypto";
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
@@ -33,12 +34,12 @@ export const useToastStore = create<ToastStore>((set, get) => ({
     position: 'top-right',
 
     addToast: (toastData) => {
-        const id = Math.random().toString(36).substring(2, 9)
+        const id = crypto.randomUUID();
         const toast: Toast = {
             ...toastData,
             id,
             createdAt: Date.now(),
-            duration: toastData.duration ?? 5000, // 5 secondes par défaut
+            duration: toastData.duration ?? 5000,
             position: toastData.position ?? get().position
         }
 
@@ -79,7 +80,7 @@ export const useToast = () => {
         },
 
         error: (message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message' | 'createdAt'>>) => {
-            return addToast({type: 'error', message, duration: 0, ...options}) // Les erreurs ne disparaissent pas automatiquement par défaut
+            return addToast({type: 'error', message, duration: 0, ...options})
         },
 
         warning: (message: string, options?: Partial<Omit<Toast, 'id' | 'type' | 'message' | 'createdAt'>>) => {

@@ -218,6 +218,7 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
     padding: var(--space-4);
     min-height: calc(100vh - 80px);
 }
+
 /* ==========================================================================
    GLOBAL STYLES - Colors, Borders, Shadows
    ========================================================================== */
@@ -273,6 +274,7 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 .bg-background {
     background-color: var(--background);
 }
+
 .bg-foreground {
     background-color: var(--foreground);
 }
@@ -280,33 +282,43 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 .border {
     border: 1px solid var(--border);
 }
+
 .border-primary {
     border-color: var(--primary);
 }
+
 .border-secondary {
     border-color: var(--secondary);
 }
+
 .border-accent {
     border-color: var(--accent);
 }
+
 .border-muted {
     border-color: var(--muted);
 }
+
 .border-card {
     border-color: var(--card);
 }
+
 .border-input {
     border-color: var(--input);
 }
+
 .border-success {
     border-color: var(--success);
 }
+
 .border-warning {
     border-color: var(--warning);
 }
+
 .border-error {
     border-color: var(--error);
 }
+
 .border-info {
     border-color: var(--info);
 }
@@ -314,12 +326,15 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
 .border-b {
     border-bottom: 1px solid var(--border);
 }
+
 .border-t {
     border-top: 1px solid var(--border);
 }
+
 .border-l {
     border-left: 1px solid var(--border);
 }
+
 .border-r {
     border-right: 1px solid var(--border);
 }
@@ -709,8 +724,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* À ajouter dans votre index.css */
-
 /* ==========================================================================
    TOAST SYSTEM - Positionnement des containers
    ========================================================================== */
@@ -726,91 +739,19 @@ h1, h2, h3, h4, h5, h6 {
     padding: var(--space-4);
 }
 
-/* Positions des containers */
 .toast-container-top-left {
-    top: 0;
+    top: 80px;
     left: 0;
 }
 
 .toast-container-top-center {
-    top: 0;
+    top: 80px;
     left: 50%;
     transform: translateX(-50%);
 }
 
 .toast-container-top-right {
-    top: 0;
-    right: 0;
-}
-
-.toast-container-center-left {
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-}
-
-.toast-container-center {
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.toast-container-center-right {
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-}
-
-.toast-container-bottom-left {
-    bottom: 0;
-    left: 0;
-    flex-direction: column-reverse;
-}
-
-.toast-container-bottom-center {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    flex-direction: column-reverse;
-}
-
-.toast-container-bottom-right {
-    bottom: 0;
-    right: 0;
-    flex-direction: column-reverse;
-}
-
-/* À ajouter dans votre index.css */
-
-/* ==========================================================================
-   TOAST SYSTEM - Positionnement des containers
-   ========================================================================== */
-
-.toast-container {
-    position: fixed;
-    z-index: 9999;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-    max-width: 420px;
-    padding: var(--space-4);
-}
-
-/* Positions des containers */
-.toast-container-top-left {
-    top: 80px; /* 80px plus bas */
-    left: 0;
-}
-
-.toast-container-top-center {
-    top: 80px; /* 80px plus bas */
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.toast-container-top-right {
-    top: 80px; /* 80px plus bas */
+    top: 80px;
     right: 0;
 }
 
@@ -880,7 +821,6 @@ h1, h2, h3, h4, h5, h6 {
     transform: translateX(0) scale(1);
 }
 
-/* Contenu principal du toast */
 .toast-content {
     display: flex;
     align-items: flex-start;
@@ -1021,13 +961,12 @@ h1, h2, h3, h4, h5, h6 {
         max-width: 100%;
     }
 
-    /* Sur mobile, toutes les positions deviennent top-center avec 80px de marge */
     .toast-container-top-left,
     .toast-container-top-right,
     .toast-container-center-left,
     .toast-container-center,
     .toast-container-center-right {
-        top: 80px; /* Garde la marge de 80px sur mobile aussi */
+        top: 80px;
         left: 50%;
         right: auto;
         bottom: auto;
@@ -1400,6 +1339,7 @@ h1, h2, h3, h4, h5, h6 {
 .flex-direction-column {
     flex-direction: column;
 }
+
 .flex-direction-row {
     flex-direction: row;
 }

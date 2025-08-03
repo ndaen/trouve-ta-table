@@ -116,8 +116,8 @@ const DesignSystemShowcase = () => {
         const currentIndex = TOAST_POSITIONS.indexOf(position);
         const nextIndex = (currentIndex + 1) % TOAST_POSITIONS.length;
         setPosition(TOAST_POSITIONS[nextIndex]);
-        toast.setPosition(position)
-        toast.success(`Position changée vers ${position}`)
+        toast.setPosition(TOAST_POSITIONS[nextIndex])
+        toast.success(`Position changée vers ${TOAST_POSITIONS[nextIndex]}`)
     }
 
     const handleMultiple = () => {

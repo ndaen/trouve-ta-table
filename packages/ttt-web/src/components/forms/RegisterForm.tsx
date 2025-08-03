@@ -89,7 +89,7 @@ export default function RegisterForm() {
                 placeholder={'Confirmer le mot de passe'}
                 required
             />
-            <Button type={'submit'}>Connexion</Button>
+            <Button type={'submit'}>S'inscrire</Button>
             <div className={'or-separator'}>
                 <span>
                     ou
