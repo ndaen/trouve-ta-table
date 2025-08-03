@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { X, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react'
-import {type Toast as ToastType, useToastStore } from '@/stores/useToastStore'
+import { type Toast as ToastType, useToastStore } from '../../stores/useToastStore'
 
 interface ToastProps {
     toast: ToastType
@@ -35,7 +35,6 @@ const Toast: React.FC<ToastProps> = ({ toast }) => {
 
     const handleClose = () => {
         setIsVisible(false)
-        // Attendre la fin de l'animation avant de supprimer
         setTimeout(() => removeToast(toast.id), 200)
     }
 
@@ -82,7 +81,7 @@ const Toast: React.FC<ToastProps> = ({ toast }) => {
                 </button>
             </div>
 
-            {toast.duration && toast.duration > 0 && (
+            {(toast.duration ?? 0) > 0 && (
                 <div className="toast-progress-bar">
                     <div
                         className="toast-progress-fill"

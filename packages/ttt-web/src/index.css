@@ -780,6 +780,77 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column-reverse;
 }
 
+/* À ajouter dans votre index.css */
+
+/* ==========================================================================
+   TOAST SYSTEM - Positionnement des containers
+   ========================================================================== */
+
+.toast-container {
+    position: fixed;
+    z-index: 9999;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    max-width: 420px;
+    padding: var(--space-4);
+}
+
+/* Positions des containers */
+.toast-container-top-left {
+    top: 80px; /* 80px plus bas */
+    left: 0;
+}
+
+.toast-container-top-center {
+    top: 80px; /* 80px plus bas */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.toast-container-top-right {
+    top: 80px; /* 80px plus bas */
+    right: 0;
+}
+
+.toast-container-center-left {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.toast-container-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.toast-container-center-right {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+.toast-container-bottom-left {
+    bottom: 0;
+    left: 0;
+    flex-direction: column-reverse;
+}
+
+.toast-container-bottom-center {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column-reverse;
+}
+
+.toast-container-bottom-right {
+    bottom: 0;
+    right: 0;
+    flex-direction: column-reverse;
+}
+
 /* ==========================================================================
    TOAST COMPONENT - Style individuel
    ========================================================================== */
@@ -950,13 +1021,13 @@ h1, h2, h3, h4, h5, h6 {
         max-width: 100%;
     }
 
-    /* Sur mobile, toutes les positions deviennent top-center */
+    /* Sur mobile, toutes les positions deviennent top-center avec 80px de marge */
     .toast-container-top-left,
     .toast-container-top-right,
     .toast-container-center-left,
     .toast-container-center,
     .toast-container-center-right {
-        top: 0;
+        top: 80px; /* Garde la marge de 80px sur mobile aussi */
         left: 50%;
         right: auto;
         bottom: auto;
