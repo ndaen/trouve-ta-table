@@ -44,7 +44,7 @@ export default function RegisterForm() {
             });
             setError(null);
         }
-    }, [error]);
+    }, [error, toast]);
 
     return (
         <form onSubmit={(event) => handleSubmit(event)} className={'flex flex-direction-column gap-4'}>

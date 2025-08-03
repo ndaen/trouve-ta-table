@@ -1,5 +1,4 @@
 import {create} from 'zustand'
-import * as crypto from "node:crypto";
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
@@ -34,7 +33,7 @@ export const useToastStore = create<ToastStore>((set, get) => ({
     position: 'top-right',
 
     addToast: (toastData) => {
-        const id = crypto.randomUUID();
+        const id = window.crypto.randomUUID();
         const toast: Toast = {
             ...toastData,
             id,
