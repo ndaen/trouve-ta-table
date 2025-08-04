@@ -1,17 +1,22 @@
+import type { UUID, EventType } from './common.js'
 import {DateTime} from "luxon";
 
-export enum EventType {
-	WEDDING = 'wedding',
-	BAR_MITZVAH = 'bar_mitzvah',
-	ANNIVERSARY = 'anniversary',
-	CORPORATE = 'corporate',
-	BIRTHDAY = 'birthday',
-	OTHER = 'other'
+export interface ProjectData {
+	id: UUID
+	userId: UUID
+	name: string
+	eventType: EventType
+	eventDate: DateTime
+	venue: string
+	description: string
+	qrCodeUrl?: string
+	isActive: boolean
+	createdAt: string
+	updatedAt: string
+	deletedAt: string | null
 }
 
-export type UUID = string
-
-export interface ProjectPayload {
+export interface CreateProjectPayload {
 	name: string
 	eventType: EventType
 	eventDate: DateTime
@@ -19,3 +24,22 @@ export interface ProjectPayload {
 	description?: string
 	userId: string
 }
+
+export interface UpdateProjectPayload {
+	name?: string
+	eventType?: EventType
+	eventDate?: DateTime
+	venue?: string
+	description?: string
+	qrCodeUrl?: string
+	isActive?: boolean
+}
+
+export interface ProjectWithStats extends ProjectData {
+	totalTables: number
+	totalGuests: number
+	assignedGuests: number
+	unassignedGuests: number
+}
+
+export { EventType }

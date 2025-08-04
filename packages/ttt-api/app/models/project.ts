@@ -5,7 +5,7 @@ import type {BelongsTo, HasMany} from "@adonisjs/lucid/types/relations";
 import User from "#models/user";
 import Table from "#models/table";
 import Guest from "#models/guest";
-import {EventType, type UUID} from "#types/project";
+import type {EventType, UUID} from "#types/index";
 
 export default class Project extends BaseModel {
   @column({ isPrimary: true })

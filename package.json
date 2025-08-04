@@ -1,26 +1,31 @@
 {
   "name": "trouve-ta-table",
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "shared"
-  ],
+  "workspaces": ["packages/*"],
   "scripts": {
-    "dev": "concurrently \"npm run dev:shared\" \"npm run dev:api\" \"npm run dev:web\"",
-    "dev:shared": "npm run dev --workspace=shared",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "npm run dev --workspace=packages/ttt-api",
     "dev:web": "npm run dev --workspace=packages/ttt-web",
-    "build": "npm run build --workspace=shared && npm run build --workspace=packages/ttt-api && npm run build --workspace=packages/ttt-web",
-    "build:shared": "npm run build --workspace=shared",
-    "build:api": "npm run build --workspace=packages/api",
-    "build:web": "npm run build --workspace=packages/web",
-    "clean": "npm run clean --workspace=shared && npm run clean --workspace=packages/ttt-api && npm run clean --workspace=packages/ttt-web",
-    "test": "npm run test --workspace=packages/ttt-api && npm run test --workspace=packages/ttt-web",
-    "lint": "npm run lint --workspace=packages/ttt-api && npm run lint --workspace=packages/ttt-web",
-    "install:all": "npm install && npm run build:shared"
+    "build": "npm run build --workspace=packages/ttt-api && npm run build --workspace=packages/ttt-web",
+
+    "docker:dev": "docker compose -f docker-compose.yml --env-file .env.docker up --build",
+    "docker:dev:detached": "docker compose -f docker-compose.yml --env-file .env.docker up --build -d",
+    "docker:prod": "docker compose -f docker-compose.yml --env-file .env.docker.production up --build -d",
+    "docker:down": "docker compose down",
+    "docker:down:volumes": "docker compose down -v",
+    "docker:logs": "docker compose logs -f",
+    "docker:logs:api": "docker compose logs -f api",
+    "docker:logs:web": "docker compose logs -f web",
+    "docker:restart": "docker compose restart",
+    "docker:rebuild": "docker compose down && docker compose up --build -d",
+    "docker:clean": "docker system prune -f && docker volume prune -f",
+
+    "db:migrate": "docker compose exec api node ace migration:run",
+    "db:seed": "docker compose exec api node ace db:seed",
+    "db:reset": "docker compose exec api node ace migration:rollback --batch=0 && docker compose exec api node ace migration:run",
+    "db:status": "docker compose exec api node ace migration:status"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2",
-    "typescript": "^5.0.0"
+    "concurrently": "^8.2.2"
   }
 }

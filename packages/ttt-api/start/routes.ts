@@ -6,6 +6,8 @@ import ProjectsController from "#controllers/projects_controller";
 import TablesController from "#controllers/tables_controller";
 import GuestsController from "#controllers/guests_controller";
 
+router.get('/health', '#controllers/health_controller.check')
+
 router.group(() => {
 	router.post('/auth/register', [AuthController, 'register'])
 	router.post('/auth/login', [AuthController, 'login'])

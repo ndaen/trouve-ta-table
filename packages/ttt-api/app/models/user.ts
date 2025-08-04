@@ -4,10 +4,10 @@ import {randomUUID} from "node:crypto";
 import {compose} from '@adonisjs/core/helpers'
 import {withAuthFinder} from "@adonisjs/auth/mixins/lucid";
 import hash from "@adonisjs/core/services/hash";
-import type {SubscriptionPlan, UserRole, UUID} from "@trouve-ta-table/shared/types/index.js"
 import Project from "#models/project";
 import type {HasMany} from "@adonisjs/lucid/types/relations";
 import {DbRememberMeTokensProvider} from "@adonisjs/auth/session";
+import type {SubscriptionPlan, UserRole, UUID} from "#types/index";
 
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {

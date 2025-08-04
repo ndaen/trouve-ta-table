@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
 import {BaseModel, beforeCreate, belongsTo, column, hasMany} from '@adonisjs/lucid/orm'
-import type {UUID} from '@trouve-ta-table/shared/types/index.js'
 import {randomUUID} from "node:crypto";
 import Project from "#models/project";
 import type {BelongsTo, HasMany} from "@adonisjs/lucid/types/relations";
 import Guest from "#models/guest";
+import type {UUID} from "#types/index";
 
 export default class Table extends BaseModel {
   @column({ isPrimary: true })
