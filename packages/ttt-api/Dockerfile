@@ -28,4 +28,6 @@ WORKDIR /app/packages/ttt-api
 EXPOSE 3333
 
 ENTRYPOINT ["dumb-init", "--"]
+# The following path is the build output entrypoint for the API server.
+# If the build output location changes, update this path accordingly.
 CMD ["node", "build/bin/server.js"]

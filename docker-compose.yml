@@ -57,7 +57,7 @@ services:
       - ttt-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "node", "-e", "http.get('http://localhost:3333/health', (res) => process.exit(res.statusCode === 200 ? 0 : 1))"]
+      test: ["CMD", "curl", "-f", "http://localhost:3333/health"]
       interval: 30s
       timeout: 10s
       retries: 3
