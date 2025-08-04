@@ -1,5 +1,7 @@
 .idea/**
 
 .env
+.env.docker
+.env.docker.production
 
 node_modules/**

@@ -1,10 +1,10 @@
 import Project from '#models/project'
-import {ProjectPayload} from "#types/project";
+import {CreateProjectPayload} from "#types/project";
 import User from "#models/user";
 
 export default class ProjectService {
 
-	public async createProject(payload: ProjectPayload) {
+	public async createProject(payload: CreateProjectPayload) {
 		return Project.create(payload)
 	}
 
@@ -27,7 +27,7 @@ export default class ProjectService {
 			.first();
 	}
 
-	public async updateProject(projectId: string, payload: Partial<ProjectPayload>, user: User) {
+	public async updateProject(projectId: string, payload: Partial<CreateProjectPayload>, user: User) {
 		const project = await Project.query().where('id', projectId).first();
 		if (!project) {
 			return {

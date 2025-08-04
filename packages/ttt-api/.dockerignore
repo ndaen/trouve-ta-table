@@ -14,5 +14,5 @@ README.md
 *.log
 .DS_Store
 Thumbs.db
-src/**/*.test.*
-src/**/*.spec.*
+tests/
+tmp/

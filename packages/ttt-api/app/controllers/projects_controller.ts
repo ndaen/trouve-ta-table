@@ -1,7 +1,7 @@
 import type {HttpContext} from '@adonisjs/core/http'
 import Project from "#models/project";
 import ProjectService from "#services/project_service";
-import {ProjectPayload} from "#types/project";
+import type {CreateProjectPayload} from "#types/index";
 
 export default class ProjectsController {
 
@@ -29,8 +29,8 @@ export default class ProjectsController {
 	}
 
 	public async create({request, response, auth}: HttpContext) {
-		const body = request.body() as ProjectPayload;
-		const payload: ProjectPayload = {
+		const body = request.body() as CreateProjectPayload;
+		const payload: CreateProjectPayload = {
 			...body,
 			userId: auth.user!.id
 		}
