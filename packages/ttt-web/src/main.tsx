@@ -48,11 +48,10 @@ function AppWithAuth() {
                         <DesignSystemShowcase/>
                     </ProtectedRoute>
                 }/>
-                <Route path="/dashboard" element={<div>
+                <Route path="/dashboard" element={
                     <ProtectedRoute>
                         <Dashboard/>
                     </ProtectedRoute>
-                </div>
                 }/>
 
 
