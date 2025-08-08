@@ -3,15 +3,17 @@ import {createRoot} from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import {BrowserRouter, Route, Routes} from "react-router"
-import DesignSystemShowcase from "./pages/DesignSystemShowcase.tsx"
+import DesignSystemShowcase from "@/pages/ProtectedRoutes/DesignSystemShowcase.tsx"
 import Header from "@/components/navigation/Header.tsx"
-import Auth from "@/pages/Auth.tsx"
+import Auth from "@/pages/GuestRoutes/Auth.tsx"
 
 import {GuestOnlyRoute, ProtectedRoute} from '@/components/navigation/ProtectedRoutes.tsx'
 
 import {initializeAuth, useAuthStore} from "@/stores/useAuthStore.ts";
 import Page404 from "@/pages/Page404.tsx";
 import ToastContainer from '@/components/toast/ToastContainer.tsx'
+import SearchInProject from "@/pages/SearchInProject.tsx";
+import Dashboard from "@/pages/ProtectedRoutes/Dashboard.tsx";
 
 function AppWithAuth() {
     useEffect(() => {
@@ -32,7 +34,7 @@ function AppWithAuth() {
                 {/* Routes publiques */}
                 <Route path="/" element={<App/>}/>
                 <Route path="*" element={<Page404/>}/>
-
+                <Route path="/search/:projectId" element={<SearchInProject/>}/>
 
                 <Route path="/auth" element={
                     <GuestOnlyRoute>
@@ -45,6 +47,12 @@ function AppWithAuth() {
                     <ProtectedRoute>
                         <DesignSystemShowcase/>
                     </ProtectedRoute>
+                }/>
+                <Route path="/dashboard" element={<div>
+                    <ProtectedRoute>
+                        <Dashboard/>
+                    </ProtectedRoute>
+                </div>
                 }/>
 
 
