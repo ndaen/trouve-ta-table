@@ -3,22 +3,32 @@ import {type FormEvent, useState} from "react";
 import Button from "@/components/buttons/Button";
 import {GoogleButton} from "@/components/buttons/GoogleButton";
 import {useAuthStore} from "@/stores/useAuthStore";
-import {useNavigate} from "react-router";
+import {useNavigate, useSearchParams} from "react-router";
 import {InputPassword} from "@/components/inputs/InputPassword.tsx";
+import {useToast} from "@/stores/useToastStore.ts";
 
 export default function LoginForm() {
-    const {login} = useAuthStore();
+    const {login, loading} = useAuthStore();
     const [rememberMe, setRememberMe] = useState(false);
     const [loginData, setLoginData] = useState({
         email: '',
         password: ''
     });
+    const [searchParams] = useSearchParams()
     const navigate = useNavigate();
+    const toast = useToast();
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await login({...loginData, rememberMe: rememberMe});
-        navigate('/')
+        try {
+            await login({...loginData, rememberMe: rememberMe});
+            const returnTo = searchParams.get('returnTo')
+            navigate(returnTo || '/', {replace: true});
+        } catch (error) {
+
+            toast.error('Erreur lors de la connexion. Veuillez vérifier vos identifiants.');
+            return;
+        }
     }
 
     return (
@@ -45,7 +55,7 @@ export default function LoginForm() {
                 <input type={'checkbox'} id={'input-remember-me'} value={rememberMe ? 1 : 0} onChange={() => setRememberMe(!rememberMe)} />
                 <label className={'text-base'} htmlFor={'input-remember-me'}>Se souvenir de moi</label>
             </div>
-            <Button type={'submit'} >Connexion</Button>
+            <Button isLoading={loading} type={'submit'} >Connexion</Button>
             <div className={'or-separator'}>
                 <span>
                     ou

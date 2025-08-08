@@ -81,6 +81,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             localStorage.setItem("userToken", response.token)
             set({ user })
         } catch (error) {
+            console.warn("Erreur lors de la connexion:", error)
             throw error
         }
     },
