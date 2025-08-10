@@ -1,6 +1,7 @@
 import Guest from "#models/guest";
 import User from "#models/user";
 import Table from "#models/table";
+import Project from "#models/project";
 
 export class GuestService {
 	public async getAll() {
@@ -112,5 +113,50 @@ export class GuestService {
 		}
 
 		return guests;
+	}
+
+	public async fuzzySearchByProjectId(projectId: string, searchTerms: string) {
+		searchTerms = searchTerms.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '');
+
+		const [firstName, lastName, email] = [...searchTerms.split('+').map(term => term.trim()), '', '', ''].slice(0, 3);
+
+		const project = await Project.find(projectId);
+		if (!project) {
+			return {
+				error: 'Project not found',
+				status: 404
+			};
+		}
+
+		const guests = await Guest.query()
+			.where('projectId', projectId)
+			.where((query) => {
+				if (firstName) {
+					query.where('firstName', 'ILIKE', `%${firstName}%`);
+				}
+				if (lastName) {
+					query.andWhere('lastName', 'ILIKE', `%${lastName}%`);
+				}
+				if (email) {
+					query.andWhere('email', 'ILIKE', `%${email}%`);
+				}
+			})
+			.preload('table');
+		if (guests.length > 1) {
+			return {
+				error: 'Multiple guests found matching the search criteria',
+				status: 400
+			};
+		}
+		if (guests.length === 0) {
+			return {
+				error: 'No guests found matching the search criteria',
+				status: 404
+			};
+		}
+
+		return guests[0];
 	}
 }

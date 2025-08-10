@@ -81,4 +81,23 @@ export default class GuestsController {
 		}
 		return response.status(200).json({message: 'List of unassigned guests', data: guests});
 	}
+
+	public async fuzzySearchInProject({params, response, request}: HttpContext) {
+		const {id} = params;
+		const q = request.input('q');
+
+		if (!q) {
+			return response.status(400).json({message: 'Search query is required'});
+		}
+
+		const guest = await this.guestService.fuzzySearchByProjectId(id, q);
+		if (!(guest instanceof Guest)) {
+			return response.status(guest.status).json({message: guest.error});
+		}
+
+		return response.status(200).json({
+			message: 'Guest matching the search query',
+			data: guest,
+		});
+	}
 }
