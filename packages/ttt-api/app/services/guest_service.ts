@@ -120,7 +120,7 @@ export class GuestService {
 			.normalize('NFD')
 			.replace(/[\u0300-\u036f]/g, '');
 
-		const [firstName, lastName, email] = searchTerms.split('+').map(term => term.trim());
+		const [firstName, lastName, email] = [...searchTerms.split('+').map(term => term.trim()), '', '', ''].slice(0, 3);
 
 		const project = await Project.find(projectId);
 		if (!project) {
@@ -133,8 +133,12 @@ export class GuestService {
 		const guests = await Guest.query()
 			.where('projectId', projectId)
 			.where((query) => {
-				query.where('firstName', 'ILIKE', `%${firstName}%`);
-				query.andWhere('lastName', 'ILIKE', `%${lastName}%`);
+				if (firstName) {
+					query.where('firstName', 'ILIKE', `%${firstName}%`);
+				}
+				if (lastName) {
+					query.andWhere('lastName', 'ILIKE', `%${lastName}%`);
+				}
 				if (email) {
 					query.andWhere('email', 'ILIKE', `%${email}%`);
 				}
@@ -144,7 +148,7 @@ export class GuestService {
 			return {
 				error: 'Multiple guests found matching the search criteria',
 				status: 400
-			}
+			};
 		}
 		if (guests.length === 0) {
 			return {
