@@ -9,9 +9,14 @@ import GuestsController from "#controllers/guests_controller";
 router.get('/health', '#controllers/health_controller.check')
 
 router.group(() => {
+
+	// Auth Routes
 	router.post('/auth/register', [AuthController, 'register'])
 	router.post('/auth/login', [AuthController, 'login'])
 	router.get('/auth/check', [AuthController, 'check'])
+
+	// Fuzzy Search Routes
+	router.get('/projects/:id/guests/search', [GuestsController, 'fuzzySearchInProject'])
 
 	router.get('/', async () => {
 		return {
@@ -19,6 +24,7 @@ router.group(() => {
 			status: 'API running'
 		}
 	})
+
 }).prefix('/api')
 
 router.group(() => {
