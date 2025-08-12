@@ -5,14 +5,14 @@ import {GoogleButton} from "@/components/buttons/GoogleButton";
 import {useAuthStore} from "@/stores/useAuthStore";
 import {useNavigate} from "react-router";
 import {InputPassword} from "@/components/inputs/InputPassword.tsx";
-import {type RegisterWithConfirmInput, RegisterWithConfirmSchema} from "@/schemas/auth.ts";
+import {type RegisterWithConfirmInput, RegisterWithConfirmSchema} from "@/schemas/authSchemas.ts";
 import {z} from "zod";
-import { useToast } from "@/stores/useToastStore";
+import {useToast} from "@/stores/useToastStore";
 
 export default function RegisterForm() {
     const {register} = useAuthStore();
     const toast = useToast();
-    const [error, setError] = useState<string|null>(null);
+    const [error, setError] = useState<string | null>(null);
     const [registerData, setRegisterData] = useState<RegisterWithConfirmInput>({
         firstName: '',
         lastName: '',

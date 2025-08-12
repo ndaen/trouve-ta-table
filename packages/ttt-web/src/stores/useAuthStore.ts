@@ -1,10 +1,10 @@
 import { create } from 'zustand'
 import { parseJWT } from '@/utils/jwt'
-import { authApi } from '@/services/authApi'
+import { authService } from '@/services/authService.ts'
 import {
     type LoginWithRememberInput,
     type RegisterWithConfirmInput,
-} from '@/schemas/auth'
+} from '@/schemas/authSchemas'
 
 interface User {
     sub: string
@@ -42,7 +42,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             if (token) {
                 try {
                     if (!get().user) {
-                        const response = await authApi.checkAuthStatus()
+                        const response = await authService.checkAuthStatus()
                         if (response.isAuthenticated && response.token) {
                             const user = parseJWT(response.token)
                             localStorage.setItem("userToken", response.token)
@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 }
             } else {
                 set({ loading: true })
-                const response = await authApi.checkAuthStatus()
+                const response = await authService.checkAuthStatus()
                 if (response.isAuthenticated && response.token) {
                     const user = parseJWT(response.token)
                     localStorage.setItem("userToken", response.token)
@@ -76,7 +76,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     login: async (credentials) => {
         try {
-            const response = await authApi.login(credentials)
+            const response = await authService.login(credentials)
             const user = parseJWT(response.token)
             localStorage.setItem("userToken", response.token)
             set({ user })
@@ -88,7 +88,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     register: async (userData) => {
         try {
-            const response = await authApi.register(userData)
+            const response = await authService.register(userData)
             const user = parseJWT(response.token)
             localStorage.setItem("userToken", response.token)
             set({ user })
@@ -100,7 +100,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     logout: async () => {
         localStorage.removeItem("userToken")
         set({ user: null })
-        await authApi.logout()
+        await authService.logout()
     },
 
     getToken: () => {

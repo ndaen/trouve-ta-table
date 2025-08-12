@@ -1,5 +1,4 @@
-
-import { LoginSchema } from "@/schemas/auth.ts"
+import { LoginSchema } from "@/schemas/authSchemas.ts"
 import { api } from '@/utils/apiClient'
 
 interface LoginCredentials {
@@ -27,7 +26,7 @@ interface CheckResponse {
     tokenType?: 'Bearer'
 }
 
-export const authApi = {
+export const authService = {
     async login(credentials: LoginCredentials): Promise<AuthResponse> {
         const loginInformation = LoginSchema.parse({
             email: credentials.email,
