@@ -25,7 +25,7 @@ export default class ProjectsController {
 		if (!project) {
 			return response.status(404).json({message: 'Project not found'})
 		}
-		return response.json({message: `Project details for ID: ${projectId}`, project})
+		return response.json({message: `Project details for ID: ${projectId}`, data: project})
 	}
 
 	public async create({request, response, auth}: HttpContext) {
@@ -38,7 +38,7 @@ export default class ProjectsController {
 		if (!project) {
 			return response.status(400).json({message: 'Failed to create project'})
 		}
-		return response.status(201).json({message: 'Project created successfully', project})
+		return response.status(201).json({message: 'Project created successfully', data: project})
 	}
 
 	public async update({params, request, response, auth}: HttpContext) {
@@ -46,7 +46,7 @@ export default class ProjectsController {
 		if (!(result instanceof Project)) {
 			return response.status(result.status).json({message: result.error})
 		}
-		return response.json({message: `Project updated successfully`, project: result})
+		return response.json({message: `Project updated successfully`, data: result})
 	}
 
 	public async delete({params, response, auth}: HttpContext) {
