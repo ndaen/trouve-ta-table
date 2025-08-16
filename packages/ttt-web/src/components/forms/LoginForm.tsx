@@ -1,10 +1,10 @@
-import {Input} from "@/components/inputs/Input";
+import {Input} from "@/components/ui/inputs/Input";
 import {type FormEvent, useState} from "react";
-import Button from "@/components/buttons/Button";
-import {GoogleButton} from "@/components/buttons/GoogleButton";
+import Button from "@/components/ui/buttons/Button";
+import {GoogleButton} from "@/components/ui/buttons/GoogleButton";
 import {useAuthStore} from "@/stores/useAuthStore";
 import {useNavigate, useSearchParams} from "react-router";
-import {InputPassword} from "@/components/inputs/InputPassword.tsx";
+import {InputPassword} from "@/components/ui/inputs/InputPassword.tsx";
 import {useToast} from "@/stores/useToastStore.ts";
 
 export default function LoginForm() {
@@ -24,8 +24,7 @@ export default function LoginForm() {
             await login({...loginData, rememberMe: rememberMe});
             const returnTo = searchParams.get('returnTo')
             navigate(returnTo || '/', {replace: true});
-        } catch (error) {
-
+        } catch {
             toast.error('Erreur lors de la connexion. Veuillez vérifier vos identifiants.');
             return;
         }

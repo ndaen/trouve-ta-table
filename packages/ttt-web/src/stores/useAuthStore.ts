@@ -52,7 +52,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                             set({ user: null })
                         }
                     }
-                } catch (error) {
+                } catch {
                     console.log("Token invalide")
                     localStorage.removeItem("userToken")
                     set({ user: null })
@@ -87,14 +87,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     register: async (userData) => {
-        try {
-            const response = await authService.register(userData)
-            const user = parseJWT(response.token)
-            localStorage.setItem("userToken", response.token)
-            set({ user })
-        } catch (error) {
-            throw error;
-        }
+        const response = await authService.register(userData)
+        const user = parseJWT(response.token)
+        localStorage.setItem("userToken", response.token)
+        set({ user })
     },
 
     logout: async () => {

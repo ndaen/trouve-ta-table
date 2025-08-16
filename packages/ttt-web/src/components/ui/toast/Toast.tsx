@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { X, CheckCircle, XCircle, AlertTriangle, Info } from 'lucide-react'
-import { type Toast as ToastType, useToastStore } from '../../stores/useToastStore'
+import { type Toast as ToastType, useToastStore } from '@/stores/useToastStore'
 
 interface ToastProps {
     toast: ToastType

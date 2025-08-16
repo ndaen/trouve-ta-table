@@ -1,5 +1,5 @@
 import '@/assets/styles/page404.css'
-import Button from "@/components/buttons/Button.tsx";
+import Button from "@/components/ui/buttons/Button.tsx";
 import {useNavigate} from "react-router";
 
 const Page404 = () => {

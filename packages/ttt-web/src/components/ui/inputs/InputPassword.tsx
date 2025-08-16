@@ -11,7 +11,7 @@ interface InputProps {
     label?: string;
     onChange?: (value: string) => void;
 
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export const InputPassword = ({
@@ -22,9 +22,6 @@ export const InputPassword = ({
                                   value = '',
                                   label,
                                   onChange,
-                                  leftIcon,
-                                  rightIcon,
-                                  onRightIconClick,
                                   ...props
                               }: InputProps) => {
 

@@ -1,5 +1,5 @@
 import {useTheme} from "@/stores/themeStore.ts";
-import ButtonIcon from "@/components/buttons/ButtonIcon.tsx";
+import ButtonIcon from "@/components/ui/buttons/ButtonIcon.tsx";
 
 export const ThemeToggleButton = () => {
     const { darkMode, toggleDarkMode } = useTheme();
