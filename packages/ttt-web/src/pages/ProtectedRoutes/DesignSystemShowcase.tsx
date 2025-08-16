@@ -1,9 +1,9 @@
-import Button from "@/components/buttons/Button.tsx";
-import ButtonIcon from "@/components/buttons/ButtonIcon.tsx";
-import Card from "@/components/cards/Card.tsx";
-import Badge from "@/components/Badge.tsx";
-import {Input} from "@/components/inputs/Input.tsx";
-import {CopyButton} from "@/components/buttons/CopyButton.tsx";
+import Button from "@/components/ui/buttons/Button.tsx";
+import ButtonIcon from "@/components/ui/buttons/ButtonIcon.tsx";
+import Card from "@/components/ui/cards/Card.tsx";
+import Badge from "@/components/ui/Badge.tsx";
+import {Input} from "@/components/ui/inputs/Input.tsx";
+import {CopyButton} from "@/components/ui/buttons/CopyButton.tsx";
 import {useTheme} from "@/stores/themeStore.ts";
 import {useState} from "react";
 import {type ToastPosition, useToast} from "@/stores/useToastStore.ts";

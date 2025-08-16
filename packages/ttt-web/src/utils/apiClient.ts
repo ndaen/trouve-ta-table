@@ -61,7 +61,7 @@ export class ApiError extends Error {
     constructor(
         message: string,
         public status: number,
-        public data?: any
+        public data?: unknown
     ) {
         super(message)
         this.name = 'ApiError'
@@ -100,21 +100,21 @@ export const api = {
     get: <T>(endpoint: string, options?: ApiCallOptions) =>
         apiCall<T>(endpoint, { method: 'GET', ...options }),
 
-    post: <T>(endpoint: string, data?: any, options?: ApiCallOptions) =>
+    post: <T>(endpoint: string, data?: unknown, options?: ApiCallOptions) =>
         apiCall<T>(endpoint, {
             method: 'POST',
             body: data ? JSON.stringify(data) : undefined,
             ...options
         }),
 
-    put: <T>(endpoint: string, data?: any, options?: ApiCallOptions) =>
+    put: <T>(endpoint: string, data?: unknown, options?: ApiCallOptions) =>
         apiCall<T>(endpoint, {
             method: 'PUT',
             body: data ? JSON.stringify(data) : undefined,
             ...options
         }),
 
-    patch: <T>(endpoint: string, data?: any, options?: ApiCallOptions) =>
+    patch: <T>(endpoint: string, data?: unknown, options?: ApiCallOptions) =>
         apiCall<T>(endpoint, {
             method: 'PATCH',
             body: data ? JSON.stringify(data) : undefined,

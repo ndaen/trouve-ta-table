@@ -50,7 +50,7 @@ export const authService = {
     async checkAuthStatus(): Promise<CheckResponse> {
         try {
             return await api.get<CheckResponse>('/api/auth/check')
-        } catch (error) {
+        } catch {
             return { isAuthenticated: false }
         }
     },

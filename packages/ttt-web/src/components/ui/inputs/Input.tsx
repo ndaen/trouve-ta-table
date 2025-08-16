@@ -12,7 +12,7 @@ interface InputProps {
     onChange?: (value: string) => void;
     leftIcon?: IconName;
 
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export const Input = ({

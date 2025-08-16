@@ -1,4 +1,3 @@
-
 /**
  * UUID string type for better type safety
  */
@@ -23,23 +22,23 @@ export type EventType = 'wedding' | 'bar_mitzvah' | 'anniversary' | 'corporate' 
  * Common API response structure
  */
 export interface ApiResponse<T = any> {
-	success: boolean
-	data?: T
-	message?: string
-	errors?: Record<string, string[]>
+    success: boolean
+    data?: T
+    message?: string
+    errors?: Record<string, string[]>
 }
 
 /**
  * Pagination metadata
  */
 export interface PaginationMeta {
-	total: number
-	perPage: number
-	currentPage: number
-	lastPage: number
-	firstPage: number
-	firstPageUrl: string
-	lastPageUrl: string
-	nextPageUrl: string | null
-	previousPageUrl: string | null
+    total: number
+    perPage: number
+    currentPage: number
+    lastPage: number
+    firstPage: number
+    firstPageUrl: string
+    lastPageUrl: string
+    nextPageUrl: string | null
+    previousPageUrl: string | null
 }

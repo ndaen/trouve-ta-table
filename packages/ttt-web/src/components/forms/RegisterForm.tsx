@@ -1,10 +1,10 @@
-import {Input} from "@/components/inputs/Input";
+import {Input} from "@/components/ui/inputs/Input";
 import {type FormEvent, useEffect, useState} from "react";
-import Button from "@/components/buttons/Button";
-import {GoogleButton} from "@/components/buttons/GoogleButton";
+import Button from "@/components/ui/buttons/Button";
+import {GoogleButton} from "@/components/ui/buttons/GoogleButton";
 import {useAuthStore} from "@/stores/useAuthStore";
 import {useNavigate} from "react-router";
-import {InputPassword} from "@/components/inputs/InputPassword.tsx";
+import {InputPassword} from "@/components/ui/inputs/InputPassword.tsx";
 import {type RegisterWithConfirmInput, RegisterWithConfirmSchema} from "@/schemas/authSchemas.ts";
 import {z} from "zod";
 import {useToast} from "@/stores/useToastStore";
@@ -31,7 +31,7 @@ export default function RegisterForm() {
             navigate('/');
         } catch (error) {
             if (error instanceof z.ZodError) {
-                error.issues[0].message && setError(error.issues[0].message);
+                if (error.issues[0].message) setError(error.issues[0].message);
                 return;
             }
         }

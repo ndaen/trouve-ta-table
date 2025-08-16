@@ -33,10 +33,13 @@ clean: ## Nettoyer Docker (images, conteneurs non utilisés)
 	docker volume prune -f
 
 shell-api: ## Shell dans le conteneur API
-	docker compose exec api sh
+	docker compose exec api sh -c "cd packages/ttt-api && sh"
 
-shell-web: ## Shell dans le conteneur Web
-	docker compose exec web sh
+run-migrations: ## Exécuter les migrations de la base de données
+	docker compose exec api sh -c "cd packages/ttt-api && node ace migration:run"
+
+run-seeder: ## Exécuter les seeders de la base de données
+	docker compose exec api sh -c "cd packages/ttt-api && node ace db:seed"
 
 shell-db: ## Shell dans PostgreSQL
 	POSTGRES_USER = env | grep POSTGRES_USER | cut -d'=' -f2

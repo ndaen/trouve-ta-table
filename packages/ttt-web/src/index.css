@@ -219,6 +219,10 @@ p, h1, h2, h3, h4, h5, h6, ul, ol, li {
     min-height: calc(100vh - 80px);
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
+
 /* ==========================================================================
    GLOBAL STYLES - Colors, Borders, Shadows
    ========================================================================== */
@@ -427,7 +431,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .text-muted {
-    color: var(--muted-foreground);
+
 }
 
 .text-success {
@@ -444,6 +448,36 @@ h1, h2, h3, h4, h5, h6 {
 
 .text-info {
     color: var(--info);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.text-ellipsis-2 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 /* ==========================================================================
@@ -567,6 +601,9 @@ h1, h2, h3, h4, h5, h6 {
 .card-description {
     font-size: var(--text-sm);
     color: var(--muted-foreground);
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
 }
 
 .card-content {
@@ -685,6 +722,7 @@ h1, h2, h3, h4, h5, h6 {
     line-height: 1;
     transition: var(--transition-colors);
     border: 1px solid transparent;
+    gap: 4px;
 }
 
 .badge-default {
@@ -920,7 +958,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ==========================================================================
-   PROGRESS BAR - Barre de progression
+   TOAST PROGRESS BAR - Barre de progression du toast
    ========================================================================== */
 
 .toast-progress-bar {
@@ -1507,5 +1545,118 @@ h1, h2, h3, h4, h5, h6 {
 
     .print-only {
         display: block !important;
+    }
+}
+
+/* ===== PROGRESS BAR COMPONENT STYLES ===== */
+
+.progress-container {
+    width: 100%;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+    font-size: var(--text-sm);
+}
+
+.progress-label-text {
+    color: var(--foreground);
+    font-weight: var(--font-medium);
+}
+
+.progress-values {
+    color: var(--muted-foreground);
+    font-weight: var(--font-medium);
+    font-variant-numeric: tabular-nums; /* Pour aligner les chiffres */
+}
+
+.progress-bar {
+    width: 100%;
+    background-color: var(--muted);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    border-radius: var(--radius-md);
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+/* Animation au chargement - adaptée aux thèmes */
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+    );
+    animation: progress-shimmer 2s infinite;
+}
+
+/* Animation différente pour le thème dark */
+[data-theme="dark"] .progress-fill::after {
+    background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.1),
+            transparent
+    );
+}
+
+@keyframes progress-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Utilise directement les classes de votre design system */
+.progress-fill.bg-primary {
+    background-color: var(--primary);
+}
+
+.progress-fill.bg-secondary {
+    background-color: var(--secondary);
+}
+
+.progress-fill.bg-success {
+    background-color: var(--success);
+}
+
+.progress-fill.bg-warning {
+    background-color: var(--warning);
+}
+
+.progress-fill.bg-error {
+    background-color: var(--error);
+}
+
+.progress-fill.bg-info {
+    background-color: var(--info);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .progress-label {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-1);
+    }
+
+    .progress-values {
+        align-self: flex-end;
     }
 }

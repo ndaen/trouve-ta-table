@@ -23,7 +23,7 @@ export function parseJWT(token: string): JWTPayload {
                 .join('')
         )
         return JSON.parse(jsonPayload)
-    } catch (error) {
+    } catch {
         throw new Error('Token JWT invalide')
     }
 }

@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useProjectsStore, selectProjects, selectLoading, selectError } from '@/stores/useProjectsStore';
 import type { Project } from "@/types/project.types.ts";
-import type { CreateProjectInput } from "@/schemas/projectSchemas.ts";
 
 export const useProjects = () => {
     const projects = useProjectsStore(selectProjects);
