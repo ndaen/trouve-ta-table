@@ -9,7 +9,12 @@ export class GuestService {
     }
 
     public async getById(id: string) {
-        return Guest.query().where('id', id).preload('table').first()
+        return Guest.query()
+            .where('id', id)
+            .preload('table', (tableQuery) => {
+                tableQuery.preload('project')
+            })
+            .first()
     }
 
     public async create(guestData: Partial<Guest>) {
@@ -41,13 +46,13 @@ export class GuestService {
         const guest = await this.getById(id)
         if (!guest) {
             return {
-                message: 'Guest not found',
+                error: 'Guest not found',
                 status: 404,
             }
         }
         if (user.id !== guest.table.project.userId && user.role !== 'admin') {
             return {
-                message: 'You do not have permission to delete this guest',
+                error: 'You do not have permission to delete this guest',
                 status: 403,
             }
         }
@@ -135,7 +140,7 @@ export class GuestService {
         }
 
         const guests = await Guest.query()
-            .where('projectId', projectId)
+            .where('projectId', project.id)
             .where((query) => {
                 if (firstName) {
                     query.where('firstName', 'ILIKE', `%${firstName}%`)
@@ -150,13 +155,13 @@ export class GuestService {
             .preload('table')
         if (guests.length > 1) {
             return {
-                error: 'Multiple guests found matching the search criteria',
+                error: 'Plusieurs invités correspondent à votre recherche, veuillez préciser avec votre email',
                 status: 400,
             }
         }
         if (guests.length === 0) {
             return {
-                error: 'No guests found matching the search criteria',
+                error: 'Aucun invité trouvé correspondant à votre recherche',
                 status: 404,
             }
         }
