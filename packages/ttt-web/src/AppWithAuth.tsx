@@ -1,18 +1,14 @@
 import {useEffect} from "react";
 import {useAuthStore} from "@/stores/useAuthStore.ts";
-import {Route, Routes} from "react-router"
-import App from './App.tsx'
+import {Route, Routes, useLocation} from "react-router"
 import DesignSystemShowcase from "@/pages/ProtectedRoutes/DesignSystemShowcase.tsx"
 import Header from "@/components/navigation/Header.tsx"
-import Auth from "@/pages/GuestRoutes/Auth.tsx"
-import {GuestOnlyRoute, ProtectedRoute} from '@/components/navigation/ProtectedRoutes.tsx'
-import Page404 from "@/pages/Page404.tsx";
-import ToastContainer from '@/components/ui/toast/ToastContainer.tsx'
-import SearchInProject from "@/pages/SearchInProject.tsx";
+import {ProtectedRoute} from '@/components/navigation/ProtectedRoutes.tsx'
 import Dashboard from "@/pages/ProtectedRoutes/Dashboard.tsx";
 
 export default function AppWithAuth() {
     const {initialize, loading} = useAuthStore()
+    const location = useLocation()
 
     useEffect(() => {
         initialize()
@@ -22,23 +18,15 @@ export default function AppWithAuth() {
         return <div>Chargement...</div>
     }
 
+    const routesWithoutHeader = ['/search']
+    const shouldShowHeader = !routesWithoutHeader.some(route =>
+        location.pathname.startsWith(route)
+    )
+
     return (
         <>
-            <Header/>
-            <ToastContainer/>
+            {shouldShowHeader && <Header/>}
             <Routes>
-                {/* Routes publiques */}
-                <Route path="/" element={<App/>}/>
-                <Route path="*" element={<Page404/>}/>
-                <Route path="/search/:projectId" element={<SearchInProject/>}/>
-
-                <Route path="/auth" element={
-                    <GuestOnlyRoute>
-                        <Auth/>
-                    </GuestOnlyRoute>
-                }
-                />
-
                 <Route path="/show/design" element={
                     <ProtectedRoute>
                         <DesignSystemShowcase/>
