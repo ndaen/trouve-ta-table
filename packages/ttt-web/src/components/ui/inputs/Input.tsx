@@ -11,6 +11,7 @@ interface InputProps {
     label?: string;
     onChange?: (value: string) => void;
     leftIcon?: IconName;
+    required?: boolean;
 
     [key: string]: unknown;
 }
@@ -25,6 +26,7 @@ export const Input = ({
                           label,
                           onChange,
                           leftIcon,
+                          required = false,
                           ...props
                       }: InputProps) => {
 
@@ -36,7 +38,12 @@ export const Input = ({
 
     return (
         <div className={`input-container`}>
-            {label && <label htmlFor={id} className={`input-label`}>{label}</label>}
+            {label && (
+                <label htmlFor={id} className={`input-label`}>
+                    {label}
+                    {required && <span style={{color: 'var(--error)', marginLeft: '4px'}}>*</span>}
+                </label>
+            )}
             <div className="input-wrapper">
                 {leftIcon && (
                     <div
@@ -54,6 +61,7 @@ export const Input = ({
                     disabled={disabled}
                     value={value}
                     onChange={handleChange}
+                    required={required}
                     {...props}
                 />
             </div>

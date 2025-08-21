@@ -13,3 +13,6 @@ const Event = [
 
 export const EventEnum = z.enum(Event);
 export type EventType = z.infer<typeof EventEnum>;
+
+export const emailSchema = z.email();
+export type Email = z.infer<typeof emailSchema>;
