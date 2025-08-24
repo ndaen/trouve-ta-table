@@ -16,7 +16,7 @@ type newProjectCard = {
     actions: () => void
 }
 
-const Dashboard = () => {
+const DashboardPage = () => {
     const {projects, loading, error} = useProjects();
     const toast = useToast();
     const [activeFilter, setActiveFilter] = useState<string>('all')
@@ -122,4 +122,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default DashboardPage;

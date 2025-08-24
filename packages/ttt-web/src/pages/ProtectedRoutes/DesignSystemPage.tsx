@@ -1,14 +1,24 @@
-import Button from "@/components/ui/buttons/Button.tsx";
-import ButtonIcon from "@/components/ui/buttons/ButtonIcon.tsx";
-import Card from "@/components/ui/cards/Card.tsx";
-import Badge from "@/components/ui/Badge.tsx";
-import {Input} from "@/components/ui/inputs/Input.tsx";
-import {CopyButton} from "@/components/ui/buttons/CopyButton.tsx";
+import {
+    Badge,
+    Button,
+    ButtonIcon,
+    Card,
+    CopyButton,
+    FilterChips,
+    Input,
+    SearchInput,
+    StatCard,
+    TableComponent,
+    Tabs,
+} from "@/components/ui";
 import {useTheme} from "@/stores/themeStore.ts";
 import {useState} from "react";
 import {type ToastPosition, useToast} from "@/stores/useToastStore.ts";
+import {type FilterChip} from "@/components/ui/FilterChips";
+import {type TableColumn} from "@/components/ui/TableComponent";
+import {type Tab} from "@/components/ui/Tabs";
 
-const DesignSystemShowcase = () => {
+const DesignSystemPage = () => {
     const {darkMode} = useTheme();
     const colourPalette = [
         {
@@ -81,7 +91,50 @@ const DesignSystemShowcase = () => {
     ];
     const [name, setName] = useState<string>('');
     const [position, setPosition] = useState<ToastPosition>('top-right');
-    const TOAST_POSITIONS: ToastPosition[] = [ 'top-left', 'top-center', 'top-right', 'center-left', 'center', 'center-right', 'bottom-left', 'bottom-center', 'bottom-right' ];
+    const TOAST_POSITIONS: ToastPosition[] = ['top-left', 'top-center', 'top-right', 'center-left', 'center', 'center-right', 'bottom-left', 'bottom-center', 'bottom-right'];
+
+    // États pour les nouveaux composants
+    const [searchValue, setSearchValue] = useState<string>('');
+    const [activeFilterChip, setActiveFilterChip] = useState<string>('all');
+    const [activeTab, setActiveTab] = useState<string>('overview');
+
+    // Données d'exemple pour les nouveaux composants
+    const filterChips: FilterChip[] = [
+        {id: 'all', label: 'Tous', value: 24},
+        {id: 'active', label: 'Actifs', value: 18},
+        {id: 'pending', label: 'En attente', value: 6},
+        {id: 'archived', label: 'Archivés'}
+    ];
+
+    const tableColumns: TableColumn[] = [
+        {id: 'name', label: 'Nom', width: '30%'},
+        {id: 'email', label: 'Email', width: '40%'},
+        {
+            id: 'status', label: 'Statut', width: '20%', render: (value) => (
+                <Badge variant={value === 'active' ? 'badge-success' : 'badge-warning'}>
+                    {value === 'active' ? 'Actif' : 'Inactif'}
+                </Badge>
+            )
+        },
+        {
+            id: 'actions', label: 'Actions', width: '10%', render: () => (
+                <Button size="sm" variant="btn-ghost">Voir</Button>
+            )
+        }
+    ];
+
+    const tableData = [
+        {name: 'Jean Dupont', email: 'jean@example.com', status: 'active'},
+        {name: 'Marie Martin', email: 'marie@example.com', status: 'inactive'},
+        {name: 'Pierre Durand', email: 'pierre@example.com', status: 'active'}
+    ];
+
+    const tabs: Tab[] = [
+        {id: 'overview', label: 'Vue d\'ensemble'},
+        {id: 'users', label: 'Utilisateurs'},
+        {id: 'settings', label: 'Paramètres'},
+        {id: 'disabled', label: 'Désactivé', disabled: true}
+    ];
 
 
     const toast = useToast()
@@ -335,7 +388,7 @@ const DesignSystemShowcase = () => {
                             <h3>Toast</h3>
                         }
                               body={
-                                  <div style={{ padding: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                                  <div style={{padding: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap'}}>
                                       <Button variant={'btn-primary'} onClick={handleSuccess}>
                                           Toast Succès
                                       </Button>
@@ -366,6 +419,139 @@ const DesignSystemShowcase = () => {
                                   </div>
                               }
                         />
+
+                        {/* StatCards */}
+                        <Card header={
+                            <h3>Cartes de Statistiques</h3>
+                        }
+                              description={
+                                  <p>Cartes pour afficher des métriques avec support des trends et icônes.</p>
+                              }
+                              body={
+                                  <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+                                      <StatCard
+                                          label="Utilisateurs"
+                                          value="1,234"
+                                          icon="users"
+                                          trend={{value: 12, type: 'positive'}}
+                                      />
+                                      <StatCard
+                                          label="Revenus"
+                                          value="€45,230"
+                                          icon="euro"
+                                          trend={{value: 8, type: 'negative'}}
+                                      />
+                                      <StatCard
+                                          label="Commandes"
+                                          value="892"
+                                          icon="shopping-cart"
+                                          trend={{value: 0, type: 'neutral'}}
+                                      />
+                                      <StatCard
+                                          label="Conversion"
+                                          value="3.2%"
+                                          icon="trending-up"
+                                      />
+                                  </div>
+                              }
+                        />
+
+                        {/* SearchInput */}
+                        <Card header={
+                            <h3>Champ de Recherche</h3>
+                        }
+                              description={
+                                  <p>Champ de recherche avec icône et bouton de vidage automatique.</p>
+                              }
+                              body={
+                                  <div className="flex flex-direction-column gap-4 max-w-md">
+                                      <SearchInput
+                                          placeholder="Rechercher des utilisateurs..."
+                                          value={searchValue}
+                                          onChange={setSearchValue}
+                                      />
+                                      {searchValue && (
+                                          <p className="text-sm text-muted">
+                                              Recherche: "{searchValue}"
+                                          </p>
+                                      )}
+                                  </div>
+                              }
+                        />
+
+                        {/* FilterChips */}
+                        <Card header={
+                            <h3>Puces de Filtrage</h3>
+                        }
+                              description={
+                                  <p>Puces cliquables pour filtrer du contenu avec compteurs optionnels.</p>
+                              }
+                              body={
+                                  <div className="flex flex-direction-column gap-4">
+                                      <FilterChips
+                                          chips={filterChips}
+                                          activeChip={activeFilterChip}
+                                          onChipClick={setActiveFilterChip}
+                                      />
+                                      <p className="text-sm text-muted">
+                                          Filtre actif: {filterChips.find(c => c.id === activeFilterChip)?.label}
+                                      </p>
+                                  </div>
+                              }
+                        />
+
+                        {/* Table */}
+                        <Card header={
+                            <h3>Tableau</h3>
+                        }
+                              description={
+                                  <p>Tableau responsive avec colonnes configurables et rendu personnalisé.</p>
+                              }
+                              body={
+                                  <TableComponent
+                                      columns={tableColumns}
+                                      data={tableData}
+                                      onRowClick={(row) => toast.info(`Clic sur: ${row.name}`)}
+                                  />
+                              }
+                        />
+
+                        {/* Tabs */}
+                        <Card header={
+                            <h3>Onglets</h3>
+                        }
+                              description={
+                                  <p>Navigation par onglets avec support des états désactivés.</p>
+                              }
+                              body={
+                                  <Tabs
+                                      tabs={tabs}
+                                      activeTab={activeTab}
+                                      onTabChange={setActiveTab}
+                                  >
+                                      <div className="p-4 bg-muted rounded-md">
+                                          {activeTab === 'overview' && (
+                                              <div>
+                                                  <h4>Vue d'ensemble</h4>
+                                                  <p>Contenu de la vue d'ensemble avec statistiques générales.</p>
+                                              </div>
+                                          )}
+                                          {activeTab === 'users' && (
+                                              <div>
+                                                  <h4>Gestion des utilisateurs</h4>
+                                                  <p>Interface de gestion des comptes utilisateurs.</p>
+                                              </div>
+                                          )}
+                                          {activeTab === 'settings' && (
+                                              <div>
+                                                  <h4>Paramètres</h4>
+                                                  <p>Configuration de l'application et préférences.</p>
+                                              </div>
+                                          )}
+                                      </div>
+                                  </Tabs>
+                              }
+                        />
                     </div>
 
                 </section>
@@ -375,4 +561,4 @@ const DesignSystemShowcase = () => {
 
 };
 
-export default DesignSystemShowcase;
+export default DesignSystemPage;

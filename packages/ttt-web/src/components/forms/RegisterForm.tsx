@@ -1,10 +1,9 @@
 import {Input} from "@/components/ui/inputs/Input";
 import {type FormEvent, useEffect, useState} from "react";
 import Button from "@/components/ui/buttons/Button";
-import {GoogleButton} from "@/components/ui/buttons/GoogleButton";
+import {GoogleButton, InputPassword} from "@/components/ui";
 import {useAuthStore} from "@/stores/useAuthStore";
 import {useNavigate} from "react-router";
-import {InputPassword} from "@/components/ui/inputs/InputPassword.tsx";
 import {type RegisterWithConfirmInput, RegisterWithConfirmSchema} from "@/schemas/authSchemas.ts";
 import {z} from "zod";
 import {useToast} from "@/stores/useToastStore";

@@ -1,8 +1,6 @@
-import {ThemeToggleButton} from "@/components/ui/buttons/ThemeToggleButton.tsx";
+import {Button, Link, ThemeToggleButton} from "@/components/ui";
 import {useTheme} from "@/stores/themeStore.ts";
 import './style.css';
-import Button from "@/components/ui/buttons/Button.tsx";
-import {Link} from "@/components/ui/buttons/Link.tsx";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router";
 import {useAuthStore, useIsAuthenticated} from "@/stores/useAuthStore.ts";
@@ -33,6 +31,11 @@ export default function Header() {
         };
     }, []);
 
+    const handleLogout = () => {
+        logout();
+        navigate('/');
+    }
+
     return (
         <div className={'header-container'}>
             <div className={'header border rounded-md'}>
@@ -57,7 +60,7 @@ export default function Header() {
                         {
                             isAuthenticated ?
                                 <>
-                                    <Button variant={'btn-outline'} onClick={() => logout()}>Déconnexion</Button>
+                                    <Button variant={'btn-outline'} onClick={handleLogout}>Déconnexion</Button>
                                 </>
                                 :
                                 <>

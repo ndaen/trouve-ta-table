@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useProjectsStore, selectProjects, selectLoading, selectError } from '@/stores/useProjectsStore';
-import type { Project } from "@/types/project.types.ts";
+import type { Project } from '@/types/project.types.ts';
 
 export const useProjects = () => {
     const projects = useProjectsStore(selectProjects);
@@ -57,12 +57,49 @@ export const useProjectsComplete = () => {
     };
 };
 
-export const useProjectById = (id: string | undefined): Project | undefined => {
+export const useProjectById = (id: string | undefined): {
+    project: Project | undefined;
+    loading: boolean;
+    error: string | null;
+    isLoaded: boolean;
+} => {
     const projects = useProjectsStore(selectProjects);
+    const loading = useProjectsStore(selectLoading);
+    const error = useProjectsStore(selectError);
+    const loadProjects = useProjectsStore(state => state.loadProjects);
 
-    if (!id || !projects) return undefined;
+    useEffect(() => {
+        if (projects === null && !loading) {
+            loadProjects();
+        }
+    }, [projects, loading, loadProjects]);
 
-    return projects.find(project => project.id === id);
+    if (!id) {
+        return { 
+            project: undefined, 
+            loading: false, 
+            error: null,
+            isLoaded: true 
+        };
+    }
+
+    if (!projects) {
+        return { 
+            project: undefined, 
+            loading, 
+            error,
+            isLoaded: false 
+        };
+    }
+
+    const project = projects.find(project => project.id === id);
+    
+    return { 
+        project, 
+        loading: false, 
+        error: project ? null : 'Projet non trouvé',
+        isLoaded: true 
+    };
 };
 
 export const useProjectsStats = () => {
