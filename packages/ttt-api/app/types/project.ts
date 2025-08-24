@@ -42,4 +42,4 @@ export interface ProjectWithStats extends ProjectData {
     unassignedGuests: number
 }
 
-export { EventType }
+export type { EventType }

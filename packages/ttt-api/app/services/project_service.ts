@@ -18,8 +18,9 @@ export default class ProjectService {
                 .andWhere('isActive', true)
                 .preload('tables')
                 .preload('guests')
+                .orderBy('updatedAt', 'desc');
         }
-        return Project.query().where('user_id', userId).preload('tables').preload('guests')
+        return Project.query().where('userId', userId).preload('tables').preload('guests')
     }
 
     public async getById(projectId: string) {
