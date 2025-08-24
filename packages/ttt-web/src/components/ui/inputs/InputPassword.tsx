@@ -14,7 +14,7 @@ interface InputProps {
     [key: string]: unknown;
 }
 
-export const InputPassword = ({
+const InputPassword = ({
                                   id,
                                   className = '',
                                   disabled = false,
@@ -62,3 +62,5 @@ export const InputPassword = ({
         </div>
     )
 };
+
+export default InputPassword;

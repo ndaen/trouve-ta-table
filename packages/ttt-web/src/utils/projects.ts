@@ -1,4 +1,4 @@
-import type {EventType} from "@/types/common.types.ts";
+import type {EventType, UUID} from "@/types/common.types.ts";
 import type {IconName} from "lucide-react/dynamic";
 import type {Project, ProjectStatus, ProjectAction, ProgressBarConfig} from "@/types/project.types.ts";
 
@@ -99,6 +99,26 @@ export const getProjectActions = (project: Project): ProjectAction[] => {
                 { label: 'Configurer', action: 'configure', variant: 'btn-primary',  icon: 'rocket' },
                 { label: 'Supprimer', action: 'delete', variant: 'btn-outline', icon: 'trash' }
             ];
+    }
+}
+
+export const getActionRoute = (action: ProjectAction['action'], id: UUID): string => {
+    switch (action) {
+        case 'view-details':
+            return `/projects/${id}`;
+        case 'configure':
+        case 'finalize':
+        case 'adjust':
+        case 'edit':
+        case 'delete':
+            return `/projects/${id}?action=${action}`;
+        case 'add-guests':
+        case 'place-guests':
+            return `/projects/${id}?tab=guests`;
+        case 'show-qr':
+            return `/projects/${id}?tab=qrcode`;
+        default:
+            return `/projects/${id}`;
     }
 }
 

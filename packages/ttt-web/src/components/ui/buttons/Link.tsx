@@ -6,12 +6,12 @@ interface LinkProps {
     children?: React.ReactNode;
 }
 
-export const Link = ({href, className = 'link', children}: LinkProps ) => {
-
-
+const Link = ({href, className = 'link', children}: LinkProps ) => {
     return (
         <a href={href} className={className}>
             {children}
         </a>
     );
 }
+
+export default Link;

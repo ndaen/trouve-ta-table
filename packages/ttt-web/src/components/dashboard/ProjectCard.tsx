@@ -1,12 +1,20 @@
-import type {Project} from "@/types/project.types.ts";
+import type {Project, ProjectAction} from "@/types/project.types.ts";
 import Card from "@/components/ui/cards/Card.tsx";
 import Badge from "@/components/ui/Badge.tsx";
-import {configureProgressBar, getEventTypeIcon, getEventTypeLabel, getProjectActions} from "@/utils/projects.ts";
+import {
+    configureProgressBar,
+    getActionRoute,
+    getEventTypeIcon,
+    getEventTypeLabel,
+    getProjectActions
+} from "@/utils/projects.ts";
 import {formatDate} from "@/utils/date.ts";
 import {Calendar, MapPin} from "lucide-react";
 import {DynamicIcon} from "lucide-react/dynamic";
 import ProgressBar from "@/components/ui/ProgressBar.tsx";
 import Button from "@/components/ui/buttons/Button.tsx";
+import { useNavigate } from 'react-router';
+import {useProjectsComplete} from "@/hook/useProjects.ts";
 
 interface ProjectCardProps {
     project: Project
@@ -15,7 +23,14 @@ interface ProjectCardProps {
 const ProjectCard = ({project}: ProjectCardProps) => {
     const progressBarConfig = configureProgressBar(project);
     const actionButtons = getProjectActions(project);
-    console.log(actionButtons)
+    const navigate = useNavigate();
+    const {selectProject} = useProjectsComplete()
+
+    const handleAction = (action: ProjectAction['action']) => {
+        selectProject(project);
+        navigate(`/dashboard${getActionRoute(action, project.id)}`)
+    }
+
     return (
         <Card
             className={'project-card'}
@@ -73,7 +88,7 @@ const ProjectCard = ({project}: ProjectCardProps) => {
                     </div>
                     <div className={'project-card-actions'}>
                         {actionButtons.map((actionButton) => (
-                            <Button variant={actionButton.variant} icon={actionButton.icon ? actionButton.icon : null}>{actionButton.label}</Button>
+                            <Button onClick={() => handleAction(actionButton.action)} variant={actionButton.variant} icon={actionButton.icon ? actionButton.icon : null}>{actionButton.label}</Button>
                         ))}
                     </div>
                 </div>

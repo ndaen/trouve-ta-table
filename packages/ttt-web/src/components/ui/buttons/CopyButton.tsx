@@ -5,7 +5,7 @@ interface CopyButtonProps {
     textToCopy: string;
 }
 
-export const CopyButton = ({textToCopy}: CopyButtonProps) => {
+const CopyButton = ({textToCopy}: CopyButtonProps) => {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
@@ -33,3 +33,5 @@ export const CopyButton = ({textToCopy}: CopyButtonProps) => {
         </button>
     );
 }
+
+export default CopyButton;

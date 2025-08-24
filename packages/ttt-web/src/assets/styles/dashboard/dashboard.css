@@ -52,17 +52,6 @@
     width: 100%;
 }
 
-.dashboard-filters {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    width: 100%;
-    max-width: 400px;
-}
-
 .project-card-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

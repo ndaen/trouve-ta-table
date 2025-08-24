@@ -1,10 +1,9 @@
 import {Input} from "@/components/ui/inputs/Input";
 import {type FormEvent, useState} from "react";
 import Button from "@/components/ui/buttons/Button";
-import {GoogleButton} from "@/components/ui/buttons/GoogleButton";
+import {GoogleButton, InputPassword} from "@/components/ui";
 import {useAuthStore} from "@/stores/useAuthStore";
 import {useNavigate, useSearchParams} from "react-router";
-import {InputPassword} from "@/components/ui/inputs/InputPassword.tsx";
 import {useToast} from "@/stores/useToastStore.ts";
 
 export default function LoginForm() {
@@ -31,7 +30,7 @@ export default function LoginForm() {
     }
 
     return (
-        <form onSubmit={(event) =>  handleSubmit(event)} className={'flex flex-direction-column gap-4'}>
+        <form onSubmit={(event) => handleSubmit(event)} className={'flex flex-direction-column gap-4'}>
             <h2>Bon retour !</h2>
             <p className={'text-lg text-muted'}>Connectez-vous à votre compte</p>
             <Input
@@ -51,16 +50,17 @@ export default function LoginForm() {
                 required
             />
             <div className={'flex flex-direction-row gap-2 align-items-center'}>
-                <input type={'checkbox'} id={'input-remember-me'} value={rememberMe ? 1 : 0} onChange={() => setRememberMe(!rememberMe)} />
+                <input type={'checkbox'} id={'input-remember-me'} value={rememberMe ? 1 : 0}
+                       onChange={() => setRememberMe(!rememberMe)}/>
                 <label className={'text-base'} htmlFor={'input-remember-me'}>Se souvenir de moi</label>
             </div>
-            <Button isLoading={loading} type={'submit'} >Connexion</Button>
+            <Button isLoading={loading} type={'submit'}>Connexion</Button>
             <div className={'or-separator'}>
                 <span>
                     ou
                 </span>
             </div>
-            <GoogleButton />
+            <GoogleButton/>
         </form>
     )
 }

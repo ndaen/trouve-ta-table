@@ -1,4 +1,4 @@
-import Button from "@/components/ui/buttons/Button.tsx";
+import FilterChips, { type FilterChip } from "@/components/ui/FilterChips.tsx";
 
 interface FiltersProps {
     activeFilter: string;
@@ -6,27 +6,18 @@ interface FiltersProps {
 }
 
 const Filters = ({activeFilter, setActiveFilter}: FiltersProps) => {
+    const filterChips: FilterChip[] = [
+        { id: 'all', label: 'Tous' },
+        { id: 'incoming', label: 'À venir' },
+        { id: 'finished', label: 'Terminés' }
+    ];
+
     return (
-        <div className={'dashboard-filters'}>
-            <Button
-                variant={activeFilter === 'all' ? 'btn-secondary' : 'btn-ghost'}
-                onClick={() => setActiveFilter('all')}
-            >
-                Tous
-            </Button>
-            <Button
-                variant={activeFilter === 'incoming' ? 'btn-secondary' : 'btn-ghost'}
-                onClick={() => setActiveFilter('incoming')}
-            >
-                À venir
-            </Button>
-            <Button
-                variant={activeFilter === 'finished' ? 'btn-secondary' : 'btn-ghost'}
-                onClick={() => setActiveFilter('finished')}
-            >
-                Terminés
-            </Button>
-        </div>
+        <FilterChips 
+            chips={filterChips}
+            activeChip={activeFilter}
+            onChipClick={setActiveFilter}
+        />
     );
 };
 

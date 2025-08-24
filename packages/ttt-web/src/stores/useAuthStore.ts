@@ -53,7 +53,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                         }
                     }
                 } catch {
-                    console.log("Token invalide")
                     localStorage.removeItem("userToken")
                     set({ user: null })
                 }
