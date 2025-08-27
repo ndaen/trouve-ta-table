@@ -54,8 +54,8 @@ export default function ProjectHeader({project}: ProjectHeaderProps) {
                     icon="trash-2"
                     onClick={handleDelete}
                     disabled={isDeleting || loading}
-                    // title="Supprimer le projet"
-                    iconSize={16}
+                    title="Supprimer le projet"
+                    size="sm"
                 />
             </div>
         </div>

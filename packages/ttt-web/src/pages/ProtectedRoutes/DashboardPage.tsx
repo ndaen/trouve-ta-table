@@ -74,7 +74,7 @@ const DashboardPage = () => {
                             key={index}
                             header={
                                 <div className={'flex items-center justify-center'}>
-                                    <ButtonIcon variant={'btn-secondary'} icon={pCard.icon} iconSize={18}/>
+                                    <ButtonIcon variant={'btn-secondary'} icon={pCard.icon} size="lg"/>
                                 </div>
                             }
                             body={

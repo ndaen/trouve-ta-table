@@ -566,6 +566,16 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
 }
 
+.btn-icon.btn-sm {
+    width: var(--button-height-sm);
+    height: var(--button-height-sm);
+}
+
+.btn-icon.btn-lg {
+    width: var(--button-height-lg);
+    height: var(--button-height-lg);
+}
+
 .animate-spin {
     animation: spin 1s linear infinite;
 }

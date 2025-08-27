@@ -300,7 +300,7 @@ const DesignSystemPage = () => {
                                             <Button variant={"btn-primary"} size={"lg"}>
                                                 Grand
                                             </Button>
-                                            <ButtonIcon icon={'settings'} iconSize={16}/>
+                                            <ButtonIcon icon={'settings'} size="default"/>
                                         </div>
                                     </div>
                                     <div>

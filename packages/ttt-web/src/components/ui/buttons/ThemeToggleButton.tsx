@@ -5,7 +5,7 @@ const ThemeToggleButton = () => {
     const { darkMode, toggleDarkMode } = useTheme();
 
     return (
-        <ButtonIcon icon={darkMode ? "sun" : "moon"} iconSize={16} variant={'btn-outline'} onClick={toggleDarkMode} />
+        <ButtonIcon icon={darkMode ? "sun" : "moon"} size="default" variant={'btn-outline'} onClick={toggleDarkMode} />
     );
 }
 
