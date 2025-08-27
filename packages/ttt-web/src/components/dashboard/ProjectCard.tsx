@@ -31,6 +31,11 @@ const ProjectCard = ({project}: ProjectCardProps) => {
         navigate(`${getActionRoute(action, project.id)}`)
     }
 
+    const handleTitleClick = () => {
+        selectProject(project);
+        navigate(`/projects/${project.id}`);
+    }
+
     return (
         <Card
             className={'project-card'}
@@ -50,7 +55,13 @@ const ProjectCard = ({project}: ProjectCardProps) => {
                             {getEventTypeLabel(project.eventType)}
                         </Badge>
                     </div>
-                    <h2>{project.name}</h2>
+                    <h2 
+                        onClick={handleTitleClick}
+                        className="project-title-clickable"
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {project.name}
+                    </h2>
                 </div>
             }
             description={<>

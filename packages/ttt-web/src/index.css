@@ -1074,6 +1074,15 @@ input[type="date"] {
     }
 }
 
+/* Project Card Title Clickable */
+.project-title-clickable {
+    transition: all var(--transition-colors) ease-in-out;
+}
+
+.project-title-clickable:hover {
+    text-decoration: underline;
+}
+
 .input-label {
     display: block;
     font-size: var(--text-sm);
