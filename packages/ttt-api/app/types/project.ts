@@ -8,7 +8,7 @@ export interface ProjectData {
     eventType: EventType
     eventDate: DateTime
     venue: string
-    description: string
+    description: string | null
     qrCodeUrl?: string
     isActive: boolean
     createdAt: string

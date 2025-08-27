@@ -6,6 +6,8 @@ import Header from "@/components/navigation/Header.tsx"
 import {ProtectedRoute} from '@/components/navigation/ProtectedRoutes.tsx'
 import DashboardPage from "@/pages/ProtectedRoutes/DashboardPage.tsx";
 import ProjectDetailPage from "@/pages/ProtectedRoutes/ProjectDetailsPage.tsx";
+import CreateProjectPage from "@/pages/ProtectedRoutes/CreateProjectPage.tsx";
+import EditProjectPage from "@/pages/ProtectedRoutes/EditProjectPage.tsx";
 import Page404 from "@/pages/Page404.tsx";
 
 export default function AppWithAuth() {
@@ -44,17 +46,28 @@ export default function AppWithAuth() {
                     </ProtectedRoute>
                 }/>
                 <Route path="dashboard">
-
-                        <Route index element={
-                            <ProtectedRoute>
-                                <DashboardPage/>
-                            </ProtectedRoute>
-                        }/>
-                        <Route path="projects/:id" element={
-                            <ProtectedRoute>
-                                <ProjectDetailPage />
-                            </ProtectedRoute>
-                        }/>
+                    <Route index element={
+                        <ProtectedRoute>
+                            <DashboardPage/>
+                        </ProtectedRoute>
+                    }/>
+                </Route>
+                <Route path="projects">
+                    <Route path=":id" element={
+                        <ProtectedRoute>
+                            <ProjectDetailPage/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path="create" element={
+                        <ProtectedRoute>
+                            <CreateProjectPage/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path=":id/edit" element={
+                        <ProtectedRoute>
+                            <EditProjectPage/>
+                        </ProtectedRoute>
+                    }/>
                 </Route>
                 <Route path="*" element={<Page404/>}/>
             </Routes>

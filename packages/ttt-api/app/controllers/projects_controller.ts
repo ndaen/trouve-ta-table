@@ -12,9 +12,6 @@ export default class ProjectsController {
 
     public async index({ response }: HttpContext) {
         const projects = await this.projectService.getAll()
-        if (projects.length === 0) {
-            return response.status(404).json({ message: 'No projects found' })
-        }
         return response.json({ message: 'List of projects', data: projects })
     }
 
@@ -73,9 +70,6 @@ export default class ProjectsController {
         }
 
         const projects = await this.projectService.getAllByUser(auth.user!.id, isActive)
-        if (projects.length === 0) {
-            return response.status(404).json({ message: 'No projects found for this user' })
-        }
         return response.json({ message: `Projects for user ID: ${auth.user!.id}`, data: projects })
     }
 }

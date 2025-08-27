@@ -1,12 +1,14 @@
 import {DynamicIcon} from "lucide-react/dynamic";
 import type {Project} from "@/types/project.types.ts";
 import Button from "@/components/ui/buttons/Button.tsx";
+import {useNavigate} from "react-router";
 
 interface ProjectHeaderProps {
     project: Project;
 }
 
 export default function ProjectHeader({project}: ProjectHeaderProps) {
+    const navigate = useNavigate();
     return (
         <div className="project-header">
             <div className="project-header-info">
@@ -15,19 +17,9 @@ export default function ProjectHeader({project}: ProjectHeaderProps) {
 
             <div className="project-actions">
                 <Button
-                    variant="btn-outline"
-                    size="sm"
-                    onClick={() => {/* TODO: Implement QR code preview */
-                    }}
-                >
-                    <DynamicIcon name="qr-code" size={16}/>
-                    QR Code
-                </Button>
-                <Button
                     variant="btn-secondary"
                     size="sm"
-                    onClick={() => {/* TODO: Implement edit functionality */
-                    }}
+                    onClick={() => navigate(`/projects/${project.id}/edit`)}
                 >
                     <DynamicIcon name="edit-3" size={16}/>
                     Modifier

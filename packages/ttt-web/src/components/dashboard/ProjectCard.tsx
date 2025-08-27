@@ -28,7 +28,7 @@ const ProjectCard = ({project}: ProjectCardProps) => {
 
     const handleAction = (action: ProjectAction['action']) => {
         selectProject(project);
-        navigate(`/dashboard${getActionRoute(action, project.id)}`)
+        navigate(`${getActionRoute(action, project.id)}`)
     }
 
     return (

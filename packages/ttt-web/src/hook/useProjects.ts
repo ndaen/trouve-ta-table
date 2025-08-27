@@ -14,6 +14,18 @@ export const useProjects = () => {
         }
     }, [projects, loading, loadProjects]);
 
+    // Refresh projects when window regains focus
+    useEffect(() => {
+        const handleFocus = () => {
+            if (projects !== null && !loading) {
+                loadProjects();
+            }
+        };
+
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [projects, loading, loadProjects]);
+
     return {
         projects: projects || [],
         loading,

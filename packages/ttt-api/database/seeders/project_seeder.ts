@@ -3,10 +3,12 @@ import Project from '#models/project'
 import Table from '#models/table'
 import Guest from '#models/guest'
 import { DateTime } from 'luxon'
+import User from '#models/user'
 
 export default class ProjectSeeder extends BaseSeeder {
     async run() {
-        const userId = '56cc93d1-0d76-49c9-9b2e-7ba48422e065'
+        const user = await User.findBy('email', 'daennoah@gmail.com')
+        const userId = user?.id
 
         const weddingProject = await Project.create({
             userId,
