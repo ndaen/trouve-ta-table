@@ -70,6 +70,7 @@ router
                     '/:id/guests/unassigned',
                     '#controllers/guests_controller.getUnassignedGuests'
                 )
+                router.get('/:id/tables', '#controllers/projects_controller.getProjectTables')
             })
             .prefix('/projects')
 

@@ -45,7 +45,7 @@ export default function Modal({header, description, body, isOpen, onClose, class
             >
                 <div className="modal-header">
                     {header}
-                    {description && <p className="modal-description">{description}</p>}
+                    {description && <span className="modal-description">{description}</span>}
                     <button className="modal-close" onClick={onClose}>
                         ✕
                     </button>

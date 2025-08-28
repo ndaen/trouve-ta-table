@@ -2,12 +2,15 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Project from '#models/project'
 import ProjectService from '#services/project_service'
 import type { CreateProjectPayload } from '#types/index'
+import { TableService } from '#services/table_service'
 
 export default class ProjectsController {
     private projectService: ProjectService
+    private tableService: TableService
 
     constructor() {
         this.projectService = new ProjectService()
+        this.tableService = new TableService()
     }
 
     public async index({ response }: HttpContext) {
@@ -71,5 +74,22 @@ export default class ProjectsController {
 
         const projects = await this.projectService.getAllByUser(auth.user!.id, isActive)
         return response.json({ message: `Projects for user ID: ${auth.user!.id}`, data: projects })
+    }
+
+    public async getProjectTables({ params, response }: HttpContext) {
+        const project = await this.projectService.getById(params.id)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
+        }
+        const tables = await this.tableService.getByProject(project.id)
+
+        if (tables.length === 0) {
+            return response.status(404).json({ message: 'No tables found for this project' })
+        }
+
+        return response.status(200).json({
+            message: 'Project tables',
+            data: tables
+        })
     }
 }

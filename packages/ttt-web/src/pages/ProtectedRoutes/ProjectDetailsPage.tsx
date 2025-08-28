@@ -114,6 +114,7 @@ const ProjectDetailPage = () => {
                         <TablesSection
                             tables={project.tables || []}
                             guests={project.guests || []}
+                            projectId={project.id}
                         />
                     </div>
                 );

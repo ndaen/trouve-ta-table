@@ -7,7 +7,7 @@ export class TableService {
     }
 
     public async getById(id: string) {
-        return Table.query().where('id', id).preload('guests').first()
+        return Table.query().where('id', id).preload('project').preload('guests').first()
     }
 
     public async create(tableData: Partial<Table>) {
@@ -52,5 +52,9 @@ export class TableService {
 
         await table.delete()
         return { message: 'Table deleted successfully' }
+    }
+
+    public async getByProject(projectId: string): Promise<Table[]> {
+        return Table.query().where('projectId', projectId).preload('guests')
     }
 }
