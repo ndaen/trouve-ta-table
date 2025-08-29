@@ -1,5 +1,6 @@
 import Table from '#models/table'
 import User from '#models/user'
+import Guest from '#models/guest'
 
 export class TableService {
     public async getAll() {
@@ -49,6 +50,11 @@ export class TableService {
                 status: 403,
             }
         }
+
+        // Désassigner tous les invités de cette table avant de la supprimer
+        await Guest.query()
+            .where('tableId', id)
+            .update({ tableId: null })
 
         await table.delete()
         return { message: 'Table deleted successfully' }

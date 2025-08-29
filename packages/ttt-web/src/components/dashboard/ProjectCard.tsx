@@ -98,8 +98,8 @@ const ProjectCard = ({project}: ProjectCardProps) => {
                         </div>
                     </div>
                     <div className={'project-card-actions'}>
-                        {actionButtons.map((actionButton) => (
-                            <Button onClick={() => handleAction(actionButton.action)} variant={actionButton.variant} icon={actionButton.icon ? actionButton.icon : null}>{actionButton.label}</Button>
+                        {actionButtons.map((actionButton, index) => (
+                            <Button key={`btn-${index}`} onClick={() => handleAction(actionButton.action)} variant={actionButton.variant} icon={actionButton.icon ? actionButton.icon : null}>{actionButton.label}</Button>
                         ))}
                     </div>
                 </div>

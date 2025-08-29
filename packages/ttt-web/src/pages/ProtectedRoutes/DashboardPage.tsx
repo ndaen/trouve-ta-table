@@ -109,8 +109,8 @@ const DashboardPage = () => {
                         </div>
                     </div>
                     <div className={'project-card-grid'}>
-                        {filterProjects(activeFilter).map((project, index) => (
-                            <ProjectCard key={index} project={project}/>
+                        {filterProjects(activeFilter).map((project) => (
+                            <ProjectCard key={project.id} project={project}/>
                         ))}
                     </div>
                 </div>

@@ -1,6 +1,8 @@
 import {useEffect, useMemo, useState} from 'react';
 import {Link, useParams, useSearchParams} from "react-router";
 import {useProjectById} from "@/hook/useProjects.ts";
+import {useTablesStore} from "@/stores/useTablesStore";
+import {useGuestsStore} from "@/stores/useGuestsStore";
 import '@/assets/styles/project-detail.css';
 import ProjectHeader from "@/components/project-detail/ProjectHeader.tsx";
 import ProjectTabs from "@/components/project-detail/ProjectTabs.tsx";
@@ -13,6 +15,8 @@ const ProjectDetailPage = () => {
     const {id} = useParams<{ id: string }>();
     const [searchParams] = useSearchParams();
     const {project, loading, error, isLoaded} = useProjectById(id);
+    const {reset: resetTables} = useTablesStore();
+    const {reset: resetGuests} = useGuestsStore();
     const [activeTab, setActiveTab] = useState('overview');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedFilter, setSelectedFilter] = useState('all');
@@ -47,6 +51,18 @@ const ProjectDetailPage = () => {
 
         return filtered;
     }, [project?.guests, searchTerm, selectedFilter]);
+
+    useEffect(() => {
+        resetTables();
+        resetGuests();
+    }, [id, resetTables, resetGuests]);
+
+    useEffect(() => {
+        return () => {
+            resetTables();
+            resetGuests();
+        };
+    }, [resetTables, resetGuests]);
 
     useEffect(() => {
         const tab = searchParams.get('tab');
@@ -105,6 +121,7 @@ const ProjectDetailPage = () => {
                             selectedFilter={selectedFilter}
                             onFilterChange={setSelectedFilter}
                             tables={project.tables || []}
+                            projectId={project.id}
                         />
                     </div>
                 );
