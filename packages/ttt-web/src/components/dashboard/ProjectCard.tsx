@@ -28,7 +28,12 @@ const ProjectCard = ({project}: ProjectCardProps) => {
 
     const handleAction = (action: ProjectAction['action']) => {
         selectProject(project);
-        navigate(`/dashboard${getActionRoute(action, project.id)}`)
+        navigate(`${getActionRoute(action, project.id)}`)
+    }
+
+    const handleTitleClick = () => {
+        selectProject(project);
+        navigate(`/projects/${project.id}`);
     }
 
     return (
@@ -50,7 +55,13 @@ const ProjectCard = ({project}: ProjectCardProps) => {
                             {getEventTypeLabel(project.eventType)}
                         </Badge>
                     </div>
-                    <h2>{project.name}</h2>
+                    <h2 
+                        onClick={handleTitleClick}
+                        className="project-title-clickable"
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {project.name}
+                    </h2>
                 </div>
             }
             description={<>
@@ -87,8 +98,8 @@ const ProjectCard = ({project}: ProjectCardProps) => {
                         </div>
                     </div>
                     <div className={'project-card-actions'}>
-                        {actionButtons.map((actionButton) => (
-                            <Button onClick={() => handleAction(actionButton.action)} variant={actionButton.variant} icon={actionButton.icon ? actionButton.icon : null}>{actionButton.label}</Button>
+                        {actionButtons.map((actionButton, index) => (
+                            <Button key={`btn-${index}`} onClick={() => handleAction(actionButton.action)} variant={actionButton.variant} icon={actionButton.icon ? actionButton.icon : null}>{actionButton.label}</Button>
                         ))}
                     </div>
                 </div>

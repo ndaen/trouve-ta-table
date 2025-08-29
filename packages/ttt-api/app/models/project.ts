@@ -27,7 +27,7 @@ export default class Project extends BaseModel {
     declare venue: string
 
     @column()
-    declare description: string
+    declare description: string | null
 
     @column()
     declare qrCodeUrl?: string

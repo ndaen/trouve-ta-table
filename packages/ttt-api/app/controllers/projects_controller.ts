@@ -2,19 +2,22 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Project from '#models/project'
 import ProjectService from '#services/project_service'
 import type { CreateProjectPayload } from '#types/index'
+import { TableService } from '#services/table_service'
+import { GuestService } from '#services/guest_service'
 
 export default class ProjectsController {
     private projectService: ProjectService
+    private tableService: TableService
+    private guestService: GuestService
 
     constructor() {
         this.projectService = new ProjectService()
+        this.tableService = new TableService()
+        this.guestService = new GuestService()
     }
 
     public async index({ response }: HttpContext) {
         const projects = await this.projectService.getAll()
-        if (projects.length === 0) {
-            return response.status(404).json({ message: 'No projects found' })
-        }
         return response.json({ message: 'List of projects', data: projects })
     }
 
@@ -73,9 +76,36 @@ export default class ProjectsController {
         }
 
         const projects = await this.projectService.getAllByUser(auth.user!.id, isActive)
-        if (projects.length === 0) {
-            return response.status(404).json({ message: 'No projects found for this user' })
-        }
         return response.json({ message: `Projects for user ID: ${auth.user!.id}`, data: projects })
+    }
+
+    public async getProjectTables({ params, response }: HttpContext) {
+        const project = await this.projectService.getById(params.id)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
+        }
+        const tables = await this.tableService.getByProject(project.id)
+
+        if (tables.length === 0) {
+            return response.status(404).json({ message: 'No tables found for this project' })
+        }
+
+        return response.status(200).json({
+            message: 'Project tables',
+            data: tables,
+        })
+    }
+
+    public async getProjectGuests({ params, response }: HttpContext) {
+        const project = await this.projectService.getById(params.id)
+        if (project === null) {
+            return response.status(404).json({ message: 'Project not found' })
+        }
+
+        const guests = await this.guestService.getByProject(project.id)
+        return response.status(200).json({
+            message: 'Project guests',
+            data: guests,
+        })
     }
 }

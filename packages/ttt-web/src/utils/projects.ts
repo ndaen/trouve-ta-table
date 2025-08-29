@@ -106,10 +106,11 @@ export const getActionRoute = (action: ProjectAction['action'], id: UUID): strin
     switch (action) {
         case 'view-details':
             return `/projects/${id}`;
+        case 'edit':
+            return `/projects/${id}/edit`;
         case 'configure':
         case 'finalize':
         case 'adjust':
-        case 'edit':
         case 'delete':
             return `/projects/${id}?action=${action}`;
         case 'add-guests':

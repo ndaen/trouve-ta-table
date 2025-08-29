@@ -1,4 +1,5 @@
 import {useProjects} from "@/hook/useProjects.ts";
+import { useProjectsStore } from "@/stores/useProjectsStore";
 import {useToast} from "@/stores/useToastStore.ts";
 import ProjectCard from "@/components/dashboard/ProjectCard.tsx";
 import '@/assets/styles/dashboard/dashboard.css'
@@ -8,6 +9,7 @@ import type {IconName} from "lucide-react/dynamic";
 import {useState} from "react";
 import Filters from "@/components/dashboard/Filters.tsx";
 import Button from "@/components/ui/buttons/Button.tsx";
+import { useNavigate } from "react-router";
 
 type newProjectCard = {
     icon: IconName,
@@ -18,7 +20,9 @@ type newProjectCard = {
 
 const DashboardPage = () => {
     const {projects, loading, error} = useProjects();
+    const loadProjects = useProjectsStore(state => state.loadProjects);
     const toast = useToast();
+    const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState<string>('all')
 
     if (loading) return <p>Loading...</p>;
@@ -42,19 +46,19 @@ const DashboardPage = () => {
             icon: 'gem',
             title: 'Nouveau Mariage',
             description: 'Organisez le placement de vos invités',
-            actions: () => toast.info('Actions pour Nouveau Mariage')
+            actions: () => navigate('/projects/create?type=wedding')
         },
         {
             icon: 'cake',
             title: 'Anniversaire',
             description: 'Célébrez en beauté',
-            actions: () => toast.info('Actions pour Anniversaire')
+            actions: () => navigate('/projects/create?type=birthday')
         },
         {
             icon: 'building-2',
             title: 'Événement Pro',
             description: 'Réunions et conférences',
-            actions: () => toast.info('Actions pour Événement Pro')
+            actions: () => navigate('/projects/create?type=corporate')
         }
     ]
 
@@ -70,7 +74,7 @@ const DashboardPage = () => {
                             key={index}
                             header={
                                 <div className={'flex items-center justify-center'}>
-                                    <ButtonIcon variant={'btn-secondary'} icon={pCard.icon} iconSize={18}/>
+                                    <ButtonIcon variant={'btn-secondary'} icon={pCard.icon} size="lg"/>
                                 </div>
                             }
                             body={
@@ -92,12 +96,21 @@ const DashboardPage = () => {
                         <h1>Mes projets</h1>
                         <div className={'flex flex-direction-row gap-2 items-center justify-between'}>
                             <Filters activeFilter={activeFilter} setActiveFilter={setActiveFilter}/>
-                            <Button variant={'btn-secondary'} icon={'plus'}>Créer un projet</Button>
+                            <div className={'flex gap-2'}>
+                                <ButtonIcon 
+                                    variant={'btn-secondary'} 
+                                    icon={'refresh-cw'} 
+                                    onClick={() => loadProjects()}
+                                    disabled={loading}
+                                    title="Actualiser les projets"
+                                />
+                                <Button variant={'btn-secondary'} icon={'plus'} onClick={() => navigate('/projects/create')}>Créer un projet</Button>
+                            </div>
                         </div>
                     </div>
                     <div className={'project-card-grid'}>
-                        {filterProjects(activeFilter).map((project, index) => (
-                            <ProjectCard key={index} project={project}/>
+                        {filterProjects(activeFilter).map((project) => (
+                            <ProjectCard key={project.id} project={project}/>
                         ))}
                     </div>
                 </div>
@@ -110,7 +123,7 @@ const DashboardPage = () => {
                         <h2 className={'text-center text-2xl'}>Aucun projet trouvé</h2>
                         <p className={'text-center text-muted'}>Créez votre premier projet pour commencer à organiser vos
                             événements.</p>
-                        <Button variant={'btn-primary'} icon={'plus'} onClick={() => toast.info('Créer un projet')}>
+                        <Button variant={'btn-primary'} icon={'plus'} onClick={() => navigate('/projects/create')}>
                             Créer un projet
                         </Button>
                     </div>

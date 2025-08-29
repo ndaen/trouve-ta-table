@@ -1,5 +1,6 @@
 import Table from '#models/table'
 import User from '#models/user'
+import Guest from '#models/guest'
 
 export class TableService {
     public async getAll() {
@@ -7,7 +8,7 @@ export class TableService {
     }
 
     public async getById(id: string) {
-        return Table.query().where('id', id).preload('guests').first()
+        return Table.query().where('id', id).preload('project').preload('guests').first()
     }
 
     public async create(tableData: Partial<Table>) {
@@ -50,7 +51,16 @@ export class TableService {
             }
         }
 
+        // Désassigner tous les invités de cette table avant de la supprimer
+        await Guest.query()
+            .where('tableId', id)
+            .update({ tableId: null })
+
         await table.delete()
         return { message: 'Table deleted successfully' }
+    }
+
+    public async getByProject(projectId: string): Promise<Table[]> {
+        return Table.query().where('projectId', projectId).preload('guests')
     }
 }

@@ -9,12 +9,7 @@ export class GuestService {
     }
 
     public async getById(id: string) {
-        return Guest.query()
-            .where('id', id)
-            .preload('table', (tableQuery) => {
-                tableQuery.preload('project')
-            })
-            .first()
+        return Guest.query().where('id', id).preload('table').preload('project').first()
     }
 
     public async create(guestData: Partial<Guest>) {
@@ -30,7 +25,7 @@ export class GuestService {
                 status: 404,
             }
         }
-        if (user.id !== guest.table.project.userId && user.role !== 'admin') {
+        if (user.id !== guest.project.userId && user.role !== 'admin') {
             return {
                 error: 'You do not have permission to update this guest',
                 status: 403,
@@ -50,7 +45,7 @@ export class GuestService {
                 status: 404,
             }
         }
-        if (user.id !== guest.table.project.userId && user.role !== 'admin') {
+        if (user.id !== guest.project.userId && user.role !== 'admin') {
             return {
                 error: 'You do not have permission to delete this guest',
                 status: 403,
@@ -82,7 +77,9 @@ export class GuestService {
                 status: 400,
             }
         }
-        if (typeof table.guests === 'object' && table.capacity <= table.guests.length) {
+        // Charger la relation guests pour vérifier la capacité
+        await table.load('guests');
+        if (table.guests && table.capacity <= table.guests.length) {
             return {
                 error: 'The table is already full',
                 status: 400,
@@ -167,5 +164,9 @@ export class GuestService {
         }
 
         return guests[0]
+    }
+
+    public async getByProject(projectID: string) {
+        return Guest.query().where('projectId', projectID).preload('table')
     }
 }

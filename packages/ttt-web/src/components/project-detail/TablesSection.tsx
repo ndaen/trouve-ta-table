@@ -1,14 +1,37 @@
 import type { Table } from "@/types/table.types.ts";
 import type { Guest } from "@/types/guest.types.ts";
 import Button from "@/components/ui/buttons/Button.tsx";
+import ButtonIcon from "@/components/ui/buttons/ButtonIcon.tsx";
+import Modal from "@/components/ui/modals/Modal.tsx";
 import { DynamicIcon } from "lucide-react/dynamic";
+import { useNavigate } from "react-router";
+import { useTablesStore } from "@/stores/useTablesStore";
+import { useToast } from "@/stores/useToastStore";
+import { useState, useEffect } from "react";
 
 interface TablesSectionProps {
     tables: Table[];
     guests: Guest[];
+    projectId: string;
 }
 
-export default function TablesSection({ tables, guests }: TablesSectionProps) {
+export default function TablesSection({ tables: propTables, guests, projectId }: TablesSectionProps) {
+    const navigate = useNavigate();
+    const { tables: storeTables, deleteTable, loading, loadTables } = useTablesStore();
+    const toast = useToast();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [tableToDelete, setTableToDelete] = useState<Table | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    // Use store tables if available, fallback to props
+    const tables = storeTables || propTables;
+
+    // Load tables from store when component mounts
+    useEffect(() => {
+        if (!storeTables && projectId) {
+            loadTables(projectId);
+        }
+    }, [projectId, storeTables, loadTables]);
     const getTableOccupancy = (tableId: string) => {
         const tableGuests = guests.filter(g => g.tableId === tableId);
         return tableGuests.length;
@@ -31,8 +54,62 @@ export default function TablesSection({ tables, guests }: TablesSectionProps) {
         return 'text-success';
     };
 
+    const handleCreateTable = () => {
+        navigate(`/projects/${projectId}/tables/create`);
+    };
+
+    const handleEditTable = (table: Table) => {
+        navigate(`/projects/${projectId}/tables/${table.id}/edit`);
+    };
+
+    const handleDeleteClick = (table: Table) => {
+        setTableToDelete(table);
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!tableToDelete) return;
+        
+        try {
+            setIsDeleting(true);
+            await deleteTable(tableToDelete.id);
+            toast.success('Table supprimée avec succès');
+            setShowDeleteModal(false);
+        } catch (error) {
+            toast.error('Erreur lors de la suppression de la table');
+            console.error('Delete table error:', error);
+        } finally {
+            setIsDeleting(false);
+            setTableToDelete(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setShowDeleteModal(false);
+        setTableToDelete(null);
+    };
+
     return (
         <div className="tables-section">
+            {tables.length > 0 && (
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-4)'}}>
+                    <div>
+                        <h3 style={{margin: 0}}>Gestion des tables</h3>
+                        <p style={{color: 'var(--muted-foreground)', margin: 0, fontSize: 'var(--text-sm)'}}>
+                            {tables.length} table{tables.length > 1 ? 's' : ''} configurée{tables.length > 1 ? 's' : ''}
+                        </p>
+                    </div>
+                    <Button 
+                        variant="btn-primary"
+                        onClick={handleCreateTable}
+                        size="sm"
+                    >
+                        <DynamicIcon name="plus" size={14} />
+                        Ajouter une table
+                    </Button>
+                </div>
+            )}
+
             {tables.length === 0 ? (
                 <div className="empty-state">
                     <div className="empty-state-icon">
@@ -42,7 +119,10 @@ export default function TablesSection({ tables, guests }: TablesSectionProps) {
                     <p className="empty-state-description">
                         Commencez par ajouter des tables à votre projet
                     </p>
-                    <Button variant="btn-primary">
+                    <Button 
+                        variant="btn-primary"
+                        onClick={handleCreateTable}
+                    >
                         <DynamicIcon name="plus" size={16} />
                         Ajouter une table
                     </Button>
@@ -87,29 +167,81 @@ export default function TablesSection({ tables, guests }: TablesSectionProps) {
                                     </p>
                                 )}
 
-                                <div className="form-row">
-                                    <Button 
-                                        variant="btn-outline" 
-                                        size="sm"
-                                        onClick={() => {/* TODO: View table details */}}
-                                    >
-                                        <DynamicIcon name="eye" size={14} />
-                                        Voir
-                                    </Button>
+                                <div className="form-row" style={{ gap: 'var(--space-2)' }}>
                                     <Button 
                                         variant="btn-secondary" 
                                         size="sm"
-                                        onClick={() => {/* TODO: Edit table */}}
+                                        onClick={() => handleEditTable(table)}
+                                        disabled={isDeleting}
                                     >
                                         <DynamicIcon name="edit-3" size={14} />
                                         Modifier
                                     </Button>
+                                    <ButtonIcon
+                                        variant="btn-destructive"
+                                        icon="trash-2"
+                                        size="sm"
+                                        onClick={() => handleDeleteClick(table)}
+                                        disabled={isDeleting || loading}
+                                        title="Supprimer la table"
+                                    />
                                 </div>
                             </div>
                         );
                     })}
                 </div>
             )}
+
+            {/* Modal de confirmation de suppression */}
+            <Modal
+                isOpen={showDeleteModal}
+                onClose={handleCancelDelete}
+                size="sm"
+                header={
+                    <div style={{display: 'flex', alignItems: 'center', gap: 'var(--space-3)'}}>
+                        <div 
+                            className="rounded-full" 
+                            style={{
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                width: '40px', 
+                                height: '40px',
+                                backgroundColor: 'var(--error-light, rgba(190, 18, 60, 0.1))'
+                            }}
+                        >
+                            <DynamicIcon name="trash-2" size={20} style={{color: 'var(--error)'}} />
+                        </div>
+                        <h2 style={{fontSize: 'var(--text-lg)', fontWeight: 'var(--font-semibold)'}}>Supprimer la table</h2>
+                    </div>
+                }
+                description={
+                    <p style={{color: 'var(--muted-foreground)'}}>
+                        Êtes-vous sûr de vouloir supprimer la table <strong>"{tableToDelete?.name}"</strong> ? 
+                        Cette action est irréversible et supprimera définitivement tous les invités assignés à cette table.
+                    </p>
+                }
+                body={
+                    <div style={{display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-3)', marginTop: 'var(--space-6)'}}>
+                        <Button
+                            variant="btn-outline"
+                            onClick={handleCancelDelete}
+                            disabled={isDeleting}
+                        >
+                            Annuler
+                        </Button>
+                        <Button
+                            variant="btn-destructive"
+                            onClick={handleConfirmDelete}
+                            isLoading={isDeleting}
+                            disabled={isDeleting}
+                            icon="trash-2"
+                        >
+                            Supprimer définitivement
+                        </Button>
+                    </div>
+                }
+            />
         </div>
     );
 }

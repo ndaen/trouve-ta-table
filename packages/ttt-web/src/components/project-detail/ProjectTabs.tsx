@@ -8,8 +8,8 @@ interface ProjectTabsProps {
 export default function ProjectTabs({ activeTab, onTabChange }: ProjectTabsProps) {
     const tabs: Tab[] = [
         { id: 'overview', label: 'Vue d\'ensemble' },
-        { id: 'guests', label: 'Invités' },
         { id: 'tables', label: 'Tables' },
+        { id: 'guests', label: 'Invités' },
         { id: 'qrcode', label: 'QR Code' }
     ];
 
