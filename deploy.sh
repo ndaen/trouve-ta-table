@@ -31,11 +31,11 @@ sleep 30
 
 # Exécuter les migrations
 echo "📊 Exécution des migrations..."
-docker compose exec -T api sh -c "cd packages/ttt-api && node ace migration:run"
+docker compose exec -T api sh -c "node ace migration:run"
 
 # Exécuter les seeds
 echo "🌱 Ajout des données de test..."
-docker compose exec -T api sh -c "cd packages/ttt-api && node ace db:seed"
+docker compose exec -T api sh -c "node ace db:seed"
 
 # Vérifier l'état des conteneurs
 echo "🔍 État des conteneurs:"
