@@ -3,7 +3,7 @@ import {Input} from "@/components/ui/inputs/Input.tsx";
 import Button from "@/components/ui/buttons/Button.tsx";
 import {guestsService} from "@/services/guestsService.ts";
 import {useToast} from "@/stores/useToastStore.ts";
-import type {UUID} from "ttt-api/app/types";
+import type {UUID} from "@/types/common.types";
 import type {Guest} from "@/types/guest.types.ts";
 import type {Email} from "@/types/common.types.ts";
 import {ApiError} from "@/utils/apiClient.ts";

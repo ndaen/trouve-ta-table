@@ -1,7 +1,7 @@
 // === GUEST INTERFACE ===
-import type {UUID} from "ttt-api/app/types";
 import type {Project} from "@/types/project.types.ts";
 import type {Table} from "@/types/table.types.ts";
+import type {UUID} from "@/types/common.types";
 
 export interface Guest {
     id: UUID;
