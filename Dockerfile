@@ -1,4 +1,3 @@
-# Dockerfile root pour Railway - Build API
 FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat dumb-init
 WORKDIR /app
@@ -22,8 +21,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/packages/ttt-api/build ./build
 COPY --from=build /app/packages/ttt-api/package.json ./package.json
 
-# Railway fournit $PORT automatiquement
 EXPOSE $PORT
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "build/bin/server.js"]
+# Auto-migrate au démarrage puis start server
+CMD ["sh", "-c", "node build/bin/console.js migration:run && node build/bin/server.js"]
