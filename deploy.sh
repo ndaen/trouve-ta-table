@@ -31,11 +31,11 @@ sleep 30
 
 # Exécuter les migrations
 echo "📊 Exécution des migrations..."
-docker compose exec -T api sh -c "node ace migration:run"
+docker compose exec -T api sh -c "cd packages/ttt-api && node ace migration:run"
 
 # Exécuter les seeds
 echo "🌱 Ajout des données de test..."
-docker compose exec -T api sh -c "node ace db:seed"
+docker compose exec -T api sh -c "cd packages/ttt-api && node ace db:seed"
 
 # Vérifier l'état des conteneurs
 echo "🔍 État des conteneurs:"
@@ -47,7 +47,9 @@ curl -f http://31.97.155.246:3333/health && echo "✅ API OK" || echo "❌ Probl
 
 echo ""
 echo "🎉 Déploiement terminé !"
-echo "📱 Frontend: http://31.97.155.246"
-echo "🔧 API: http://31.97.155.246:3333"
+echo "🌐 Site: https://31.97.155.246"
+echo "🔧 API: https://31.97.155.246/api"
 echo "🩺 Health: http://31.97.155.246:3333/health"
+echo ""
+echo "⚠️  Accepte l'avertissement SSL dans ton navigateur"
 echo ""
