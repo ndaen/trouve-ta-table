@@ -15,19 +15,14 @@ RUN npm run build
 
 FROM base AS production
 ENV NODE_ENV=production
-WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
-
-COPY --from=build /app/packages/ttt-api/build ./packages/ttt-api/build
-COPY --from=build /app/packages/ttt-api/package.json ./packages/ttt-api/
-COPY --from=build /app/package.json ./package.json
-
 WORKDIR /app/packages/ttt-api
 
-EXPOSE 3333
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/packages/ttt-api/build ./build
+COPY --from=build /app/packages/ttt-api/package.json ./package.json
+
+# Railway utilise $PORT, local utilise 3333
+EXPOSE ${PORT:-3333}
 
 ENTRYPOINT ["dumb-init", "--"]
-# The following path is the build output entrypoint for the API server.
-# If the build output location changes, update this path accordingly.
 CMD ["node", "build/bin/server.js"]

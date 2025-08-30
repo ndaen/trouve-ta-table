@@ -78,3 +78,6 @@ credentials.json
 *.tar.gz
 *.zip
 *.rar
+# Railway et backup
+.railwayignore
+.backup-before-railway/

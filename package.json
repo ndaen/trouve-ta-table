@@ -8,22 +8,10 @@
     "dev:web": "npm run dev --workspace=packages/ttt-web",
     "build": "npm run build --workspace=packages/ttt-api && npm run build --workspace=packages/ttt-web",
 
-    "docker:dev": "docker compose -f docker-compose.yml --env-file .env.docker up --build",
-    "docker:dev:detached": "docker compose -f docker-compose.yml --env-file .env.docker up --build -d",
-    "docker:prod": "docker compose -f docker-compose.yml --env-file .env.docker.production up --build -d",
+    "docker:dev": "docker compose up --build -d",
     "docker:down": "docker compose down",
-    "docker:down:volumes": "docker compose down -v",
     "docker:logs": "docker compose logs -f",
-    "docker:logs:api": "docker compose logs -f api",
-    "docker:logs:web": "docker compose logs -f web",
-    "docker:restart": "docker compose restart",
-    "docker:rebuild": "docker compose down && docker compose up --build -d",
-    "docker:clean": "docker system prune -f && docker volume prune -f",
-
-    "db:migrate": "docker compose exec api node ace migration:run",
-    "db:seed": "docker compose exec api node ace db:seed",
-    "db:reset": "docker compose exec api node ace migration:rollback --batch=0 && docker compose exec api node ace migration:run",
-    "db:status": "docker compose exec api node ace migration:status"
+    "docker:clean": "docker compose down -v && docker system prune -f"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
