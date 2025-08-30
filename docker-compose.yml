@@ -69,8 +69,11 @@ services:
     container_name: ttt-web
     ports:
       - "80:80"
+      - "443:443"
     environment:
       VITE_API_URL: ${VITE_API_URL:-http://localhost:3333/api}
+    volumes:
+      - ./ssl:/etc/ssl:ro
     depends_on:
       - api
     networks:
