@@ -24,5 +24,4 @@ COPY --from=build /app/packages/ttt-api/package.json ./package.json
 EXPOSE $PORT
 
 ENTRYPOINT ["dumb-init", "--"]
-# Auto-migrate au démarrage puis start server
 CMD ["sh", "-c", "node build/bin/console.js migration:run && node build/bin/server.js"]

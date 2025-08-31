@@ -14,6 +14,7 @@ const corsConfig = defineConfig({
         'http://localhost',
         'http://31.97.155.246',
         'http://31.97.155.246:80',
+        'https://trouve-ta-table.netlify.app',
     ],
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     headers: true,
