@@ -1,5 +1,5 @@
 import Guest from '#models/guest'
-import User from '#models/user'
+import type User from '#models/user'
 import Table from '#models/table'
 import Project from '#models/project'
 
@@ -78,7 +78,7 @@ export class GuestService {
             }
         }
         // Charger la relation guests pour vérifier la capacité
-        await table.load('guests');
+        await table.load('guests')
         if (table.guests && table.capacity <= table.guests.length) {
             return {
                 error: 'The table is already full',

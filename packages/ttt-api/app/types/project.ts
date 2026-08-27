@@ -1,5 +1,5 @@
 import type { UUID, EventType } from './common.js'
-import { DateTime } from 'luxon'
+import { type DateTime } from 'luxon'
 
 export interface ProjectData {
     id: UUID

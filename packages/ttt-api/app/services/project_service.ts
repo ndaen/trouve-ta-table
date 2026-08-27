@@ -1,6 +1,6 @@
 import Project from '#models/project'
-import { CreateProjectPayload } from '#types/project'
-import User from '#models/user'
+import { type CreateProjectPayload } from '#types/project'
+import type User from '#models/user'
 
 export default class ProjectService {
     public async createProject(payload: CreateProjectPayload) {
