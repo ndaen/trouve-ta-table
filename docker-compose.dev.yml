@@ -26,7 +26,7 @@ services:
     ports:
       - "3333:3333"
     environment:
-      TZ: UTC+1
+      TZ: UTC
       NODE_ENV: development
       PORT: 3333
       HOST: 0.0.0.0
