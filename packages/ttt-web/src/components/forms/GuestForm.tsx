@@ -69,8 +69,6 @@ export default function GuestForm({
             setIsCreatingTable(true);
             await onCreateTable(tableData);
             setIsTableModalOpen(false);
-        } catch (error) {
-            throw error;
         } finally {
             setIsCreatingTable(false);
         }

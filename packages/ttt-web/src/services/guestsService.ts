@@ -29,7 +29,7 @@ export const guestsService = {
             return response.data;
         } catch (error) {
             console.error('Failed to fetch guests:', error);
-            throw new Error('Unable to load guests. Please try again.');
+            throw new Error('Unable to load guests. Please try again.', { cause: error });
         }
     },
 
