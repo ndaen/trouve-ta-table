@@ -1,6 +1,6 @@
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import { UserFactory, ProjectFactory } from '#database/factories/main'
+import { UserFactory, ProjectFactory, GuestFactory } from '#database/factories/main'
 
 test.group('Validation des entrées', (group) => {
     group.each.setup(() => testUtils.db().truncate())
@@ -59,6 +59,17 @@ test.group('Validation des entrées', (group) => {
                 eventType: 'birthday',
                 eventDate: '2027-06-12',
             })
+            .loginAs(user)
+        response.assertStatus(422)
+    })
+
+    test('assigner un invité avec un tableId invalide est refusé', async ({ client }) => {
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
+        const guest = await GuestFactory.merge({ projectId: project.id }).create()
+        const response = await client
+            .post(`/api/guests/${guest.id}/assign`)
+            .json({ tableId: 'pas-un-uuid' })
             .loginAs(user)
         response.assertStatus(422)
     })

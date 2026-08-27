@@ -18,3 +18,9 @@ export const updateGuestValidator = vine.compile(
         dietaryRequirements: vine.string().trim().maxLength(500).nullable().optional(),
     })
 )
+
+export const assignGuestValidator = vine.compile(
+    vine.object({
+        tableId: vine.string().uuid(),
+    })
+)

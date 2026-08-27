@@ -3,7 +3,7 @@ import Guest from '#models/guest'
 import Project from '#models/project'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
-import { createGuestValidator, updateGuestValidator } from '#validators/guest'
+import { createGuestValidator, updateGuestValidator, assignGuestValidator } from '#validators/guest'
 import QuotaService from '#services/quota_service'
 
 export default class GuestsController {
@@ -67,10 +67,7 @@ export default class GuestsController {
     }
 
     public async assignToTable({ params, request, response, bouncer }: HttpContext) {
-        const { tableId } = request.only(['tableId'])
-        if (!tableId) {
-            return response.status(400).json({ message: 'Table ID is required' })
-        }
+        const { tableId } = await request.validateUsing(assignGuestValidator)
 
         const guest = await this.guestService.getById(params.id)
         if (!guest) {
