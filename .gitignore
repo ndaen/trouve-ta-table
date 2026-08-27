@@ -5,3 +5,5 @@
 .env.docker.production
 
 node_modules/**
+# Ateliers SDD (scratch, non versionné)
+.superpowers/
