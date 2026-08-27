@@ -36,7 +36,7 @@ son plan (tables, invités, placement) avant le jour J.
 - ⚡ **Vite** - Build tool ultra-rapide
 - 🐻 **Zustand** - Gestion d'état légère
 - 🛡️ **Zod** - Validation des schémas
-- 🛣️ **React Router 7** - Routage côté client
+- 🛣️ **React Router 8** - Routage côté client
 
 ### 🔧 **DevOps & Outils**
 - 🐳 **Docker & Docker Compose** - Conteneurisation
