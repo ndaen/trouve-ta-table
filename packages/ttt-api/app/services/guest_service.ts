@@ -4,10 +4,6 @@ import Table from '#models/table'
 import Project from '#models/project'
 
 export class GuestService {
-    public async getAll() {
-        return Guest.query().preload('table')
-    }
-
     public async getById(id: string) {
         return Guest.query().where('id', id).preload('table').preload('project').first()
     }

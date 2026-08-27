@@ -7,10 +7,6 @@ export default class ProjectService {
         return Project.create(payload)
     }
 
-    public async getAll() {
-        return Project.query().preload('user').preload('tables').preload('guests')
-    }
-
     public async getAllByUser(userId: string, isActive: boolean) {
         if (isActive) {
             return Project.query()

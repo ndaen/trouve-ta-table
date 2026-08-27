@@ -3,10 +3,6 @@ import type User from '#models/user'
 import Guest from '#models/guest'
 
 export class TableService {
-    public async getAll() {
-        return Table.query().preload('guests')
-    }
-
     public async getById(id: string) {
         return Table.query().where('id', id).preload('project').preload('guests').first()
     }

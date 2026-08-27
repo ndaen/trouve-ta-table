@@ -9,14 +9,6 @@ export default class GuestsController {
         this.guestService = new GuestService()
     }
 
-    public async index({ response }: HttpContext) {
-        const guests = await this.guestService.getAll()
-        if (guests.length === 0) {
-            return response.status(404).json({ message: 'No guests found' })
-        }
-        return response.status(200).json({ message: 'List of all guests', data: guests })
-    }
-
     public async show({ params, response }: HttpContext) {
         const guest = await this.guestService.getById(params.id)
         if (!guest) {

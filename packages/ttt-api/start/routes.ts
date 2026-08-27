@@ -40,23 +40,10 @@ router
 router
     .group(() => {
         /**
-         * Users Routes
-         */
-        router
-            .group(() => {
-                router.get('/', '#controllers/users_controller.index')
-                router.get('/:id', '#controllers/users_controller.show')
-                router.patch('/:id', '#controllers/users_controller.update')
-                router.delete('/:id', '#controllers/users_controller.delete')
-            })
-            .prefix('/users')
-
-        /**
          * Projects Routes
          */
         router
             .group(() => {
-                router.get('/', '#controllers/projects_controller.index')
                 router.get('/:id', '#controllers/projects_controller.show')
                 router.post('/', '#controllers/projects_controller.create')
                 router.patch('/:id', '#controllers/projects_controller.update')
@@ -80,7 +67,6 @@ router
          */
         router
             .group(() => {
-                router.get('/', '#controllers/tables_controller.index')
                 router.get('/:id', '#controllers/tables_controller.show')
                 router.post('/', '#controllers/tables_controller.create')
                 router.patch('/:id', '#controllers/tables_controller.update')
@@ -93,7 +79,6 @@ router
          */
         router
             .group(() => {
-                router.get('/', '#controllers/guests_controller.index')
                 router.get('/:id', '#controllers/guests_controller.show')
                 router.post('/', '#controllers/guests_controller.create')
                 router.patch('/:id', '#controllers/guests_controller.update')

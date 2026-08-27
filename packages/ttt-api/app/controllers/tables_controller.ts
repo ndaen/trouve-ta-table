@@ -9,14 +9,6 @@ export default class TablesController {
         this.tableService = new TableService()
     }
 
-    public async index({ response }: HttpContext) {
-        const tables = await this.tableService.getAll()
-        if (tables.length === 0) {
-            return response.status(404).json({ message: 'No tables found' })
-        }
-        return response.status(200).json({ message: 'List of all tables', data: tables })
-    }
-
     public async show({ params, response }: HttpContext) {
         const table = await this.tableService.getById(params.id)
         if (!table) {

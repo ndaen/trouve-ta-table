@@ -16,11 +16,6 @@ export default class ProjectsController {
         this.guestService = new GuestService()
     }
 
-    public async index({ response }: HttpContext) {
-        const projects = await this.projectService.getAll()
-        return response.json({ message: 'List of projects', data: projects })
-    }
-
     public async show({ params, response }: HttpContext) {
         const projectId = params.id
         const project = await this.projectService.getById(projectId)
