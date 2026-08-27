@@ -10,6 +10,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-aldo} -d ${POSTGRES_DB:-ttt-db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
     networks:
       - ttt-network
     restart: unless-stopped
@@ -35,10 +40,10 @@ services:
       DB_USER: ${POSTGRES_USER:-aldo}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-Abcd1234*}
       DB_DATABASE: ${POSTGRES_DB:-ttt-db}
-      JWT_SECRET: ${JWT_SECRET}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - ttt-network
     restart: unless-stopped
@@ -56,7 +61,7 @@ services:
     ports:
       - "80:80"
     environment:
-      VITE_API_URL: ${VITE_API_URL:-http://localhost:3333/api}
+      VITE_API_URL: ${VITE_API_URL:-http://localhost:3333}
     depends_on:
       - api
     networks:
