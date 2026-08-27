@@ -33,6 +33,7 @@ export const TableFactory = factory
         description: faker.lorem.sentence(),
         capacity: 8,
     }))
+    .relation('project', () => ProjectFactory)
     .build()
 
 export const GuestFactory = factory
@@ -41,4 +42,5 @@ export const GuestFactory = factory
         lastName: faker.person.lastName(),
         email: faker.internet.email().toLowerCase(),
     }))
+    .relation('project', () => ProjectFactory)
     .build()
