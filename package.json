@@ -1,13 +1,14 @@
 {
   "name": "trouve-ta-table",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "concurrently \"npm run dev:api\" \"npm run dev:web\"",
     "dev:api": "npm run dev --workspace=packages/ttt-api",
     "dev:web": "npm run dev --workspace=packages/ttt-web",
     "build": "npm run build --workspace=packages/ttt-api && npm run build --workspace=packages/ttt-web",
-
     "docker:dev": "docker compose -f docker-compose.yml --env-file .env.docker up --build",
     "docker:dev:detached": "docker compose -f docker-compose.yml --env-file .env.docker up --build -d",
     "docker:prod": "docker compose -f docker-compose.yml --env-file .env.docker.production up --build -d",
@@ -19,7 +20,6 @@
     "docker:restart": "docker compose restart",
     "docker:rebuild": "docker compose down && docker compose up --build -d",
     "docker:clean": "docker system prune -f && docker volume prune -f",
-
     "db:migrate": "docker compose exec api node ace migration:run",
     "db:seed": "docker compose exec api node ace db:seed",
     "db:reset": "docker compose exec api node ace migration:rollback --batch=0 && docker compose exec api node ace migration:run",
@@ -27,5 +27,10 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "allowScripts": {
+    "@swc/core@1.11.24": true,
+    "esbuild@0.25.5": true,
+    "fsevents@2.3.3": true
   }
 }
