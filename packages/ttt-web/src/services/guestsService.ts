@@ -1,6 +1,5 @@
 import {api} from "@/utils/apiClient.ts";
 import type {Guest} from "@/types/guest.types.ts";
-import type {Email} from "@/types/common.types.ts";
 import type { CreateGuestInput, UpdateGuestInput } from "@/schemas/guestSchemas";
 
 interface ApiResponse {
@@ -13,14 +12,27 @@ interface ApiListResponse {
     data: Guest[];
 }
 
+export interface GuestSearchResult {
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    table: {
+        name: string;
+        description: string | null;
+    } | null;
+}
+
+interface GuestSearchResponse {
+    message: string;
+    data: GuestSearchResult[];
+    tooManyMatches: boolean;
+}
+
 export const guestsService = {
-    async getGuestTable(projectId: string, firstName: string, lastName: string, email: Email | null): Promise<ApiResponse> {
-        let query = `${firstName.toLowerCase()}+${lastName.toLowerCase()}`;
-        if (email) {
-            query =`${query}+${email.toLowerCase()}`;
-        }
-        query = encodeURIComponent(query);
-        return await api.get<ApiResponse>(`/api/projects/${projectId}/guests/search?q=${query}`);
+    async searchGuests(projectId: string, q: string): Promise<GuestSearchResponse> {
+        return await api.get<GuestSearchResponse>(
+            `/api/projects/${projectId}/guests/search?q=${encodeURIComponent(q)}`
+        );
     },
 
     async getByProjectId(projectId: string): Promise<Guest[]> {

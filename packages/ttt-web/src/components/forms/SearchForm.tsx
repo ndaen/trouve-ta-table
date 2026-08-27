@@ -1,98 +1,64 @@
 import {type FormEvent, useState} from "react";
 import {Input} from "@/components/ui/inputs/Input.tsx";
 import Button from "@/components/ui/buttons/Button.tsx";
-import {guestsService} from "@/services/guestsService.ts";
+import {guestsService, type GuestSearchResult} from "@/services/guestsService.ts";
 import {useToast} from "@/stores/useToastStore.ts";
 import type {UUID} from "ttt-api/app/types";
-import type {Guest} from "@/types/guest.types.ts";
-import type {Email} from "@/types/common.types.ts";
 import {ApiError} from "@/utils/apiClient.ts";
 
-interface SearchTableFormProps {
+interface SearchFormProps {
     projectId: UUID | string | undefined;
-    setResultModalVisible?: (visible: boolean) => void;
-    setGuestResult?: (guest: Guest | null) => void;
+    onResults: (results: GuestSearchResult[], tooManyMatches: boolean) => void;
 }
 
-const SearchForm = ({projectId, setResultModalVisible, setGuestResult}: SearchTableFormProps) => {
+const SearchForm = ({projectId, onResults}: SearchFormProps) => {
     const toast = useToast();
-    const [fullName, setFullName] = useState({
-        firstName: '',
-        lastName: '',
-    });
-    const [email, setEmail] = useState<Email | string>('');
+    const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         if (!projectId) {
-            toast.error('Aucun projet sélectionné.');
+            toast.error('Aucun mariage sélectionné.');
             return;
         }
-        if (!fullName.firstName || !fullName.lastName) {
-            toast.error('Veuillez remplir les deux champs.');
-            return;
-        }
-        if (email !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            toast.error('Veuillez entrer une adresse email valide.');
+        if (query.trim().length < 2) {
+            toast.warning('Entrez au moins deux lettres de votre nom.');
             return;
         }
 
+        setLoading(true);
         try {
-            const response = await guestsService.getGuestTable(projectId, fullName.firstName, fullName.lastName, email);
-            if (response) {
-                if (setGuestResult) {
-                    setGuestResult(response.data);
-                }
-                if (setResultModalVisible) {
-                    setResultModalVisible(true);
-                }
-            }
-
+            const response = await guestsService.searchGuests(projectId, query.trim());
+            onResults(response.data, response.tooManyMatches);
         } catch (error) {
-            if (error instanceof ApiError) {
-                if (error.status === 400) {
-                    toast.warning(error.message);
-                    return;
-                }
+            if (error instanceof ApiError && error.status === 429) {
+                toast.warning('Trop de recherches d\'un coup. Réessayez dans une minute.');
+            } else if (error instanceof ApiError) {
                 toast.error(error.message);
-
             } else {
                 toast.error('Une erreur est survenue lors de la recherche.');
             }
+        } finally {
+            setLoading(false);
         }
-
-
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit} className={'search-table-form'}>
             <Input
-                id={'input-first-name'}
-                placeholder={'Prénom'}
-                value={fullName.firstName}
+                id={'input-guest-name'}
+                placeholder={'Votre nom'}
+                value={query}
                 leftIcon={'user'}
-                onChange={(value) => setFullName({...fullName, firstName: value})}
-                label={'Prénom'}
+                onChange={(value) => setQuery(value)}
+                label={'Votre nom'}
                 required
             />
-            <Input
-                id={'input-last-name'}
-                placeholder={'Nom de famille'}
-                value={fullName.lastName}
-                leftIcon={'user-check'}
-                onChange={(value) => setFullName({...fullName, lastName: value})}
-                label={'Nom de famille'}
-                required
-            />
-            <Input
-                id={'input-email'}
-                type={'email'}
-                value={email}
-                onChange={(value) => setEmail(value)}
-                label={'Email (optionnel)'}
-                leftIcon={'mail'}
-                placeholder={'Email'}
-            />
-            <Button type={'submit'} icon={'search'}>Rechercher</Button>
+            <Button type={'submit'} icon={'search'} disabled={loading}>
+                {loading ? 'Recherche…' : 'Rechercher'}
+            </Button>
         </form>
     );
 };
