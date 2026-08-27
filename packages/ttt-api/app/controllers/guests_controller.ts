@@ -4,6 +4,7 @@ import Project from '#models/project'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
 import { createGuestValidator, updateGuestValidator } from '#validators/guest'
+import QuotaService from '#services/quota_service'
 
 export default class GuestsController {
     private guestService: GuestService
@@ -30,6 +31,7 @@ export default class GuestsController {
             return response.status(404).json({ message: 'Project not found' })
         }
         await bouncer.with(ProjectPolicy).authorize('manage', project)
+        await QuotaService.assertCanAddGuests(project.id, 1)
 
         const guest = await this.guestService.create(payload)
         return response.status(201).json({ message: 'Guest created successfully', data: guest })
