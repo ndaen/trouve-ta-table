@@ -1,30 +1,18 @@
 import { create } from 'zustand'
-import { parseJWT } from '@/utils/jwt'
-import { authService } from '@/services/authService.ts'
+import { authService, type AuthUser } from '@/services/authService.ts'
 import {
     type LoginWithRememberInput,
     type RegisterWithConfirmInput,
 } from '@/schemas/authSchemas'
 
-interface User {
-    sub: string
-    email: string
-    firstName: string
-    lastName: string
-    fullName: string
-    role: string
-    subscriptionPlan: string
-}
-
 interface AuthState {
-    user: User | null | undefined
+    user: AuthUser | null | undefined
     loading: boolean
     initialize: () => Promise<void>
     login: (credentials: LoginWithRememberInput) => Promise<void>
     register: (userData: RegisterWithConfirmInput) => Promise<void>
     logout: () => Promise<void>
     isAuth: () => boolean
-    getToken: () => string | null
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -36,37 +24,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     },
 
     initialize: async () => {
+        set({ loading: true })
         try {
-            set({ loading: true })
-            const token = localStorage.getItem("userToken")
-            if (token) {
-                try {
-                    if (!get().user) {
-                        const response = await authService.checkAuthStatus()
-                        if (response.isAuthenticated && response.token) {
-                            const user = parseJWT(response.token)
-                            localStorage.setItem("userToken", response.token)
-                            set({ user })
-                        } else {
-                            localStorage.removeItem("userToken")
-                            set({ user: null })
-                        }
-                    }
-                } catch {
-                    localStorage.removeItem("userToken")
-                    set({ user: null })
-                }
-            } else {
-                set({ loading: true })
-                const response = await authService.checkAuthStatus()
-                if (response.isAuthenticated && response.token) {
-                    const user = parseJWT(response.token)
-                    localStorage.setItem("userToken", response.token)
-                    set({ user })
-                }
-            }
-        } catch (error) {
-            console.error("Erreur lors de l'initialisation de l'auth:", error)
+            const response = await authService.me()
+            set({ user: response.user })
+        } catch {
             set({ user: null })
         } finally {
             set({ loading: false })
@@ -76,9 +38,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     login: async (credentials) => {
         try {
             const response = await authService.login(credentials)
-            const user = parseJWT(response.token)
-            localStorage.setItem("userToken", response.token)
-            set({ user })
+            set({ user: response.user })
         } catch (error) {
             console.warn("Erreur lors de la connexion:", error)
             throw error
@@ -87,20 +47,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     register: async (userData) => {
         const response = await authService.register(userData)
-        const user = parseJWT(response.token)
-        localStorage.setItem("userToken", response.token)
-        set({ user })
+        set({ user: response.user })
     },
 
     logout: async () => {
-        localStorage.removeItem("userToken")
-        set({ user: null })
         await authService.logout()
+        set({ user: null })
     },
-
-    getToken: () => {
-        return localStorage.getItem("userToken")
-    }
 }))
 
 export const initializeAuth = () => {

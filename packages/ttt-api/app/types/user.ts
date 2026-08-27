@@ -47,20 +47,3 @@ export interface LoginPayload {
     email: string
     password: string
 }
-
-/**
- * JWT payload for user authentication
- */
-export interface JwtPayload {
-    sub: UUID
-    email: string
-    firstName: string
-    lastName: string
-    fullName: string
-    role: UserRole
-    subscriptionPlan: SubscriptionPlan
-    iat: number
-    exp: number
-    iss: string
-    aud: string
-}

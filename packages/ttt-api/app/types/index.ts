@@ -7,13 +7,7 @@ export type {
     PaginationMeta,
 } from './common.ts'
 
-export type {
-    UserData,
-    CreateUserPayload,
-    UpdateUserPayload,
-    LoginPayload,
-    JwtPayload,
-} from './user.ts'
+export type { UserData, CreateUserPayload, UpdateUserPayload, LoginPayload } from './user.ts'
 
 export type {
     ProjectData,

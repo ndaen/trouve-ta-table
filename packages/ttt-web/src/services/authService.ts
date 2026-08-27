@@ -1,4 +1,4 @@
-import { LoginSchema } from "@/schemas/authSchemas.ts"
+import { LoginSchema } from '@/schemas/authSchemas.ts'
 import { api } from '@/utils/apiClient'
 
 interface LoginCredentials {
@@ -14,28 +14,32 @@ interface RegisterData {
     password: string
 }
 
-interface AuthResponse {
-    message: string
-    token: string
-    tokenType: 'Bearer'
+export interface AuthUser {
+    id: string
+    email: string
+    firstName: string
+    lastName: string
 }
 
-interface CheckResponse {
-    isAuthenticated: boolean
-    token?: string
-    tokenType?: 'Bearer'
+interface AuthResponse {
+    message: string
+    user: AuthUser
+}
+
+interface MeResponse {
+    user: AuthUser
 }
 
 export const authService = {
     async login(credentials: LoginCredentials): Promise<AuthResponse> {
         const loginInformation = LoginSchema.parse({
             email: credentials.email,
-            password: credentials.password
+            password: credentials.password,
         })
 
         return api.post<AuthResponse>('/api/auth/login', {
             ...loginInformation,
-            rememberMe: credentials.rememberMe
+            rememberMe: credentials.rememberMe,
         })
     },
 
@@ -47,19 +51,7 @@ export const authService = {
         return api.post('/api/auth/logout')
     },
 
-    async checkAuthStatus(): Promise<CheckResponse> {
-        try {
-            return await api.get<CheckResponse>('/api/auth/check')
-        } catch {
-            return { isAuthenticated: false }
-        }
-    },
-
-    async me(): Promise<AuthResponse> {
-        return api.get<AuthResponse>('/api/auth/me')
-    },
-
-    async refreshToken(): Promise<AuthResponse> {
-        return api.post<AuthResponse>('/api/auth/refresh-token')
+    async me(): Promise<MeResponse> {
+        return api.get<MeResponse>('/api/auth/me')
     },
 }
