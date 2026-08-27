@@ -18,6 +18,9 @@
 - `@adonisjs/limiter` doit rester en **^2.4.0** : la 3.x exige `@adonisjs/core` v7, que le projet n'a pas encore.
 - Redis est exclu du projet. Le store du limiter est `memory`, jamais `redis`.
 - Les erreurs de validation VineJS renvoient **422** dans toute cette application (voir `tests/functional/validation.spec.ts`). Le design parlait de 400 pour une requête vide : on aligne sur 422 pour rester cohérent avec le reste de l'API. C'est une correction assumée du design.
+- **`projects.user_id` est NOT NULL avec clé étrangère.** Tout test qui crée un projet crée
+  d'abord un utilisateur : `const user = await UserFactory.create()` puis
+  `ProjectFactory.merge({ userId: user.id })`. `ProjectFactory.create()` seul échoue.
 - Messages destinés aux invités : en français, sans jargon technique.
 - Format de commit : `<type>: <description courte en anglais>`, une ligne, minuscules. Pas de `Co-Authored-By`.
 - Portes de qualité, dans cet ordre, depuis `packages/ttt-api` : `npm test`, puis `npx tsc --noEmit` depuis la racine du monorepo, puis `npm run lint`.
@@ -172,14 +175,15 @@ Créer `packages/ttt-api/tests/functional/guest_search_name.spec.ts` :
 ```ts
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import { ProjectFactory } from '#database/factories/main'
+import { UserFactory, ProjectFactory } from '#database/factories/main'
 import Guest from '#models/guest'
 
 test.group('Colonne search_name', (group) => {
     group.each.setup(() => testUtils.db().truncate())
 
     test('est remplie à la création', async ({ assert }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         const guest = await Guest.create({
             projectId: project.id,
             firstName: 'José',
@@ -190,7 +194,8 @@ test.group('Colonne search_name', (group) => {
     })
 
     test('est mise à jour quand le nom change', async ({ assert }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         const guest = await Guest.create({
             projectId: project.id,
             firstName: 'José',
@@ -458,14 +463,15 @@ Créer `packages/ttt-api/tests/functional/guest_search.spec.ts` :
 ```ts
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
-import { ProjectFactory, TableFactory, GuestFactory } from '#database/factories/main'
+import { UserFactory, ProjectFactory, TableFactory, GuestFactory } from '#database/factories/main'
 import { GuestService } from '#services/guest_service'
 
 test.group('Recherche publique d\'invités', (group) => {
     group.each.setup(() => testUtils.db().truncate())
 
     test('une requête trop courte est refusée', async ({ client }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
 
         const response = await client.get(`/api/projects/${project.id}/guests/search?q=a`)
 
@@ -473,7 +479,8 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('une requête absente est refusée', async ({ client }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
 
         const response = await client.get(`/api/projects/${project.id}/guests/search`)
 
@@ -489,7 +496,8 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('un projet inactif renvoie 404', async ({ client }) => {
-        const project = await ProjectFactory.merge({ isActive: false }).create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id, isActive: false }).create()
         await GuestFactory.merge({
             projectId: project.id,
             firstName: 'Martin',
@@ -505,7 +513,8 @@ test.group('Recherche publique d\'invités', (group) => {
         client,
         assert,
     }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         const table = await TableFactory.merge({
             projectId: project.id,
             name: 'Table 4',
@@ -535,7 +544,8 @@ test.group('Recherche publique d\'invités', (group) => {
         client,
         assert,
     }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: project.id,
             firstName: 'Martin',
@@ -554,7 +564,8 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('la recherche ignore les accents dans les deux sens', async ({ client, assert }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: project.id,
             firstName: 'José',
@@ -569,7 +580,8 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('l\'ordre des mots est indifférent', async ({ client, assert }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: project.id,
             firstName: 'Martin',
@@ -584,7 +596,8 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('un invité sans table renvoie table null', async ({ client, assert }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: project.id,
             tableId: null,
@@ -598,8 +611,9 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('la recherche ne sort pas du projet', async ({ client, assert }) => {
-        const projetA = await ProjectFactory.create()
-        const projetB = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const projetA = await ProjectFactory.merge({ userId: user.id }).create()
+        const projetB = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: projetB.id,
             firstName: 'Martin',
@@ -613,7 +627,8 @@ test.group('Recherche publique d\'invités', (group) => {
     })
 
     test('au-delà du plafond, aucun résultat n\'est renvoyé', async ({ client, assert }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({ projectId: project.id, lastName: 'Martin' }).createMany(
             GuestService.MAX_SEARCH_RESULTS + 1
         )
@@ -629,7 +644,8 @@ test.group('Recherche publique d\'invités', (group) => {
         client,
         assert,
     }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: project.id,
             firstName: 'Martin',
@@ -840,14 +856,15 @@ Créer `packages/ttt-api/tests/functional/guest_search_throttle.spec.ts` :
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
 import limiter from '@adonisjs/limiter/services/main'
-import { ProjectFactory, GuestFactory } from '#database/factories/main'
+import { UserFactory, ProjectFactory, GuestFactory } from '#database/factories/main'
 
 test.group('Rate limit de la recherche publique', (group) => {
     group.each.setup(() => testUtils.db().truncate())
     group.each.teardown(() => limiter.clear())
 
     test('au-delà de 60 requêtes par minute, la recherche renvoie 429', async ({ client }) => {
-        const project = await ProjectFactory.create()
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
             projectId: project.id,
             firstName: 'Martin',
@@ -864,7 +881,7 @@ test.group('Rate limit de la recherche publique', (group) => {
         const refusee = await client.get(url)
         refusee.assertStatus(429)
     })
-}).tags(['throttle'])
+})
 ```
 
 Si `limiter.clear()` n'existe pas dans la version installée, vérifier la surface exacte de l'API :
