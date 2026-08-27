@@ -1,32 +1,23 @@
 # Trouve Ta Table 🍽️
 
-> *La plateforme moderne qui révolutionne la gestion et la recherche de tables*
+> *Le plan de table pour votre mariage*
 
 ---
 
 ## 📖 À Propos du Projet
 
-**Trouve Ta Table** est une solution complète qui facilite la connexion entre les clients et les établissements pour la réservation de tables. Notre plateforme s'adresse à deux publics distincts :
-
-### 🏢 Pour les Professionnels
-- **Gestion centralisée** de toutes vos tables et réservations
-- **Dashboard intuitif** pour visualiser l'occupation en temps réel  
-- **QR Codes personnalisés** pour chaque table
-- **Analytics détaillés** sur l'affluence et les préférences clients
-- **Interface d'administration** complète
-
-### 👥 Pour les Particuliers
-- **Recherche simplifiée** de tables disponibles
-- **Réservation en ligne** rapide et sécurisée
-- **Accès invité** sans inscription obligatoire
-- **Interface mobile-first** pour une expérience optimale
+**Trouve Ta Table** est un outil de plan de table pour mariages. Un couple prépare
+son plan (tables, invités, placement) avant le jour J.
 
 ### ✨ Fonctionnalités Principales
-- 🔐 **Authentification sécurisée** avec JWT
-- 📱 **Interface responsive** adaptée à tous les écrans
-- ⚡ **Temps réel** avec mise à jour instantanée des disponibilités
-- 🎨 **Design moderne** avec thème sombre/clair
-- 🌐 **API REST complète** pour intégrations tierces
+- 🔐 **Authentification par session** (cookie de session, `sessionGuard` AdonisJS)
+- 🗂️ **Gestion de projets** : chaque compte gère ses propres projets de mariage
+- 🪑 **Gestion des tables** : capacité, type d'événement
+- 👥 **Gestion des invités** : ajout, édition, assignation aux tables
+- 🛡️ **Autorisations centralisées** : un compte ne peut accéder qu'à ses propres
+  projets, tables et invités (Bouncer policy)
+- ✅ **Validation des données** côté API (VineJS)
+- 🎟️ **Quota d'invités** par projet, appliqué côté serveur
 
 ---
 
@@ -35,9 +26,9 @@
 ### 🚀 **Backend (API)**
 - 🟢 **AdonisJS 6** - Framework Node.js avec TypeScript
 - 🐘 **PostgreSQL 16** - Base de données relationnelle
-- 🔴 **Redis 7** - Cache et sessions
-- 🔐 **JWT** - Authentification sécurisée
+- 🍪 **Authentification par session** (cookie), via le `sessionGuard` d'AdonisJS
 - 📊 **Lucid ORM** - Mapping objet-relationnel
+- ✅ **VineJS** - Validation des données
 
 ### ⚛️ **Frontend (Web)**
 - ⚛️ **React 19** - Interface utilisateur moderne
@@ -74,34 +65,22 @@ cd trouve-ta-table
 
 ### 2️⃣ Configuration des variables d'environnement
 
-Créer les fichiers de configuration :
-
 ```bash
-# 🐳 Pour Docker
-cp .env.docker.example .env.docker
-cp .env.docker.production.example .env.docker.production
-
-# 💻 Pour le développement local (optionnel)
 cp packages/ttt-api/.env.example packages/ttt-api/.env
 ```
 
+Pour le chemin Docker, un fichier `.env.docker` doit exister à la racine (voir
+`.env.docker.exemple` pour la liste des variables attendues).
+
 ### 3️⃣ Installation avec Docker (🏆 Recommandé)
 
-#### 🔧 Développement
-
 ```bash
-# Démarrer tous les services
-npm run docker:dev
-
-# Ou en arrière-plan
-npm run docker:dev:detached
+docker compose -f docker-compose.dev.yml --env-file .env.docker up -d
 ```
 
-#### 🚀 Production
-
-```bash
-npm run docker:prod
-```
+Cette commande démarre Postgres, attend qu'il soit en bonne santé, applique les
+migrations automatiquement, puis lance l'API (port 3333) et le frontend
+(port 5173) avec rechargement à chaud.
 
 ### 4️⃣ Installation locale (Alternative)
 
@@ -109,10 +88,13 @@ npm run docker:prod
 # 📦 Installer les dépendances
 npm install
 
-# 🐳 Démarrer uniquement les services (DB + Redis)
-docker compose up postgres redis -d
+# 🐘 Démarrer uniquement Postgres
+docker compose up postgres -d
 
-# 🔥 Lancer en mode développement
+# 📈 Appliquer les migrations
+cd packages/ttt-api && node ace migration:run && cd ../..
+
+# 🔥 Lancer en mode développement (API + frontend)
 npm run dev
 ```
 
@@ -135,32 +117,25 @@ npm run build                 # Build API + Frontend
 ### 🐳 **Scripts Docker**
 
 ```bash
-# 🎛️ Gestion des conteneurs
-npm run docker:dev           # Démarrage développement
+npm run docker:dev           # Démarrage développement (build + up)
+npm run docker:dev:detached  # Idem, en arrière-plan
 npm run docker:prod          # Démarrage production
 npm run docker:down          # Arrêter les conteneurs
 npm run docker:down:volumes  # Arrêter + supprimer volumes
-npm run docker:restart       # Redémarrer les conteneurs
-npm run docker:rebuild       # Reconstruire et redémarrer
-
-# 📊 Logs
 npm run docker:logs          # Tous les logs
 npm run docker:logs:api      # Logs API uniquement
 npm run docker:logs:web      # Logs frontend uniquement
-
-# 🧹 Maintenance
+npm run docker:restart       # Redémarrer les conteneurs
+npm run docker:rebuild       # Reconstruire et redémarrer
 npm run docker:clean         # Nettoyer Docker
 ```
 
 ### 🗄️ **Scripts Base de Données**
 
 ```bash
-# 📈 Migrations
 npm run db:migrate           # Exécuter les migrations
 npm run db:status           # Statut des migrations
-npm run db:reset            # Reset complet de la DB
-
-# 🌱 Seeders
+npm run db:reset            # Rollback complet puis ré-application des migrations
 npm run db:seed             # Peupler la base avec des données de test
 ```
 
@@ -169,15 +144,12 @@ npm run db:seed             # Peupler la base avec des données de test
 Le projet inclut un **Makefile** pour simplifier les commandes Docker :
 
 ```bash
-# 📖 Voir toutes les commandes disponibles
-make help
-
-# 📋 Exemples courants
+make help                   # Voir toutes les commandes disponibles
 make logs                   # Voir tous les logs
-make logs-api              # Logs de l'API
-make shell-api             # Shell dans le conteneur API
-make run-migrations        # Exécuter les migrations
-make backup-db             # Sauvegarder la base
+make logs-api               # Logs de l'API
+make shell-api               # Shell dans le conteneur API
+make run-migrations           # Exécuter les migrations
+make backup-db                 # Sauvegarder la base
 ```
 
 ---
@@ -192,8 +164,9 @@ make backup-db             # Sauvegarder la base
 │   │   │   ├── 🎮 controllers/  # Contrôleurs REST
 │   │   │   ├── 📊 models/       # Modèles Lucid
 │   │   │   ├── ⚙️ services/     # Logique métier
+│   │   │   ├── 🛡️ policies/     # Autorisations (Bouncer)
 │   │   │   ├── 🛡️ middleware/   # Middlewares
-│   │   │   └── ✅ validators/   # Validation des données
+│   │   │   └── ✅ validators/   # Validation des données (VineJS)
 │   │   ├── 🗄️ database/
 │   │   │   ├── 📈 migrations/   # Migrations DB
 │   │   │   └── 🌱 seeders/      # Données de test
@@ -207,7 +180,8 @@ make backup-db             # Sauvegarder la base
 │       │   ├── 📝 types/        # Types TypeScript
 │       │   └── 🔧 utils/        # Utilitaires
 │       └── 🎨 public/           # Assets statiques
-├── 🐳 docker-compose.yml        # Configuration Docker
+├── 🐳 docker-compose.yml        # Configuration Docker (production)
+├── 🐳 docker-compose.dev.yml    # Configuration Docker (développement)
 └── 📋 package.json             # Scripts et workspaces
 ```
 
@@ -217,10 +191,9 @@ make backup-db             # Sauvegarder la base
 
 ### 🌐 **URLs locales**
 
-- 🖥️ **Frontend** : http://localhost (port 80)
+- 🖥️ **Frontend** : http://localhost:5173 (Docker dev / `npm run dev`)
 - 🚀 **API** : http://localhost:3333
 - 🐘 **Base de données** : localhost:5432
-- 🔴 **Redis** : localhost:6379
 
 ### 📋 **Workflow de développement**
 
@@ -257,16 +230,18 @@ docker compose ps
 
 ---
 
-## 🧪 Tests et Quality Assurance
+## 🧪 Tests
 
 ```bash
-# 🚀 Dans le conteneur API
-docker compose exec api npm run test
-docker compose exec api npm run lint
-docker compose exec api npm run typecheck
+cd packages/ttt-api && npm test
+```
 
-# ⚛️ Dans le conteneur Web
-docker compose exec web npm run lint
+```bash
+# 🔎 Lint et typecheck
+cd packages/ttt-api && npm run lint && npm run typecheck
+
+# ⚛️ Lint du frontend
+cd packages/ttt-web && npm run lint
 ```
 
 ---
@@ -326,11 +301,10 @@ docker compose ps
 
 ### 🔧 **Configuration de production**
 
-- 🌍 Variables d'environnement de `.env.docker.production`
-- ⚡ Images optimisées
+- 🌍 Variables d'environnement injectées via `--env-file` (voir `.env.docker.exemple`)
+- ⚡ Images optimisées (build multi-stage)
 - 🌐 Nginx pour servir le frontend
 - 🔄 Restart policies automatiques
-- 🛡️ Configuration de sécurité renforcée
 
 ---
 
@@ -341,15 +315,12 @@ docker compose ps
 git clone <repository-url> && cd trouve-ta-table
 
 # 2️⃣ Configure les variables
-cp .env.docker.example .env.docker
+cp packages/ttt-api/.env.example packages/ttt-api/.env
 
-# 3️⃣ Lance tout en une commande
-npm run docker:dev
+# 3️⃣ Lance tout en une commande (Postgres + migrations + API + frontend)
+docker compose -f docker-compose.dev.yml --env-file .env.docker up -d
 
-# 4️⃣ Setup la base de données
-npm run db:migrate && npm run db:seed
-
-# 🎉 C'est prêt ! Ouvre http://localhost
+# 🎉 C'est prêt ! Ouvre http://localhost:5173
 ```
 
 ---
