@@ -453,6 +453,7 @@ le cookie. Conserver les deux entretient l'illusion d'une sécurité inexistante
 - Modify: `packages/ttt-web/package.json`
 - Modify: `packages/ttt-api/.env`, `packages/ttt-api/.env.example`
 - Modify: `packages/ttt-web/src/stores/useAuthStore.ts`
+- Modify: `packages/ttt-web/src/services/authService.ts`
 - Create: `packages/ttt-api/tests/functional/auth.spec.ts`
 
 **Interfaces:**
@@ -460,7 +461,10 @@ le cookie. Conserver les deux entretient l'illusion d'une sécurité inexistante
 - Produces: le contrat des réponses d'authentification change. `POST /api/auth/register`
   et `POST /api/auth/login` renvoient `{ message, user: { id, email, firstName,
   lastName } }` sans champ `token`. `GET /api/auth/check` renvoie
-  `{ isAuthenticated: boolean }` sans champ `token`.
+  `{ isAuthenticated: boolean }` sans champ `token`. Côté front, `authService`
+  exporte le type `AuthUser` et les seules méthodes `login`, `register`, `logout`,
+  `me` ; `refreshToken` et `checkAuthStatus` sont supprimées, ainsi que
+  `useAuthStore.getToken`.
 
 - [ ] **Step 1: Écrire les tests qui échouent**
 
@@ -570,34 +574,127 @@ cd packages/ttt-api && npm uninstall jsonwebtoken @types/jsonwebtoken
 cd ../ttt-web && npm uninstall jsonwebtoken @types/jsonwebtoken
 ```
 
-- [ ] **Step 6: Nettoyer le front**
+- [ ] **Step 6: Réécrire le service d'authentification du front**
 
 ```bash
 git rm packages/ttt-web/src/utils/jwt.ts
 ```
 
-Dans `packages/ttt-web/src/stores/useAuthStore.ts`, supprimer tout import depuis
-`@/utils/jwt.ts`, tout stockage du token et tout appel à `parseJWT`,
-`isTokenExpired`, `getTokenTimeToExpire` ou `isTokenExpiringSoon`. L'utilisateur
-courant provient désormais de la réponse de `login` / `register` et de
-`GET /api/auth/me`. Vérifier ensuite qu'aucune référence ne subsiste :
+`authService.ts` type aujourd'hui `token: string` et `tokenType: 'Bearer'` dans ses
+interfaces, et expose un `refreshToken()` qui appelle `POST /api/auth/refresh-token`
+— une route qui n'existe pas dans `start/routes.ts`. Remplacer le contenu de
+`packages/ttt-web/src/services/authService.ts` par :
 
-```bash
-cd packages/ttt-web && grep -rn "utils/jwt\|parseJWT\|isTokenExpired\|jsonwebtoken" src/
+```ts
+import { LoginSchema } from '@/schemas/authSchemas.ts'
+import { api } from '@/utils/apiClient'
+
+interface LoginCredentials {
+    email: string
+    password: string
+    rememberMe?: boolean
+}
+
+interface RegisterData {
+    firstName: string
+    lastName: string
+    email: string
+    password: string
+}
+
+export interface AuthUser {
+    id: string
+    email: string
+    firstName: string
+    lastName: string
+}
+
+interface AuthResponse {
+    message: string
+    user: AuthUser
+}
+
+interface MeResponse {
+    user: AuthUser
+}
+
+export const authService = {
+    async login(credentials: LoginCredentials): Promise<AuthResponse> {
+        const loginInformation = LoginSchema.parse({
+            email: credentials.email,
+            password: credentials.password,
+        })
+
+        return api.post<AuthResponse>('/api/auth/login', {
+            ...loginInformation,
+            rememberMe: credentials.rememberMe,
+        })
+    },
+
+    async register(userData: RegisterData): Promise<AuthResponse> {
+        return api.post<AuthResponse>('/api/auth/register', userData)
+    },
+
+    async logout(): Promise<{ message: string }> {
+        return api.post('/api/auth/logout')
+    },
+
+    async me(): Promise<MeResponse> {
+        return api.get<MeResponse>('/api/auth/me')
+    },
+}
 ```
 
-Attendu : aucune sortie.
+`refreshToken()` et `checkAuthStatus()` disparaissent : la session est portée par le
+cookie, il n'y a plus rien à rafraîchir, et `GET /api/auth/me` répond seul à la
+question « qui est connecté ». Si un composant appelait `checkAuthStatus`, le
+remplacer par `me()`.
 
-- [ ] **Step 7: Lancer les vérifications**
+- [ ] **Step 7: Réécrire le store d'authentification**
+
+`useAuthStore.initialize()` se déclenche aujourd'hui sur
+`localStorage.getItem("userToken")` et reconstruit l'utilisateur avec
+`parseJWT(response.token)`. Sans token, cette logique n'a plus d'objet. La source de
+vérité devient le cookie de session, interrogé via `GET /api/auth/me`.
+
+Dans `packages/ttt-web/src/stores/useAuthStore.ts` :
+
+- Supprimer l'import `parseJWT` depuis `@/utils/jwt`.
+- Supprimer la propriété `getToken` de l'interface du store et son implémentation.
+- Supprimer tout appel à `localStorage.getItem/setItem/removeItem("userToken")`.
+- Réécrire `initialize()` selon ce principe : appeler `authService.me()` ; en cas de
+  succès, poser `user` depuis `response.user` et `isAuthenticated: true` ; en cas
+  d'erreur (401 compris), poser `user: null` et `isAuthenticated: false`. Dans les
+  deux cas, terminer par `loading: false`.
+- `login()` et `register()` posent `user` depuis `response.user` renvoyé par l'API,
+  sans passer par un token.
+- `logout()` appelle `authService.logout()` puis remet `user: null` et
+  `isAuthenticated: false`.
+
+Conserver le reste de la forme du store (noms des propriétés, signature des
+actions) pour ne pas casser les composants qui le consomment.
+
+- [ ] **Step 8: Vérifier qu'aucune trace de token ne subsiste**
+
+```bash
+cd packages/ttt-web && grep -rn "utils/jwt\|parseJWT\|isTokenExpired\|isTokenExpiringSoon\|getTokenTimeToExpire\|jsonwebtoken\|userToken\|refreshToken\|tokenType\|checkAuthStatus" src/
+```
+
+Attendu : aucune sortie. Toute occurrence restante doit être supprimée avant de
+poursuivre.
+
+- [ ] **Step 9: Lancer les vérifications**
 
 ```bash
 cd packages/ttt-api && npm run typecheck && npm test
 cd ../ttt-web && npm run build
 ```
 
-Attendu : les quatre tests d'authentification PASSENT, le build front réussit.
+Attendu : les quatre tests d'authentification PASSENT, le build front réussit. Si le
+build front signale une propriété manquante sur un composant consommant le store,
+c'est un appel résiduel à `getToken` ou `checkAuthStatus` : le corriger à la source.
 
-- [ ] **Step 8: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
 git add -A packages/ttt-api packages/ttt-web package-lock.json
