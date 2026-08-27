@@ -109,8 +109,19 @@ export class GuestService {
 
     /**
      * Recherche publique, non authentifiée. Renvoie toujours un tableau.
+     *
+     * Le type de retour est annoté explicitement : sans ça, TypeScript
+     * synthétise une union « amicale » où chaque branche porte les clés de
+     * l'autre en `?: undefined`, ce qui empêche `'error' in result` de
+     * vraiment restreindre le type côté contrôleur (sous strictNullChecks).
      */
-    public async searchPublic(projectId: string, query: string) {
+    public async searchPublic(
+        projectId: string,
+        query: string
+    ): Promise<
+        | { error: string; status: number }
+        | { results: GuestSearchResult[]; tooManyMatches: boolean }
+    > {
         const project = await Project.query()
             .where('id', projectId)
             .andWhere('isActive', true)

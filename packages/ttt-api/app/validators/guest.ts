@@ -24,3 +24,13 @@ export const assignGuestValidator = vine.compile(
         tableId: vine.string().uuid(),
     })
 )
+
+/**
+ * Le minimum de 2 caractères n'est pas cosmétique : il empêche l'énumération
+ * lettre par lettre de la liste d'invités sur une route non authentifiée.
+ */
+export const searchGuestsValidator = vine.compile(
+    vine.object({
+        q: vine.string().trim().minLength(2).maxLength(80),
+    })
+)

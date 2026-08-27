@@ -10,11 +10,9 @@ router
         router.post('/auth/login', '#controllers/auth_controller.login')
         router.get('/auth/check', '#controllers/auth_controller.check')
 
-        // Fuzzy Search Routes
-        router.get(
-            '/projects/:id/guests/search',
-            '#controllers/guests_controller.fuzzySearchInProject'
-        )
+        // Recherche publique : c'est l'écran que voient les invités après avoir
+        // scanné le QR code. Volontairement hors du groupe authentifié.
+        router.get('/projects/:id/guests/search', '#controllers/guests_controller.search')
 
         router.get('/', async () => {
             return {

@@ -3,7 +3,12 @@ import Guest from '#models/guest'
 import Project from '#models/project'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
-import { createGuestValidator, updateGuestValidator, assignGuestValidator } from '#validators/guest'
+import {
+    createGuestValidator,
+    updateGuestValidator,
+    assignGuestValidator,
+    searchGuestsValidator,
+} from '#validators/guest'
 import QuotaService from '#services/quota_service'
 
 export default class GuestsController {
@@ -111,22 +116,25 @@ export default class GuestsController {
         return response.status(200).json({ message: 'List of unassigned guests', data: guests })
     }
 
-    public async fuzzySearchInProject({ params, response, request }: HttpContext) {
-        const { id } = params
-        const q = request.input('q')
+    /**
+     * Route publique, non authentifiée : aucun bouncer ici, par conception.
+     * Le durcissement est ailleurs — validation de `q`, projet actif seulement,
+     * projection stricte des champs, et rate limit sur la route.
+     */
+    public async search({ params, request, response }: HttpContext) {
+        const { q } = await request.validateUsing(searchGuestsValidator, {
+            data: request.qs(),
+        })
 
-        if (!q) {
-            return response.status(400).json({ message: 'Search query is required' })
-        }
-
-        const guest = await this.guestService.fuzzySearchByProjectId(id, q)
-        if (!(guest instanceof Guest)) {
-            return response.status(guest.status).json({ message: guest.error })
+        const result = await this.guestService.searchPublic(params.id, q)
+        if ('error' in result) {
+            return response.status(result.status).json({ message: result.error })
         }
 
         return response.status(200).json({
-            message: 'Guest matching the search query',
-            data: guest,
+            message: 'Résultats de la recherche',
+            data: result.results,
+            tooManyMatches: result.tooManyMatches,
         })
     }
 }
