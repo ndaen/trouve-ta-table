@@ -36,7 +36,7 @@ export default function GuestForm({
         firstName: initialData?.firstName || '',
         lastName: initialData?.lastName || '',
         email: initialData?.email || '',
-        dietary_requirements: initialData?.dietary_requirements || '',
+        dietaryRequirements: initialData?.dietaryRequirements || '',
         tableId: initialData?.tableId || null
     });
 
@@ -94,7 +94,7 @@ export default function GuestForm({
                 firstName: initialData.firstName || '',
                 lastName: initialData.lastName || '',
                 email: initialData.email || '',
-                dietary_requirements: initialData.dietary_requirements || '',
+                dietaryRequirements: initialData.dietaryRequirements || '',
                 tableId: initialData.tableId || null
             });
         }
@@ -154,10 +154,10 @@ export default function GuestForm({
                     <Select
                         id="guest-dietary-requirements"
                         label="Régime alimentaire (optionnel)"
-                        value={formData.dietary_requirements || ''}
-                        onChange={(value) => updateField('dietary_requirements', value || null)}
+                        value={formData.dietaryRequirements || ''}
+                        onChange={(value) => updateField('dietaryRequirements', value || null)}
                         options={DIETARY_REQUIREMENTS_OPTIONS}
-                        error={errors.dietary_requirements}
+                        error={errors.dietaryRequirements}
                     />
                 </div>
 

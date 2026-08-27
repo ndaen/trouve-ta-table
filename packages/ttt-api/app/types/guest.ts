@@ -11,7 +11,7 @@ export interface GuestData {
     firstName: string
     lastName: string
     email: string
-    dietary_requirements: string
+    dietaryRequirements: string | null
     createdAt: string
     updatedAt: string
 }
@@ -24,7 +24,7 @@ export interface CreateGuestPayload {
     firstName: string
     lastName: string
     email?: string
-    dietary_requirements?: string
+    dietaryRequirements?: string | null
     tableId?: UUID | null
 }
 
@@ -35,7 +35,7 @@ export interface UpdateGuestPayload {
     firstName?: string
     lastName?: string
     email?: string
-    dietary_requirements?: string
+    dietaryRequirements?: string | null
     tableId?: UUID | null
 }
 
@@ -73,7 +73,7 @@ export interface ImportGuestsPayload {
         firstName: string
         lastName: string
         email?: string
-        dietary_requirements?: string
+        dietaryRequirements?: string | null
         tableName?: string
     }>
 }

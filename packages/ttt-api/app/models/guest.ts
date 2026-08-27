@@ -25,8 +25,8 @@ export default class Guest extends BaseModel {
     @column()
     declare email: string
 
-    @column({ serializeAs: 'dietary_requirements' })
-    declare dietary_requirements: string
+    @column()
+    declare dietaryRequirements: string | null
 
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime

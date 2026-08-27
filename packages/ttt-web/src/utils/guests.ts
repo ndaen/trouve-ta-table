@@ -1,5 +1,5 @@
-export const getDietaryRequirementsSummary = (dietary_requirements: string): string => {
-    switch (dietary_requirements) {
+export const getDietaryRequirementsSummary = (dietaryRequirements: string): string => {
+    switch (dietaryRequirements) {
         case 'vegetarian':
             return 'Végétarien';
         case 'vegan':

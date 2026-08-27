@@ -23,7 +23,7 @@ export default class GuestsController {
             'firstName',
             'lastName',
             'email',
-            'dietary_requirements',
+            'dietaryRequirements',
         ])
         const guest = await this.guestService.create(guestData)
         return response.status(201).json({ message: 'Guest created successfully', data: guest })
@@ -32,7 +32,7 @@ export default class GuestsController {
     public async update({ params, request, response, auth }: HttpContext) {
         const result = await this.guestService.update(
             params.id,
-            request.only(['firstName', 'lastName', 'email', 'dietary_requirements']),
+            request.only(['firstName', 'lastName', 'email', 'dietaryRequirements']),
             auth.user!
         )
         if (!(result instanceof Guest)) {

@@ -68,10 +68,10 @@ const GuestSearchPage = () => {
                                     ) : (
                                         <p>Vous n'êtes pas encore assigné à une table.</p>
                                     )}
-                                    {guestResult.dietary_requirements && (
+                                    {guestResult.dietaryRequirements && (
                                         <div className="flex flex-direction-row items-center gap-2">
                                             <DynamicIcon name="wheat-off" size={20}/>
-                                            <p>{guestResult.dietary_requirements}</p>
+                                            <p>{guestResult.dietaryRequirements}</p>
                                         </div>
                                     )}
                                 </div>

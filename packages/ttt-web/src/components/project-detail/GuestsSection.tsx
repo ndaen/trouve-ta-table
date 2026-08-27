@@ -103,9 +103,9 @@ export default function GuestsSection({
             label: 'Régime alimentaire',
             width: '25%',
             render: (_, guest) => (
-                guest.dietary_requirements ? (
+                guest.dietaryRequirements ? (
                     <Badge variant="badge-secondary">
-                        {getDietaryRequirementsSummary(guest.dietary_requirements)}
+                        {getDietaryRequirementsSummary(guest.dietaryRequirements)}
                     </Badge>
                 ) : (
                     <span className="text-muted text-sm">Aucun</span>
@@ -323,7 +323,7 @@ export default function GuestsSection({
                             firstName: guestToEdit.firstName,
                             lastName: guestToEdit.lastName,
                             email: guestToEdit.email,
-                            dietary_requirements: guestToEdit.dietary_requirements,
+                            dietaryRequirements: guestToEdit.dietaryRequirements ?? undefined,
                             tableId: guestToEdit.tableId
                         } : undefined}
                         onSubmit={handleUpdateGuest}

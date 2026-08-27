@@ -10,7 +10,7 @@ export interface Guest {
     firstName: string;
     lastName: string;
     email?: string;
-    dietary_requirements?: string;
+    dietaryRequirements?: string | null;
     createdAt: string;
     updatedAt: string;
 
