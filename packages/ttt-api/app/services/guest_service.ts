@@ -1,6 +1,8 @@
 import Guest from '#models/guest'
 import Table from '#models/table'
 import Project from '#models/project'
+import { tokenizeSearchQuery } from '#utils/search_text'
+import type { GuestSearchResult } from '#types/guest'
 
 export class GuestService {
     public async getById(id: string) {
@@ -98,55 +100,69 @@ export class GuestService {
         return guests
     }
 
-    public async fuzzySearchByProjectId(projectId: string, searchTerms: string) {
-        searchTerms = searchTerms
-            .toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
+    /**
+     * Plafond de résultats. Au-delà, on ne renvoie rien : sans ce plafond,
+     * taper « a » retournerait la moitié des invités d'un mariage en une seule
+     * requête, ce qui est exactement l'énumération que la spec §6.3 interdit.
+     */
+    public static MAX_SEARCH_RESULTS = 10
 
-        const [firstName, lastName, email] = [
-            ...searchTerms.split('+').map((term) => term.trim()),
-            '',
-            '',
-            '',
-        ].slice(0, 3)
+    /**
+     * Recherche publique, non authentifiée. Renvoie toujours un tableau.
+     */
+    public async searchPublic(projectId: string, query: string) {
+        const project = await Project.query()
+            .where('id', projectId)
+            .andWhere('isActive', true)
+            .first()
 
-        const project = await Project.find(projectId)
         if (!project) {
-            return {
-                error: 'Project not found',
-                status: 404,
-            }
+            return { error: 'Projet introuvable', status: 404 }
         }
 
+        const tokens = tokenizeSearchQuery(query)
+        if (tokens.length === 0) {
+            return { results: [] as GuestSearchResult[], tooManyMatches: false }
+        }
+
+        // On demande une ligne de plus que le plafond : c'est ce qui permet de
+        // savoir qu'il y en a trop sans compter la totalité.
         const guests = await Guest.query()
+            .select('id', 'first_name', 'last_name', 'table_id')
             .where('projectId', project.id)
-            .where((query) => {
-                if (firstName) {
-                    query.where('firstName', 'ILIKE', `%${firstName}%`)
-                }
-                if (lastName) {
-                    query.andWhere('lastName', 'ILIKE', `%${lastName}%`)
-                }
-                if (email) {
-                    query.andWhere('email', 'ILIKE', `%${email}%`)
+            .where((builder) => {
+                // `search_name` est déjà en minuscules et sans accent, donc un
+                // LIKE simple suffit — pas besoin d'ILIKE ni d'unaccent.
+                for (const token of tokens) {
+                    builder.andWhere('searchName', 'LIKE', `%${token}%`)
                 }
             })
             .preload('table')
-        if (guests.length > 1) {
-            return {
-                error: 'Plusieurs invités correspondent à votre recherche, veuillez préciser avec votre email',
-                status: 400,
-            }
-        }
-        if (guests.length === 0) {
-            return {
-                error: 'Aucun invité trouvé correspondant à votre recherche',
-                status: 404,
-            }
+            .limit(GuestService.MAX_SEARCH_RESULTS + 1)
+
+        if (guests.length > GuestService.MAX_SEARCH_RESULTS) {
+            return { results: [] as GuestSearchResult[], tooManyMatches: true }
         }
 
-        return guests[0]
+        return {
+            results: guests.map((guest) => this.toSearchResult(guest)),
+            tooManyMatches: false,
+        }
+    }
+
+    /**
+     * Projection explicite. Ne jamais remplacer par `guest.serialize()` : c'est
+     * précisément ce qui faisait fuiter l'email et le régime alimentaire.
+     */
+    private toSearchResult(guest: Guest): GuestSearchResult {
+        return {
+            firstName: guest.firstName,
+            lastName: guest.lastName,
+            fullName: guest.fullName,
+            table: guest.table
+                ? { name: guest.table.name, description: guest.table.description }
+                : null,
+        }
     }
 
     public async getByProject(projectID: string) {
