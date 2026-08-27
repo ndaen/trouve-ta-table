@@ -66,6 +66,56 @@ test.group('Autorisation des écritures invités', (group) => {
         response.assertStatus(403)
     })
 
+    test('un intrus ne peut pas modifier une table dans un projet tiers', async ({ client }) => {
+        const proprietaire = await UserFactory.create()
+        const intrus = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: proprietaire.id }).create()
+        const table = await TableFactory.merge({ projectId: project.id }).create()
+
+        const response = await client
+            .patch(`/api/tables/${table.id}`)
+            .json({ name: 'Table renommée' })
+            .loginAs(intrus)
+
+        response.assertStatus(403)
+    })
+
+    test('un intrus ne peut pas supprimer une table dans un projet tiers', async ({ client }) => {
+        const proprietaire = await UserFactory.create()
+        const intrus = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: proprietaire.id }).create()
+        const table = await TableFactory.merge({ projectId: project.id }).create()
+
+        const response = await client.delete(`/api/tables/${table.id}`).loginAs(intrus)
+
+        response.assertStatus(403)
+    })
+
+    test('un intrus ne peut pas modifier un invité dans un projet tiers', async ({ client }) => {
+        const proprietaire = await UserFactory.create()
+        const intrus = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: proprietaire.id }).create()
+        const guest = await GuestFactory.merge({ projectId: project.id }).create()
+
+        const response = await client
+            .patch(`/api/guests/${guest.id}`)
+            .json({ firstName: 'Modifié' })
+            .loginAs(intrus)
+
+        response.assertStatus(403)
+    })
+
+    test('un intrus ne peut pas supprimer un invité dans un projet tiers', async ({ client }) => {
+        const proprietaire = await UserFactory.create()
+        const intrus = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: proprietaire.id }).create()
+        const guest = await GuestFactory.merge({ projectId: project.id }).create()
+
+        const response = await client.delete(`/api/guests/${guest.id}`).loginAs(intrus)
+
+        response.assertStatus(403)
+    })
+
     test('le propriétaire peut créer un invité dans son projet', async ({ client }) => {
         const proprietaire = await UserFactory.create()
         const project = await ProjectFactory.merge({ userId: proprietaire.id }).create()
