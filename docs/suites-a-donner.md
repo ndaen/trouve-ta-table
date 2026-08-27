@@ -31,3 +31,47 @@
 - **Oracle d'existence** dans `guest_service.assignToTable` : 404 pour une table inexistante, 400 pour une table d'un autre projet. Laisse un appelant authentifié sonder l'existence d'un identifiant de table.
 - **Deux tests ne peuvent pas échouer** : celui de la date sans heure en environnement UTC, et celui de l'invité sans email qui omet la clé au lieu de passer `null`.
 - `tests/functional/removed_endpoints.spec.ts` n'assert que des codes de statut, jamais les corps de réponse.
+
+## Chantier isolé : montée vers AdonisJS 7
+
+Volontairement écartée du plan « fondations », dont une contrainte était « pas de
+changement de framework ». À traiter **après la mise en ligne**, sur sa propre branche.
+
+Documentation : <https://docs.adonisjs.com> — guide de migration v6 → v7 à préciser.
+
+### Ce qui est en attente
+
+| Paquet | Actuel | Cible |
+|---|---|---|
+| `@adonisjs/core` | 6.21.0 | 7.5.0 |
+| `@adonisjs/auth` | 9.6.0 | 10.1.0 |
+| `@adonisjs/lucid` | 21.8.2 | 22.4.2 |
+| `@adonisjs/session` | 7.7.1 | 8.1.0 |
+| `@adonisjs/bouncer` | 3.1.6 | 4.0.1 |
+| `@adonisjs/cors` | 2.2.1 | 3.0.0 |
+| `@adonisjs/assembler` | 7.8.2 | 8.5.0 |
+| `@japa/runner` | 4.5.0 | 5.3.0 |
+| `@japa/plugin-adonisjs` | 4.0.0 | 5.2.0 |
+
+Les paquets `@japa/*` dépendent transitivement de `core` v7 : la montée se fait **en
+bloc**, elle ne se découpe pas.
+
+### Pourquoi après la mise en ligne, et pas avant
+
+- `@adonisjs/auth` v10 et `@adonisjs/session` v8 touchent exactement le mécanisme sur
+  lequel repose toute l'authentification depuis la suppression du JWT. Et le
+  comportement du cookie en cross-origin est précisément le seul point que les tests
+  ne couvrent pas.
+- Enchaîner une montée de framework majeure juste après une refonte de
+  l'autorisation rend tout échec indiagnosticable : montée ou refactor ? C'est la
+  raison pour laquelle la montée de versions était la tâche 2 du plan et pas la 9.
+- Les 42 tests et une application qui tourne sont le filet qui rend cette migration
+  vérifiable. Ils n'existaient pas avant ce plan.
+
+### Deux majeures écartées pour d'autres raisons
+
+- **TypeScript 5.9 → 7** : tenté puis reverté pendant le plan. La réécriture native
+  (`tsgo`) casse `tsc` ici — `baseUrl` supprimé côté web, typage des `catch` plus
+  strict côté API.
+- **Vite 7 → 8**, avec `@vitejs/plugin-react` 4 → 6 qui en dépend. Sans lien avec
+  AdonisJS, à traiter séparément.
