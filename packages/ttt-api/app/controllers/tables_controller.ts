@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Table from '#models/table'
 import { TableService } from '#services/table_service'
+import ProjectPolicy from '#policies/project_policy'
 
 export default class TablesController {
     private tableService: TableService
@@ -9,11 +10,13 @@ export default class TablesController {
         this.tableService = new TableService()
     }
 
-    public async show({ params, response }: HttpContext) {
+    public async show({ params, response, bouncer }: HttpContext) {
         const table = await this.tableService.getById(params.id)
         if (!table) {
             return response.status(404).json({ message: 'Table not found' })
         }
+        await bouncer.with(ProjectPolicy).authorize('view', table.project)
+
         return response.status(200).json({ message: 'Table details', data: table })
     }
 
@@ -23,11 +26,16 @@ export default class TablesController {
         return response.status(201).json({ message: 'Table created successfully', data: table })
     }
 
-    public async update({ params, request, response, auth }: HttpContext) {
+    public async update({ params, request, response, bouncer }: HttpContext) {
+        const table = await this.tableService.getById(params.id)
+        if (!table) {
+            return response.status(404).json({ message: 'Table not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', table.project)
+
         const result = await this.tableService.update(
             params.id,
-            request.only(['name', 'description', 'capacity']),
-            auth.user!
+            request.only(['name', 'description', 'capacity'])
         )
 
         if (!(result instanceof Table)) {
@@ -38,8 +46,14 @@ export default class TablesController {
         return response.status(200).json({ message: 'Table updated successfully', data: result })
     }
 
-    public async delete({ params, response, auth }: HttpContext) {
-        const result = await this.tableService.delete(params.id, auth.user!)
+    public async delete({ params, response, bouncer }: HttpContext) {
+        const table = await this.tableService.getById(params.id)
+        if (!table) {
+            return response.status(404).json({ message: 'Table not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', table.project)
+
+        const result = await this.tableService.delete(params.id)
 
         if (result.status) {
             return response.status(result.status).json({ message: result.message })

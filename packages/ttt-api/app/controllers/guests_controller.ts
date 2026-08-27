@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Guest from '#models/guest'
 import { GuestService } from '#services/guest_service'
+import ProjectPolicy from '#policies/project_policy'
 
 export default class GuestsController {
     private guestService: GuestService
@@ -9,11 +10,13 @@ export default class GuestsController {
         this.guestService = new GuestService()
     }
 
-    public async show({ params, response }: HttpContext) {
+    public async show({ params, response, bouncer }: HttpContext) {
         const guest = await this.guestService.getById(params.id)
         if (!guest) {
             return response.status(404).json({ message: 'Guest not found' })
         }
+        await bouncer.with(ProjectPolicy).authorize('view', guest.project)
+
         return response.status(200).json({ message: 'Guest details', data: guest })
     }
 
@@ -29,11 +32,16 @@ export default class GuestsController {
         return response.status(201).json({ message: 'Guest created successfully', data: guest })
     }
 
-    public async update({ params, request, response, auth }: HttpContext) {
+    public async update({ params, request, response, bouncer }: HttpContext) {
+        const guest = await this.guestService.getById(params.id)
+        if (!guest) {
+            return response.status(404).json({ message: 'Guest not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', guest.project)
+
         const result = await this.guestService.update(
             params.id,
-            request.only(['firstName', 'lastName', 'email', 'dietaryRequirements']),
-            auth.user!
+            request.only(['firstName', 'lastName', 'email', 'dietaryRequirements'])
         )
         if (!(result instanceof Guest)) {
             return response.status(result.status).json({ message: result.error })
@@ -41,8 +49,14 @@ export default class GuestsController {
         return response.status(200).json({ message: 'Guest updated successfully', data: result })
     }
 
-    public async delete({ params, response, auth }: HttpContext) {
-        const result = await this.guestService.delete(params.id, auth.user!)
+    public async delete({ params, response, bouncer }: HttpContext) {
+        const guest = await this.guestService.getById(params.id)
+        if (!guest) {
+            return response.status(404).json({ message: 'Guest not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', guest.project)
+
+        const result = await this.guestService.delete(params.id)
         if (result.status) {
             return response.status(result.status).json({ message: result.message })
         }

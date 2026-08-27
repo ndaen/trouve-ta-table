@@ -1,5 +1,4 @@
 import Guest from '#models/guest'
-import type User from '#models/user'
 import Table from '#models/table'
 import Project from '#models/project'
 
@@ -12,19 +11,13 @@ export class GuestService {
         return Guest.create(guestData)
     }
 
-    public async update(id: string, guestData: Partial<Guest>, user: User) {
+    public async update(id: string, guestData: Partial<Guest>) {
         const guest = await this.getById(id)
 
         if (!guest) {
             return {
                 error: 'Guest not found',
                 status: 404,
-            }
-        }
-        if (user.id !== guest.project.userId && user.role !== 'admin') {
-            return {
-                error: 'You do not have permission to update this guest',
-                status: 403,
             }
         }
 
@@ -33,18 +26,12 @@ export class GuestService {
         return guest
     }
 
-    public async delete(id: string, user: User) {
+    public async delete(id: string) {
         const guest = await this.getById(id)
         if (!guest) {
             return {
                 error: 'Guest not found',
                 status: 404,
-            }
-        }
-        if (user.id !== guest.project.userId && user.role !== 'admin') {
-            return {
-                error: 'You do not have permission to delete this guest',
-                status: 403,
             }
         }
 

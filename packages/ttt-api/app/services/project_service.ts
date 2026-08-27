@@ -1,6 +1,5 @@
 import Project from '#models/project'
 import { type CreateProjectPayload } from '#types/project'
-import type User from '#models/user'
 
 export default class ProjectService {
     public async createProject(payload: CreateProjectPayload) {
@@ -23,11 +22,7 @@ export default class ProjectService {
         return Project.query().where('id', projectId).preload('tables').preload('guests').first()
     }
 
-    public async updateProject(
-        projectId: string,
-        payload: Partial<CreateProjectPayload>,
-        user: User
-    ) {
+    public async updateProject(projectId: string, payload: Partial<CreateProjectPayload>) {
         const project = await Project.query().where('id', projectId).first()
         if (!project) {
             return {
@@ -35,19 +30,12 @@ export default class ProjectService {
                 status: 404,
             }
         }
-        if (user.id === project.userId || user.role === 'admin') {
-            project.merge(payload)
-            await project.save()
-        } else {
-            return {
-                error: 'You do not have permission to update this project',
-                status: 403,
-            }
-        }
+        project.merge(payload)
+        await project.save()
         return project
     }
 
-    public async deleteProject(projectId: string, user: User) {
+    public async deleteProject(projectId: string) {
         const project = await Project.query().where('id', projectId).first()
         if (!project) {
             return {
@@ -55,14 +43,7 @@ export default class ProjectService {
                 status: 404,
             }
         }
-        if (user.id === project.userId || user.role === 'admin') {
-            await project.delete()
-            return { message: `Project with ID: ${projectId} deleted successfully` }
-        } else {
-            return {
-                error: 'You do not have permission to delete this project',
-                status: 403,
-            }
-        }
+        await project.delete()
+        return { message: `Project with ID: ${projectId} deleted successfully` }
     }
 }

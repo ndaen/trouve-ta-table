@@ -1,9 +1,9 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import Project from '#models/project'
 import ProjectService from '#services/project_service'
 import type { CreateProjectPayload } from '#types/index'
 import { TableService } from '#services/table_service'
 import { GuestService } from '#services/guest_service'
+import ProjectPolicy from '#policies/project_policy'
 
 export default class ProjectsController {
     private projectService: ProjectService
@@ -16,12 +16,14 @@ export default class ProjectsController {
         this.guestService = new GuestService()
     }
 
-    public async show({ params, response }: HttpContext) {
+    public async show({ params, response, bouncer }: HttpContext) {
         const projectId = params.id
         const project = await this.projectService.getById(projectId)
         if (!project) {
             return response.status(404).json({ message: 'Project not found' })
         }
+        await bouncer.with(ProjectPolicy).authorize('view', project)
+
         return response.json({ message: `Project details for ID: ${projectId}`, data: project })
     }
 
@@ -38,24 +40,26 @@ export default class ProjectsController {
         return response.status(201).json({ message: 'Project created successfully', data: project })
     }
 
-    public async update({ params, request, response, auth }: HttpContext) {
-        const result = await this.projectService.updateProject(
-            params.id,
-            request.body(),
-            auth.user!
-        )
-        if (!(result instanceof Project)) {
-            return response.status(result.status).json({ message: result.error })
+    public async update({ params, request, response, bouncer }: HttpContext) {
+        const project = await this.projectService.getById(params.id)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
         }
-        return response.json({ message: `Project updated successfully`, data: result })
+        await bouncer.with(ProjectPolicy).authorize('manage', project)
+
+        const updated = await this.projectService.updateProject(params.id, request.body())
+        return response.json({ message: `Project updated successfully`, data: updated })
     }
 
-    public async delete({ params, response, auth }: HttpContext) {
+    public async delete({ params, response, bouncer }: HttpContext) {
         const projectId = params.id
-        const result = await this.projectService.deleteProject(projectId, auth.user!)
-        if (result.error) {
-            return response.status(result.status).json({ message: result.error })
+        const project = await this.projectService.getById(projectId)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
         }
+        await bouncer.with(ProjectPolicy).authorize('manage', project)
+
+        const result = await this.projectService.deleteProject(projectId)
         return response.json({ message: result.message })
     }
 
@@ -74,16 +78,14 @@ export default class ProjectsController {
         return response.json({ message: `Projects for user ID: ${auth.user!.id}`, data: projects })
     }
 
-    public async getProjectTables({ params, response }: HttpContext) {
+    public async getProjectTables({ params, response, bouncer }: HttpContext) {
         const project = await this.projectService.getById(params.id)
         if (!project) {
             return response.status(404).json({ message: 'Project not found' })
         }
-        const tables = await this.tableService.getByProject(project.id)
+        await bouncer.with(ProjectPolicy).authorize('view', project)
 
-        if (tables.length === 0) {
-            return response.status(404).json({ message: 'No tables found for this project' })
-        }
+        const tables = await this.tableService.getByProject(project.id)
 
         return response.status(200).json({
             message: 'Project tables',
@@ -91,11 +93,12 @@ export default class ProjectsController {
         })
     }
 
-    public async getProjectGuests({ params, response }: HttpContext) {
+    public async getProjectGuests({ params, response, bouncer }: HttpContext) {
         const project = await this.projectService.getById(params.id)
         if (project === null) {
             return response.status(404).json({ message: 'Project not found' })
         }
+        await bouncer.with(ProjectPolicy).authorize('view', project)
 
         const guests = await this.guestService.getByProject(project.id)
         return response.status(200).json({
