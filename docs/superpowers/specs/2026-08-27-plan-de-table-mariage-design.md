@@ -64,7 +64,7 @@ Critère unique : est-ce que ça sert la phrase produit ?
 | Colonnes `subscriptionPlan` et `subscriptionExpiresAt` (migration de suppression) | Remplacées par le quota d'invités. |
 | Contournement `user.role === 'admin'` dans les règles d'autorisation | Avec `users_controller` supprimé, plus rien ne permet de devenir admin. Une branche morte dans un chemin de sécurité est le pire endroit pour en avoir. La colonne `role` reste en base mais n'ouvre plus rien. |
 | `DesignSystemPage` et route `/show/design` | Outil de développement exposé en production. Les composants du design system restent. |
-| `silent_auth_middleware`, `guest_middleware` | Générés par AdonisJS, jamais référencés dans `start/kernel.ts`. |
+| `silent_auth_middleware`, `guest_middleware` | Générés par AdonisJS, non utilisés. `silent_auth_middleware` n'est référencé nulle part. `guest_middleware` est enregistré comme middleware nommé dans `start/kernel.ts` mais n'est appliqué à aucune route dans `start/routes.ts` ; son entrée dans `kernel.ts` est retirée avec lui. |
 | Service Redis dans `docker-compose.yml` et `docker-compose.dev.yml` | Aucune utilisation dans le code : ni `@adonisjs/redis`, ni `config/redis.ts`, ni référence. Le store de session est `cookie`. |
 
 ### Conservé
