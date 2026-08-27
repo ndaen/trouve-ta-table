@@ -1,5 +1,5 @@
 // packages/ttt-api/app/types/user.ts
-import type { UUID, UserRole, SubscriptionPlan } from './common.js'
+import type { UUID, UserRole } from './common.js'
 
 /**
  * User interface matching the User model
@@ -10,8 +10,6 @@ export interface UserData {
     firstName: string
     lastName: string
     role: UserRole
-    subscriptionPlan: SubscriptionPlan
-    subscriptionExpiresAt: string | null
     lastLoginAt: string
     createdAt: string
     updatedAt: string
@@ -26,7 +24,6 @@ export interface CreateUserPayload {
     firstName: string
     lastName: string
     role?: UserRole
-    subscriptionPlan?: SubscriptionPlan
 }
 
 /**
@@ -37,7 +34,6 @@ export interface UpdateUserPayload {
     lastName?: string
     email?: string
     role?: UserRole
-    subscriptionPlan?: SubscriptionPlan
 }
 
 /**

@@ -9,11 +9,6 @@ export type UUID = string
 export type UserRole = 'admin' | 'user'
 
 /**
- * Subscription plans available
- */
-export type SubscriptionPlan = 'free' | 'starter' | 'pro' | 'enterprise'
-
-/**
  * Event types for projects
  */
 export type EventType = 'wedding' | 'bar_mitzvah' | 'anniversary' | 'corporate' | 'other'

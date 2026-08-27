@@ -1,11 +1,4 @@
-export type {
-    UUID,
-    UserRole,
-    SubscriptionPlan,
-    EventType,
-    ApiResponse,
-    PaginationMeta,
-} from './common.ts'
+export type { UUID, UserRole, EventType, ApiResponse, PaginationMeta } from './common.ts'
 
 export type { UserData, CreateUserPayload, UpdateUserPayload, LoginPayload } from './user.ts'
 

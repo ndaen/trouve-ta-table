@@ -7,7 +7,7 @@ import hash from '@adonisjs/core/services/hash'
 import Project from '#models/project'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { DbRememberMeTokensProvider } from '@adonisjs/auth/session'
-import type { SubscriptionPlan, UserRole, UUID } from '#types/index'
+import type { UserRole, UUID } from '#types/index'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
     uids: ['id', 'email'],
@@ -32,12 +32,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
     @column({ serializeAs: 'role' })
     declare role: UserRole
-
-    @column()
-    declare subscriptionPlan: SubscriptionPlan
-
-    @column.dateTime()
-    declare subscriptionExpiresAt: DateTime
 
     @column.dateTime({ autoCreate: true })
     declare lastLoginAt: DateTime

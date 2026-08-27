@@ -1,7 +1,6 @@
 import {useEffect} from "react";
 import {useAuthStore} from "@/stores/useAuthStore.ts";
 import {Route, Routes, useLocation, useNavigate} from "react-router"
-import DesignSystemPage from "@/pages/ProtectedRoutes/DesignSystemPage.tsx"
 import Header from "@/components/navigation/Header.tsx"
 import {ProtectedRoute} from '@/components/navigation/ProtectedRoutes.tsx'
 import DashboardPage from "@/pages/ProtectedRoutes/DashboardPage.tsx";
@@ -42,11 +41,6 @@ export default function AppWithAuth() {
         <>
             {shouldShowHeader && <Header/>}
             <Routes>
-                <Route path="/show/design" element={
-                    <ProtectedRoute>
-                        <DesignSystemPage/>
-                    </ProtectedRoute>
-                }/>
                 <Route path="dashboard">
                     <Route index element={
                         <ProtectedRoute>

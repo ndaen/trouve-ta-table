@@ -14,17 +14,6 @@ services:
       - ttt-network
     restart: unless-stopped
 
-  redis:
-    image: redis:7-alpine
-    container_name: ttt-redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - ttt-network
-    restart: unless-stopped
-
   api:
     build:
       context: .
@@ -40,8 +29,6 @@ services:
       LOG_LEVEL: info
       APP_KEY: ${APP_KEY}
       SESSION_DRIVER: cookie
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
       DB_CONNECTION: pg
       DB_HOST: postgres
       DB_PORT: 5432
@@ -52,7 +39,6 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     depends_on:
       - postgres
-      - redis
     networks:
       - ttt-network
     restart: unless-stopped
@@ -79,7 +65,6 @@ services:
 
 volumes:
   postgres_data:
-  redis_data:
 
 networks:
   ttt-network:
