@@ -5,7 +5,6 @@ import { TableService } from '#services/table_service'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
 import { createProjectValidator, updateProjectValidator } from '#validators/project'
-import type { EventType } from '#types/index'
 
 export default class ProjectsController {
     private projectService: ProjectService
@@ -33,8 +32,7 @@ export default class ProjectsController {
         const payload = await request.validateUsing(createProjectValidator)
         const project = await this.projectService.createProject({
             ...payload,
-            eventType: payload.eventType as EventType,
-            eventDate: DateTime.fromJSDate(payload.eventDate),
+            eventDate: DateTime.fromJSDate(payload.eventDate, { zone: 'utc' }),
             userId: auth.user!.id,
         })
         if (!project) {
@@ -53,8 +51,9 @@ export default class ProjectsController {
         const payload = await request.validateUsing(updateProjectValidator)
         const updated = await this.projectService.updateProject(params.id, {
             ...payload,
-            eventType: payload.eventType as EventType | undefined,
-            eventDate: payload.eventDate ? DateTime.fromJSDate(payload.eventDate) : undefined,
+            eventDate: payload.eventDate
+                ? DateTime.fromJSDate(payload.eventDate, { zone: 'utc' })
+                : undefined,
         })
         return response.json({ message: `Project updated successfully`, data: updated })
     }

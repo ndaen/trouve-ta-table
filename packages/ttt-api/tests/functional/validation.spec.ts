@@ -48,4 +48,37 @@ test.group('Validation des entrées', (group) => {
             .loginAs(user)
         response.assertStatus(201)
     })
+
+    test('un projet avec un eventType hors énumération est refusé', async ({ client }) => {
+        const user = await UserFactory.create()
+        const response = await client
+            .post('/api/projects')
+            .json({
+                name: 'Mariage de Camille',
+                venue: 'Château de Vaux',
+                eventType: 'birthday',
+                eventDate: '2027-06-12',
+            })
+            .loginAs(user)
+        response.assertStatus(422)
+    })
+
+    test('un projet avec une date sans heure conserve le jour indiqué', async ({
+        client,
+        assert,
+    }) => {
+        const user = await UserFactory.create()
+        const response = await client
+            .post('/api/projects')
+            .json({
+                name: 'Mariage de Camille',
+                venue: 'Château de Vaux',
+                eventType: 'wedding',
+                eventDate: '2027-06-12',
+            })
+            .loginAs(user)
+        response.assertStatus(201)
+        const eventDate = response.body().data.eventDate as string
+        assert.equal(eventDate.slice(0, 10), '2027-06-12')
+    })
 })
