@@ -1,5 +1,6 @@
 import router from '@adonisjs/core/services/router'
 import { middleware } from '#start/kernel'
+import { publicSearchThrottle } from '#start/limiter'
 
 router.get('/health', '#controllers/health_controller.check')
 
@@ -12,7 +13,9 @@ router
 
         // Recherche publique : c'est l'écran que voient les invités après avoir
         // scanné le QR code. Volontairement hors du groupe authentifié.
-        router.get('/projects/:id/guests/search', '#controllers/guests_controller.search')
+        router
+            .get('/projects/:id/guests/search', '#controllers/guests_controller.search')
+            .use(publicSearchThrottle)
 
         router.get('/', async () => {
             return {
