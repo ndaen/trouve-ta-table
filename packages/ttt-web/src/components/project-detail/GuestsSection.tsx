@@ -322,7 +322,7 @@ export default function GuestsSection({
                         initialData={guestToEdit ? {
                             firstName: guestToEdit.firstName,
                             lastName: guestToEdit.lastName,
-                            email: guestToEdit.email,
+                            email: guestToEdit.email ?? undefined,
                             dietaryRequirements: guestToEdit.dietaryRequirements ?? undefined,
                             tableId: guestToEdit.tableId
                         } : undefined}
