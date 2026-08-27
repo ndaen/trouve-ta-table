@@ -132,12 +132,14 @@ import type { Config } from '@japa/runner/types'
 import { pluginAdonisJS } from '@japa/plugin-adonisjs'
 import testUtils from '@adonisjs/core/services/test_utils'
 import { authApiClient } from '@adonisjs/auth/plugins/api_client'
+import { sessionApiClient } from '@adonisjs/session/plugins/api_client'
 
 export const plugins: Config['plugins'] = [
     assert(),
     apiClient(),
     pluginAdonisJS(app),
     authApiClient(app),
+    sessionApiClient(app),
 ]
 
 export const runnerHooks: Required<Pick<Config, 'setup' | 'teardown'>> = {
@@ -153,7 +155,21 @@ export const configureSuite: Config['configureSuite'] = (suite) => {
 ```
 
 `authApiClient` ajoute la méthode `.loginAs(user)` au client de test : c'est ce qui
-permettra de tester l'autorisation avec deux comptes distincts.
+permettra de tester l'autorisation avec deux comptes distincts. `sessionApiClient` est
+indispensable avec lui : sans ce plugin, `.loginAs()` lève
+`withSession is not a function`, car le guard de session a besoin du client de session
+pour poser le cookie.
+
+Créer également `packages/ttt-api/.env.test` contenant une seule ligne :
+
+```
+SESSION_DRIVER=memory
+```
+
+AdonisJS charge ce fichier par-dessus `.env` en environnement de test. Le driver
+`cookie` de production est incompatible avec le client de session de Japa, qui exige un
+store consultable côté serveur ; sans ce basculement, toute requête `.loginAs()` répond
+401. Ce fichier ne contient aucun secret et se commit.
 
 - [ ] **Step 6: Écrire les factories**
 
