@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Table from '#models/table'
+import Project from '#models/project'
 import { TableService } from '#services/table_service'
 import ProjectPolicy from '#policies/project_policy'
 
@@ -20,8 +21,15 @@ export default class TablesController {
         return response.status(200).json({ message: 'Table details', data: table })
     }
 
-    public async create({ request, response }: HttpContext) {
+    public async create({ request, response, bouncer }: HttpContext) {
         const tableData = request.only(['projectId', 'name', 'description', 'capacity'])
+
+        const project = await Project.find(tableData.projectId)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', project)
+
         const table = await this.tableService.create(tableData)
         return response.status(201).json({ message: 'Table created successfully', data: table })
     }

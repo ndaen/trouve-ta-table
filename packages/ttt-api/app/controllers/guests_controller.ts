@@ -1,5 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import Guest from '#models/guest'
+import Project from '#models/project'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
 
@@ -20,7 +21,7 @@ export default class GuestsController {
         return response.status(200).json({ message: 'Guest details', data: guest })
     }
 
-    public async create({ request, response }: HttpContext) {
+    public async create({ request, response, bouncer }: HttpContext) {
         const guestData = request.only([
             'projectId',
             'firstName',
@@ -28,6 +29,13 @@ export default class GuestsController {
             'email',
             'dietaryRequirements',
         ])
+
+        const project = await Project.find(guestData.projectId)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', project)
+
         const guest = await this.guestService.create(guestData)
         return response.status(201).json({ message: 'Guest created successfully', data: guest })
     }
@@ -63,23 +71,34 @@ export default class GuestsController {
         return response.status(200).json(result.message)
     }
 
-    public async assignToTable({ params, request, response }: HttpContext) {
+    public async assignToTable({ params, request, response, bouncer }: HttpContext) {
         const { tableId } = request.only(['tableId'])
         if (!tableId) {
             return response.status(400).json({ message: 'Table ID is required' })
         }
-        const result = await this.guestService.assignToTable(params.id, tableId)
 
+        const guest = await this.guestService.getById(params.id)
+        if (!guest) {
+            return response.status(404).json({ message: 'Guest not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', guest.project)
+
+        const result = await this.guestService.assignToTable(params.id, tableId)
         if (!(result instanceof Guest)) {
             return response.status(result.status).json({ message: result.error })
         }
-
         return response
             .status(200)
             .json({ message: 'Guest assigned to table successfully', data: result })
     }
 
-    public async unassignFromTable({ params, response }: HttpContext) {
+    public async unassignFromTable({ params, response, bouncer }: HttpContext) {
+        const existingGuest = await this.guestService.getById(params.id)
+        if (!existingGuest) {
+            return response.status(404).json({ message: 'Guest not found' })
+        }
+        await bouncer.with(ProjectPolicy).authorize('manage', existingGuest.project)
+
         const guest = await this.guestService.unassignFromTable(params.id)
         if (!(guest instanceof Guest)) {
             return response.status(guest.status).json({ message: guest.error })
@@ -89,11 +108,14 @@ export default class GuestsController {
             .json({ message: 'Guest unassigned from table successfully', data: guest })
     }
 
-    public async getUnassignedGuests({ params, response }: HttpContext) {
-        const guests = await this.guestService.getUnassignedGuests(params.id)
-        if (guests.length === 0) {
-            return response.status(404).json({ message: 'No unassigned guests found' })
+    public async getUnassignedGuests({ params, response, bouncer }: HttpContext) {
+        const project = await Project.find(params.id)
+        if (!project) {
+            return response.status(404).json({ message: 'Project not found' })
         }
+        await bouncer.with(ProjectPolicy).authorize('view', project)
+
+        const guests = await this.guestService.getUnassignedGuests(params.id)
         return response.status(200).json({ message: 'List of unassigned guests', data: guests })
     }
 
