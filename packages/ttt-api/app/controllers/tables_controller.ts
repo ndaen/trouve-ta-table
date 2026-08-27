@@ -3,6 +3,7 @@ import Table from '#models/table'
 import Project from '#models/project'
 import { TableService } from '#services/table_service'
 import ProjectPolicy from '#policies/project_policy'
+import { createTableValidator, updateTableValidator } from '#validators/table'
 
 export default class TablesController {
     private tableService: TableService
@@ -22,15 +23,15 @@ export default class TablesController {
     }
 
     public async create({ request, response, bouncer }: HttpContext) {
-        const tableData = request.only(['projectId', 'name', 'description', 'capacity'])
+        const payload = await request.validateUsing(createTableValidator)
 
-        const project = await Project.find(tableData.projectId)
+        const project = await Project.find(payload.projectId)
         if (!project) {
             return response.status(404).json({ message: 'Project not found' })
         }
         await bouncer.with(ProjectPolicy).authorize('manage', project)
 
-        const table = await this.tableService.create(tableData)
+        const table = await this.tableService.create(payload)
         return response.status(201).json({ message: 'Table created successfully', data: table })
     }
 
@@ -41,10 +42,8 @@ export default class TablesController {
         }
         await bouncer.with(ProjectPolicy).authorize('manage', table.project)
 
-        const result = await this.tableService.update(
-            params.id,
-            request.only(['name', 'description', 'capacity'])
-        )
+        const payload = await request.validateUsing(updateTableValidator)
+        const result = await this.tableService.update(params.id, payload)
 
         if (!(result instanceof Table)) {
             if (result.error) {

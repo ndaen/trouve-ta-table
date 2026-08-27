@@ -1,9 +1,11 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import { DateTime } from 'luxon'
 import ProjectService from '#services/project_service'
-import type { CreateProjectPayload } from '#types/index'
 import { TableService } from '#services/table_service'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
+import { createProjectValidator, updateProjectValidator } from '#validators/project'
+import type { EventType } from '#types/index'
 
 export default class ProjectsController {
     private projectService: ProjectService
@@ -28,12 +30,13 @@ export default class ProjectsController {
     }
 
     public async create({ request, response, auth }: HttpContext) {
-        const body = request.body() as CreateProjectPayload
-        const payload: CreateProjectPayload = {
-            ...body,
+        const payload = await request.validateUsing(createProjectValidator)
+        const project = await this.projectService.createProject({
+            ...payload,
+            eventType: payload.eventType as EventType,
+            eventDate: DateTime.fromJSDate(payload.eventDate),
             userId: auth.user!.id,
-        }
-        const project = await this.projectService.createProject(payload)
+        })
         if (!project) {
             return response.status(400).json({ message: 'Failed to create project' })
         }
@@ -47,7 +50,12 @@ export default class ProjectsController {
         }
         await bouncer.with(ProjectPolicy).authorize('manage', project)
 
-        const updated = await this.projectService.updateProject(params.id, request.body())
+        const payload = await request.validateUsing(updateProjectValidator)
+        const updated = await this.projectService.updateProject(params.id, {
+            ...payload,
+            eventType: payload.eventType as EventType | undefined,
+            eventDate: payload.eventDate ? DateTime.fromJSDate(payload.eventDate) : undefined,
+        })
         return response.json({ message: `Project updated successfully`, data: updated })
     }
 

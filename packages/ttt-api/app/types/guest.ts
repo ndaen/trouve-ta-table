@@ -10,7 +10,7 @@ export interface GuestData {
     tableId: UUID | null
     firstName: string
     lastName: string
-    email: string
+    email: string | null
     dietaryRequirements: string | null
     createdAt: string
     updatedAt: string
@@ -23,7 +23,7 @@ export interface CreateGuestPayload {
     projectId: UUID
     firstName: string
     lastName: string
-    email?: string
+    email?: string | null
     dietaryRequirements?: string | null
     tableId?: UUID | null
 }
@@ -34,7 +34,7 @@ export interface CreateGuestPayload {
 export interface UpdateGuestPayload {
     firstName?: string
     lastName?: string
-    email?: string
+    email?: string | null
     dietaryRequirements?: string | null
     tableId?: UUID | null
 }

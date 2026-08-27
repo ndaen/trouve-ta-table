@@ -9,7 +9,7 @@ export interface Guest {
     tableId?: UUID | null;
     firstName: string;
     lastName: string;
-    email?: string;
+    email?: string | null;
     dietaryRequirements?: string | null;
     createdAt: string;
     updatedAt: string;

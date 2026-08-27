@@ -8,7 +8,7 @@ export interface TableData {
     id: UUID
     projectId: UUID
     name: string
-    description: string
+    description: string | null
     capacity: number
     createdAt: string
     updatedAt: string
@@ -20,7 +20,7 @@ export interface TableData {
 export interface CreateTablePayload {
     projectId: UUID
     name: string
-    description?: string
+    description?: string | null
     capacity: number
 }
 
@@ -29,7 +29,7 @@ export interface CreateTablePayload {
  */
 export interface UpdateTablePayload {
     name?: string
-    description?: string
+    description?: string | null
     capacity?: number
 }
 

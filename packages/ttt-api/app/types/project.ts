@@ -21,7 +21,7 @@ export interface CreateProjectPayload {
     eventType: EventType
     eventDate: DateTime
     venue: string
-    description?: string
+    description?: string | null
     userId: string
 }
 
@@ -30,7 +30,7 @@ export interface UpdateProjectPayload {
     eventType?: EventType
     eventDate?: DateTime
     venue?: string
-    description?: string
+    description?: string | null
     qrCodeUrl?: string
     isActive?: boolean
 }

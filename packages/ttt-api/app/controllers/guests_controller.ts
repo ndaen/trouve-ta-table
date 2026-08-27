@@ -3,6 +3,7 @@ import Guest from '#models/guest'
 import Project from '#models/project'
 import { GuestService } from '#services/guest_service'
 import ProjectPolicy from '#policies/project_policy'
+import { createGuestValidator, updateGuestValidator } from '#validators/guest'
 
 export default class GuestsController {
     private guestService: GuestService
@@ -22,21 +23,15 @@ export default class GuestsController {
     }
 
     public async create({ request, response, bouncer }: HttpContext) {
-        const guestData = request.only([
-            'projectId',
-            'firstName',
-            'lastName',
-            'email',
-            'dietaryRequirements',
-        ])
+        const payload = await request.validateUsing(createGuestValidator)
 
-        const project = await Project.find(guestData.projectId)
+        const project = await Project.find(payload.projectId)
         if (!project) {
             return response.status(404).json({ message: 'Project not found' })
         }
         await bouncer.with(ProjectPolicy).authorize('manage', project)
 
-        const guest = await this.guestService.create(guestData)
+        const guest = await this.guestService.create(payload)
         return response.status(201).json({ message: 'Guest created successfully', data: guest })
     }
 
@@ -47,10 +42,8 @@ export default class GuestsController {
         }
         await bouncer.with(ProjectPolicy).authorize('manage', guest.project)
 
-        const result = await this.guestService.update(
-            params.id,
-            request.only(['firstName', 'lastName', 'email', 'dietaryRequirements'])
-        )
+        const payload = await request.validateUsing(updateGuestValidator)
+        const result = await this.guestService.update(params.id, payload)
         if (!(result instanceof Guest)) {
             return response.status(result.status).json({ message: result.error })
         }

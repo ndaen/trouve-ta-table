@@ -17,7 +17,7 @@ export default class Table extends BaseModel {
     declare name: string
 
     @column()
-    declare description: string
+    declare description: string | null
 
     @column()
     declare capacity: number
