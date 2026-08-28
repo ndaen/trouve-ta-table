@@ -33,12 +33,28 @@ const SearchForm = ({projectId, onResults}: SearchFormProps) => {
             const response = await guestsService.searchGuests(projectId, query.trim());
             onResults(response.data, response.tooManyMatches);
         } catch (error) {
-            if (error instanceof ApiError && error.status === 429) {
-                toast.warning('Trop de recherches d\'un coup. Réessayez dans une minute.');
-            } else if (error instanceof ApiError) {
-                toast.error(error.message);
-            } else {
-                toast.error('Une erreur est survenue lors de la recherche.');
+            // Un invité ne doit jamais lire « Failed to fetch » ni « Erreur 422 ».
+            // Le client HTTP enveloppe toute erreur — réseau comprise — dans une
+            // ApiError, dont le message est parfois du texte de navigateur en
+            // anglais, parfois un libellé fabriqué à partir du code de statut. On
+            // ne l'affiche donc jamais tel quel : on traduit le statut en une
+            // phrase que quelqu'un debout dans un hall d'entrée comprend.
+            const statut = error instanceof ApiError ? error.status : -1;
+            switch (statut) {
+                case 429:
+                    toast.warning("Trop de recherches d'un coup. Réessayez dans une minute.");
+                    break;
+                case 422:
+                    toast.warning('Votre recherche est trop longue. Entrez seulement votre nom.');
+                    break;
+                case 0:
+                    toast.error('Connexion perdue. Vérifiez votre réseau et réessayez.');
+                    break;
+                case 404:
+                    toast.error("Cette recherche n'est plus disponible. Adressez-vous à l'accueil.");
+                    break;
+                default:
+                    toast.error('Une erreur est survenue lors de la recherche.');
             }
         } finally {
             setLoading(false);
@@ -54,6 +70,7 @@ const SearchForm = ({projectId, onResults}: SearchFormProps) => {
                 leftIcon={'user'}
                 onChange={(value) => setQuery(value)}
                 label={'Votre nom'}
+                maxLength={80}
                 required
             />
             <Button type={'submit'} icon={'search'} disabled={loading}>
