@@ -35,4 +35,11 @@ export default await Env.create(new URL('../', import.meta.url), {
 	|----------------------------------------------------------
 	*/
     SESSION_DRIVER: Env.schema.enum(['cookie', 'memory'] as const),
+
+    /*
+	|----------------------------------------------------------
+	| Nombre de proxys de confiance devant l'application
+	|----------------------------------------------------------
+	*/
+    TRUST_PROXY_HOPS: Env.schema.number.optional(),
 })

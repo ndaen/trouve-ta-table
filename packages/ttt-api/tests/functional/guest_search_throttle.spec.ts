@@ -12,7 +12,7 @@ test.group('Rate limit de la recherche publique', (group) => {
     group.each.setup(() => limiter.clear())
     group.each.teardown(() => limiter.clear())
 
-    test('au-delà de 60 requêtes par minute, la recherche renvoie 429', async ({ client }) => {
+    test('au-delà de 300 requêtes par minute, la recherche renvoie 429', async ({ client }) => {
         const user = await UserFactory.create()
         const project = await ProjectFactory.merge({ userId: user.id }).create()
         await GuestFactory.merge({
@@ -23,12 +23,43 @@ test.group('Rate limit de la recherche publique', (group) => {
 
         const url = `/api/projects/${project.id}/guests/search?q=martin`
 
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 300; i++) {
             const autorisee = await client.get(url)
             autorisee.assertStatus(200)
         }
 
         const refusee = await client.get(url)
         refusee.assertStatus(429)
+    })
+
+    test('le seau est scopé par mariage : épuiser le projet A ne bloque pas le projet B', async ({
+        client,
+    }) => {
+        const user = await UserFactory.create()
+        const projetA = await ProjectFactory.merge({ userId: user.id }).create()
+        const projetB = await ProjectFactory.merge({ userId: user.id }).create()
+        await GuestFactory.merge({
+            projectId: projetA.id,
+            firstName: 'Martin',
+            lastName: 'Dupont',
+        }).create()
+        await GuestFactory.merge({
+            projectId: projetB.id,
+            firstName: 'Martin',
+            lastName: 'Dupont',
+        }).create()
+
+        const urlA = `/api/projects/${projetA.id}/guests/search?q=martin`
+        const urlB = `/api/projects/${projetB.id}/guests/search?q=martin`
+
+        for (let i = 0; i < 300; i++) {
+            const autorisee = await client.get(urlA)
+            autorisee.assertStatus(200)
+        }
+        const refuseeA = await client.get(urlA)
+        refuseeA.assertStatus(429)
+
+        const autoriseeB = await client.get(urlB)
+        autoriseeB.assertStatus(200)
     })
 })
