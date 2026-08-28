@@ -16,6 +16,9 @@
 
 ## À traiter par le plan « mise en ligne »
 
+- **Régler `TRUST_PROXY_HOPS` selon l'hébergeur retenu.** La valeur par défaut
+  est 0, correcte en local et fausse derrière un proxy. Mal réglée, elle ne se
+  voit dans aucun test et rend le rate limit de la recherche publique inopérant.
 - **Vérifier le comportement du cookie de session en cross-origin.** C'est le risque numéro un de la suppression du JWT, et il n'est prouvable qu'avec un vrai navigateur sur de vrais domaines. L'aller-retour a été vérifié manuellement en local, pas en cross-site. Spec §8.
 - **Confirmer que le mode production ne renvoie pas de traces d'erreur.** En développement, l'API renvoie les frames de pile et les chemins de fichiers. Le code est correct (`debug = !app.inProduction`) et `docker-compose.yml` pose `NODE_ENV=production`, mais ça n'a jamais été constaté sur un environnement de production réel.
 - **Durée de session à 2 h** dans `config/session.ts`, trop court pour un couple qui construit son plan sur plusieurs semaines. Spec §8 prévoit 30 jours.
@@ -58,6 +61,20 @@
   sur un déploiement mono-instance, à revoir le jour où l'API est répliquée.
 - **`@adonisjs/limiter` est bloqué en 2.4.0** : la 3.x exige `@adonisjs/core`
   v7. À intégrer au chantier de montée AdonisJS 7.
+- **Les cibles tactiles du parcours invité font 36 px de haut**, sous les 44 à
+  48 px recommandés pour un pouce. Le CSS vient du design system et est
+  antérieur à la refonte de la recherche. À reprendre avec la page d'accueil.
+- **La migration `search_name` importe du code applicatif** (`normalizeSearchText`).
+  Une seule source de vérité, mais un couplage figé : si la normalisation évolue,
+  une base migrée à neuf n'aura pas les mêmes valeurs qu'une base migrée avant.
+- **L'index `guests_project_search_name_index` ne sert pas la recherche texte.**
+  Un btree ne peut pas servir un `LIKE '%x%'` ; seule l'égalité sur `project_id`
+  est utilisable. Sans conséquence à 150 invités par projet ; passer à `pg_trgm`
+  et un index GIN le jour où le volume le justifie.
+- **`GuestSearchResult` est déclaré deux fois**, dans `ttt-api/app/types/guest.ts`
+  et dans `ttt-web/src/services/guestsService.ts`. Le front importe déjà
+  `ttt-api/app/types`, le type partagé est donc à portée d'import. Deux
+  déclarations d'un même contrat finissent toujours par diverger.
 
 ## Chantier isolé : montée vers AdonisJS 7
 

@@ -164,8 +164,13 @@ donc uniquement : prénom, nom, nom et emplacement de la table. **Jamais les ema
 des invités, jamais le régime alimentaire d'un autre invité.** Le régime alimentaire
 n'apparaît que sur la fiche de l'invité qui vient d'être sélectionné.
 
-L'endpoint est soumis à un rate limit : sans lui, la liste complète des invités d'un
-mariage est énumérable lettre par lettre.
+L'endpoint est soumis à un rate limit. Il faut être exact sur ce qu'il apporte : c'est
+un frein anti-abus, pas une barrière étanche. Une salle de réception place tous ses
+invités derrière une seule adresse IP, ce qui interdit un seuil serré. Ce qui rend
+réellement coûteuse l'énumération de la liste, c'est la longueur minimale d'un terme
+de recherche — trois lettres portent l'espace à 17 576 combinaisons — et le plafond de
+résultats au-delà duquel l'endpoint ne renvoie rien. Le seul secret non devinable
+reste l'identifiant du projet, qui est imprimé sur l'affiche à l'entrée.
 
 La recherche publique n'est ouverte que pour un projet dont `isActive` est vrai.
 
@@ -181,9 +186,10 @@ téléchargeable en PNG à une résolution imprimable.
 
 ### 6.5 Résultat affiché
 
-L'affichage déjà codé est conservé : nom de l'invité, nom de la table, emplacement,
-et son propre régime alimentaire. S'y ajoute la robustesse : cet écran tourne sur un
-téléphone, en réseau mobile saturé, sollicité par 120 personnes en dix minutes.
+L'affichage conserve le nom de l'invité, le nom de la table et son emplacement. Il ne
+conserve pas le régime alimentaire : avec des homonymes, l'afficher exposerait celui
+d'un autre invité sur une page publique. S'y ajoute la robustesse : cet écran tourne
+sur un téléphone, en réseau mobile saturé, sollicité par 120 personnes en dix minutes.
 
 ## 7. Socle
 
