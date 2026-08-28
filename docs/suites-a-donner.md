@@ -6,10 +6,7 @@
 
 ## À traiter par le plan « parcours invité »
 
-- **La recherche publique n'est pas durcie.** `GET /api/projects/:id/guests/search` est délibérément non authentifiée — c'est la recherche que fait un invité après avoir scanné le QR code. Elle n'a ni rate limit, ni restriction des champs exposés, ni fermeture sur projet inactif. Spec §6.3.
-- **Le contrat de recherche est encore l'ancien** : erreur 400 dès que plusieurs invités correspondent, et syntaxe `prénom+nom+email` découpée sur des `+`. À remplacer par un tableau de résultats et un champ libre. Spec §6.1 et §6.2.
 - **La page `/search/:projectId` existe et fonctionne**, mais n'a aucun chemin d'accès tant que la génération de QR code n'est pas faite. Volontairement non documentée dans le README.
-- `app/types/guest.ts` contient déjà `GuestSearchResult`, écrit en anticipation et jamais utilisé.
 
 ## À traiter par le plan « import tableur »
 
@@ -56,6 +53,11 @@
 - **Oracle d'existence** dans `guest_service.assignToTable` : 404 pour une table inexistante, 400 pour une table d'un autre projet. Laisse un appelant authentifié sonder l'existence d'un identifiant de table.
 - **Deux tests ne peuvent pas échouer** : celui de la date sans heure en environnement UTC, et celui de l'invité sans email qui omet la clé au lieu de passer `null`.
 - `tests/functional/removed_endpoints.spec.ts` n'assert que des codes de statut, jamais les corps de réponse.
+- **Le rate limit de la recherche publique est en mémoire et par IP.** Il ne
+  survit pas à un redémarrage et ne se partage pas entre instances. Sans effet
+  sur un déploiement mono-instance, à revoir le jour où l'API est répliquée.
+- **`@adonisjs/limiter` est bloqué en 2.4.0** : la 3.x exige `@adonisjs/core`
+  v7. À intégrer au chantier de montée AdonisJS 7.
 
 ## Chantier isolé : montée vers AdonisJS 7
 
