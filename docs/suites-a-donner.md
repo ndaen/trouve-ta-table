@@ -76,6 +76,14 @@
   `ttt-api/app/types`, le type partagé est donc à portée d'import. Deux
   déclarations d'un même contrat finissent toujours par diverger.
 
+- **La porte de typage du monorepo ne vérifie rien telle qu'elle est écrite.**
+  `npx tsc --noEmit` lancé à la racine ne trouve aucun `tsconfig.json` : il affiche
+  l'aide de `tsc` et sort en code 1. Le proxy `rtk` résume cette sortie en
+  « TypeScript: No errors found », ce qui l'a fait passer plusieurs fois pour verte.
+  Le typage doit se lancer paquet par paquet, ou derrière un script racine qui
+  parcourt les deux workspaces. Tant que ce n'est pas fait, toute preuve de typage
+  citant la racine est sans valeur.
+
 ## Chantier isolé : montée vers AdonisJS 7
 
 Volontairement écartée du plan « fondations », dont une contrainte était « pas de
