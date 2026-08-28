@@ -24,3 +24,15 @@ export const assignGuestValidator = vine.compile(
         tableId: vine.string().uuid(),
     })
 )
+
+/**
+ * Seule la borne haute est vérifiée ici. La borne basse porte sur la requête
+ * *normalisée*, pas sur la chaîne brute : `q=e-` fait bien deux caractères
+ * mais ne produit qu'un token d'une lettre. Elle est donc appliquée dans
+ * `GuestService.searchPublic`, après normalisation.
+ */
+export const searchGuestsValidator = vine.compile(
+    vine.object({
+        q: vine.string().trim().maxLength(80),
+    })
+)

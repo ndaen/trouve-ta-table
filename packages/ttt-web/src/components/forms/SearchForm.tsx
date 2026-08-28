@@ -1,98 +1,82 @@
 import {type FormEvent, useState} from "react";
 import {Input} from "@/components/ui/inputs/Input.tsx";
 import Button from "@/components/ui/buttons/Button.tsx";
-import {guestsService} from "@/services/guestsService.ts";
+import {guestsService, type GuestSearchResult} from "@/services/guestsService.ts";
 import {useToast} from "@/stores/useToastStore.ts";
 import type {UUID} from "ttt-api/app/types";
-import type {Guest} from "@/types/guest.types.ts";
-import type {Email} from "@/types/common.types.ts";
 import {ApiError} from "@/utils/apiClient.ts";
 
-interface SearchTableFormProps {
+interface SearchFormProps {
     projectId: UUID | string | undefined;
-    setResultModalVisible?: (visible: boolean) => void;
-    setGuestResult?: (guest: Guest | null) => void;
+    onResults: (results: GuestSearchResult[], tooManyMatches: boolean) => void;
 }
 
-const SearchForm = ({projectId, setResultModalVisible, setGuestResult}: SearchTableFormProps) => {
+const SearchForm = ({projectId, onResults}: SearchFormProps) => {
     const toast = useToast();
-    const [fullName, setFullName] = useState({
-        firstName: '',
-        lastName: '',
-    });
-    const [email, setEmail] = useState<Email | string>('');
+    const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         if (!projectId) {
-            toast.error('Aucun projet sélectionné.');
+            toast.error('Aucun mariage sélectionné.');
             return;
         }
-        if (!fullName.firstName || !fullName.lastName) {
-            toast.error('Veuillez remplir les deux champs.');
-            return;
-        }
-        if (email !== '' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            toast.error('Veuillez entrer une adresse email valide.');
+        if (query.trim().length < 3) {
+            toast.warning('Entrez au moins trois lettres de votre nom.');
             return;
         }
 
+        setLoading(true);
         try {
-            const response = await guestsService.getGuestTable(projectId, fullName.firstName, fullName.lastName, email);
-            if (response) {
-                if (setGuestResult) {
-                    setGuestResult(response.data);
-                }
-                if (setResultModalVisible) {
-                    setResultModalVisible(true);
-                }
-            }
-
+            const response = await guestsService.searchGuests(projectId, query.trim());
+            onResults(response.data, response.tooManyMatches);
         } catch (error) {
-            if (error instanceof ApiError) {
-                if (error.status === 400) {
-                    toast.warning(error.message);
-                    return;
-                }
-                toast.error(error.message);
-
-            } else {
-                toast.error('Une erreur est survenue lors de la recherche.');
+            // Un invité ne doit jamais lire « Failed to fetch » ni « Erreur 422 ».
+            // Le client HTTP enveloppe toute erreur — réseau comprise — dans une
+            // ApiError, dont le message est parfois du texte de navigateur en
+            // anglais, parfois un libellé fabriqué à partir du code de statut. On
+            // ne l'affiche donc jamais tel quel : on traduit le statut en une
+            // phrase que quelqu'un debout dans un hall d'entrée comprend.
+            onResults([], false);
+            const statut = error instanceof ApiError ? error.status : -1;
+            switch (statut) {
+                case 429:
+                    toast.warning("Trop de recherches d'un coup. Réessayez dans une minute.");
+                    break;
+                case 422:
+                    toast.warning('Entrez au moins trois lettres de votre nom, et pas plus de quatre-vingts.');
+                    break;
+                case 0:
+                    toast.error('Connexion perdue. Vérifiez votre réseau et réessayez.');
+                    break;
+                case 404:
+                    toast.error("Cette recherche n'est plus disponible. Adressez-vous à l'accueil.");
+                    break;
+                default:
+                    toast.error('Une erreur est survenue lors de la recherche.');
             }
+        } finally {
+            setLoading(false);
         }
-
-
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit} className={'search-table-form'}>
             <Input
-                id={'input-first-name'}
-                placeholder={'Prénom'}
-                value={fullName.firstName}
+                id={'input-guest-name'}
+                placeholder={'Votre nom'}
+                value={query}
                 leftIcon={'user'}
-                onChange={(value) => setFullName({...fullName, firstName: value})}
-                label={'Prénom'}
+                onChange={(value) => setQuery(value)}
+                label={'Votre nom'}
+                maxLength={80}
                 required
             />
-            <Input
-                id={'input-last-name'}
-                placeholder={'Nom de famille'}
-                value={fullName.lastName}
-                leftIcon={'user-check'}
-                onChange={(value) => setFullName({...fullName, lastName: value})}
-                label={'Nom de famille'}
-                required
-            />
-            <Input
-                id={'input-email'}
-                type={'email'}
-                value={email}
-                onChange={(value) => setEmail(value)}
-                label={'Email (optionnel)'}
-                leftIcon={'mail'}
-                placeholder={'Email'}
-            />
-            <Button type={'submit'} icon={'search'}>Rechercher</Button>
+            <Button type={'submit'} icon={'search'} disabled={loading}>
+                {loading ? 'Recherche…' : 'Rechercher'}
+            </Button>
         </form>
     );
 };

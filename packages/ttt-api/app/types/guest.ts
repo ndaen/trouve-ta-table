@@ -51,16 +51,17 @@ export interface GuestWithTable extends GuestData {
 }
 
 /**
- * Guest search result
+ * Forme renvoyée par la recherche publique. Volontairement minimale : cette
+ * route n'est pas authentifiée. Ni `id`, ni `email`, ni
+ * `dietaryRequirements` — voir spec §6.3.
  */
 export interface GuestSearchResult {
-    id: UUID
     firstName: string
     lastName: string
     fullName: string
-    table?: {
-        id: UUID
+    table: {
         name: string
+        description: string | null
     } | null
 }
 

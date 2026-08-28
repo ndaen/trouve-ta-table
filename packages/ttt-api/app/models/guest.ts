@@ -1,10 +1,11 @@
 import { DateTime } from 'luxon'
-import { BaseModel, beforeCreate, belongsTo, column } from '@adonisjs/lucid/orm'
+import { BaseModel, beforeCreate, beforeSave, belongsTo, column } from '@adonisjs/lucid/orm'
 import { randomUUID } from 'node:crypto'
 import Project from '#models/project'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import Table from '#models/table'
 import type { UUID } from '#types/index'
+import { normalizeSearchText } from '#utils/search_text'
 
 export default class Guest extends BaseModel {
     @column({ isPrimary: true })
@@ -28,6 +29,14 @@ export default class Guest extends BaseModel {
     @column()
     declare dietaryRequirements: string | null
 
+    /**
+     * Prénom et nom normalisés (minuscules, sans accents, sans ponctuation).
+     * Colonne dénormalisée : c'est sur elle que porte la recherche publique.
+     * Jamais renseignée à la main, toujours par le hook ci-dessous.
+     */
+    @column()
+    declare searchName: string
+
     @column.dateTime({ autoCreate: true })
     declare createdAt: DateTime
 
@@ -47,5 +56,10 @@ export default class Guest extends BaseModel {
     @beforeCreate()
     static assignId(guest: Guest) {
         guest.id = randomUUID()
+    }
+
+    @beforeSave()
+    static setSearchName(guest: Guest) {
+        guest.searchName = normalizeSearchText(`${guest.firstName} ${guest.lastName}`)
     }
 }
