@@ -7,7 +7,13 @@ import Guest from '#models/guest'
 
 export const UserFactory = factory
     .define(User, async ({ faker }) => ({
-        email: faker.internet.email().toLowerCase(),
+        /**
+         * Domaine neutre, et non un fournisseur grand public : `normalizeEmail()`
+         * de VineJS retire les points du nom local des adresses Gmail, si bien
+         * qu'une adresse écrite en base par cette factory n'était plus retrouvée
+         * à la connexion. Une exécution de la suite sur huit échouait ainsi.
+         */
+        email: faker.internet.email({ provider: 'example.com' }).toLowerCase(),
         password: 'password123',
         firstName: faker.person.firstName(),
         lastName: faker.person.lastName(),
