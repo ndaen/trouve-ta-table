@@ -26,11 +26,13 @@ export const assignGuestValidator = vine.compile(
 )
 
 /**
- * Le minimum de 2 caractères n'est pas cosmétique : il empêche l'énumération
- * lettre par lettre de la liste d'invités sur une route non authentifiée.
+ * Seule la borne haute est vérifiée ici. La borne basse porte sur la requête
+ * *normalisée*, pas sur la chaîne brute : `q=e-` fait bien deux caractères
+ * mais ne produit qu'un token d'une lettre. Elle est donc appliquée dans
+ * `GuestService.searchPublic`, après normalisation.
  */
 export const searchGuestsValidator = vine.compile(
     vine.object({
-        q: vine.string().trim().minLength(2).maxLength(80),
+        q: vine.string().trim().maxLength(80),
     })
 )

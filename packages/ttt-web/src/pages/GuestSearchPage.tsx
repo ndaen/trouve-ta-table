@@ -47,9 +47,11 @@ const GuestSearchPage = () => {
                     </p>
                 )}
 
-                {results.length > 1 && (
+                {results.length >= 1 && (
                     <div className="flex flex-direction-column gap-2">
-                        <p className="text-muted text-center">Plusieurs personnes portent ce nom :</p>
+                        {results.length > 1 && (
+                            <p className="text-muted text-center">Plusieurs personnes portent ce nom :</p>
+                        )}
                         {results.map((result, index) => (
                             <Button
                                 key={`${result.fullName}-${index}`}

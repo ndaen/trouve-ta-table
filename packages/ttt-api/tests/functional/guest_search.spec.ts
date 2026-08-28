@@ -15,6 +15,24 @@ test.group("Recherche publique d'invités", (group) => {
         response.assertStatus(422)
     })
 
+    test('un contournement par tiret (q=e-) est refusé', async ({ client }) => {
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
+
+        const response = await client.get(`/api/projects/${project.id}/guests/search?q=e-`)
+
+        response.assertStatus(422)
+    })
+
+    test('deux lettres restent en dessous du minimum', async ({ client }) => {
+        const user = await UserFactory.create()
+        const project = await ProjectFactory.merge({ userId: user.id }).create()
+
+        const response = await client.get(`/api/projects/${project.id}/guests/search?q=ab`)
+
+        response.assertStatus(422)
+    })
+
     test('une requête absente est refusée', async ({ client }) => {
         const user = await UserFactory.create()
         const project = await ProjectFactory.merge({ userId: user.id }).create()

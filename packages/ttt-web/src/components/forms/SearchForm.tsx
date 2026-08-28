@@ -23,8 +23,8 @@ const SearchForm = ({projectId, onResults}: SearchFormProps) => {
             toast.error('Aucun mariage sélectionné.');
             return;
         }
-        if (query.trim().length < 2) {
-            toast.warning('Entrez au moins deux lettres de votre nom.');
+        if (query.trim().length < 3) {
+            toast.warning('Entrez au moins trois lettres de votre nom.');
             return;
         }
 
@@ -39,13 +39,14 @@ const SearchForm = ({projectId, onResults}: SearchFormProps) => {
             // anglais, parfois un libellé fabriqué à partir du code de statut. On
             // ne l'affiche donc jamais tel quel : on traduit le statut en une
             // phrase que quelqu'un debout dans un hall d'entrée comprend.
+            onResults([], false);
             const statut = error instanceof ApiError ? error.status : -1;
             switch (statut) {
                 case 429:
                     toast.warning("Trop de recherches d'un coup. Réessayez dans une minute.");
                     break;
                 case 422:
-                    toast.warning('Votre recherche est trop longue. Entrez seulement votre nom.');
+                    toast.warning('Entrez au moins trois lettres de votre nom, et pas plus de quatre-vingts.');
                     break;
                 case 0:
                     toast.error('Connexion perdue. Vérifiez votre réseau et réessayez.');

@@ -108,6 +108,16 @@ export class GuestService {
     public static MAX_SEARCH_RESULTS = 10
 
     /**
+     * Longueur minimale d'un token de recherche, après normalisation.
+     *
+     * C'est le vrai rempart contre l'énumération de la liste d'invités sur une
+     * route ouverte, et il se mesure en espace de recherche : deux lettres font
+     * 676 combinaisons, trois en font 17 576. Le coût pour un invité est nul —
+     * personne ne cherche sa table en tapant deux lettres de son nom.
+     */
+    public static MIN_SEARCH_TOKEN_LENGTH = 3
+
+    /**
      * Recherche publique, non authentifiée. Renvoie toujours un tableau.
      *
      * Le type de retour est annoté explicitement : sans ça, TypeScript
@@ -132,8 +142,12 @@ export class GuestService {
         }
 
         const tokens = tokenizeSearchQuery(query)
-        if (tokens.length === 0) {
-            return { results: [] as GuestSearchResult[], tooManyMatches: false }
+        const plusLongToken = tokens.reduce((max, token) => Math.max(max, token.length), 0)
+        if (plusLongToken < GuestService.MIN_SEARCH_TOKEN_LENGTH) {
+            return {
+                error: `Entrez au moins ${GuestService.MIN_SEARCH_TOKEN_LENGTH} lettres de votre nom.`,
+                status: 422,
+            }
         }
 
         // On demande une ligne de plus que le plafond : c'est ce qui permet de
@@ -149,6 +163,8 @@ export class GuestService {
                 }
             })
             .preload('table')
+            .orderBy('searchName')
+            .orderBy('id')
             .limit(GuestService.MAX_SEARCH_RESULTS + 1)
 
         if (guests.length > GuestService.MAX_SEARCH_RESULTS) {

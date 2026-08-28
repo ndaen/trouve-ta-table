@@ -25,6 +25,13 @@ export default class extends BaseSchema {
                     })
             }
         })
+
+        // La colonne n'est passée en NOT NULL qu'une fois le backfill terminé :
+        // un `LIKE` sur NULL vaut NULL, donc une ligne restée nulle rendrait un
+        // invité silencieusement introuvable.
+        this.schema.alterTable(this.tableName, (table) => {
+            table.string('search_name').notNullable().alter()
+        })
     }
 
     async down() {
