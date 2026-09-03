@@ -28,8 +28,7 @@
   mobile d'abord, avec le design system maison. Récit en trois chapitres (avant, la veille,
   le jour J) avec un rail de progression, composants animés dans `src/components/landing/`.
   La section QR code porte une pastille « Bientôt » à retirer quand la fonctionnalité
-  existera. Reste à faire : le `Header` déborde à droite sur un écran de 390 px (bouton
-  « Inscription » coupé), défaut antérieur à la page.
+  existera. Le débordement du `Header` sur mobile est corrigé (lien de menu masqué sous 768 px).
 
 ## Dette technique, sans plan assigné
 
