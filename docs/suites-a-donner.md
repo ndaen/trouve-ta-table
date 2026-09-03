@@ -24,30 +24,10 @@
 - **Durée de session à 2 h** dans `config/session.ts`, trop court pour un couple qui construit son plan sur plusieurs semaines. Spec §8 prévoit 30 jours.
 - **Origines CORS en dur** sur `localhost` dans `config/cors.ts`, à passer en variable d'environnement. Spec §8.
 
-- **Écrire une vraie page d'accueil, soignée sur mobile comme sur desktop.**
-  `packages/ttt-web/src/App.tsx` est encore le placeholder généré par Vite
-  (« Welcome to the TTT Web App »), et c'est la route `/` publique — donc ce que
-  voit toute personne arrivant sur le site. Bloquant pour le jalon « en ligne et
-  utilisable ». Spec §8.
-
-  Quelques points à garder en tête au moment de la faire :
-
-  - **Le mobile n'est pas le cas secondaire, c'est le cas principal.** Le parcours
-    invité se joue intégralement au téléphone : quelqu'un scanne un QR code dans le
-    hall d'une salle de réception, souvent en réseau saturé, avec 120 personnes qui
-    font la même chose en dix minutes. La page d'accueil doit être irréprochable sur
-    petit écran avant de l'être sur grand.
-  - **Le design system maison existe déjà** : environ 22 composants dans
-    `src/components/ui/` (boutons, cartes, champs, modales, toasts), plus un thème
-    sombre/clair. C'est un actif du projet — construire la page avec, plutôt que
-    d'introduire une librairie tierce ou des styles ad hoc.
-  - **Ne rien promettre qui n'existe pas.** Même exigence que pour le README : pas
-    de QR code ni d'import de tableur tant qu'ils ne sont pas implémentés. Une
-    landing qui vend des fonctionnalités absentes reproduit le défaut qu'on vient de
-    corriger.
-  - Le public visé est **un couple qui prépare son mariage**, pas un développeur ni
-    une entreprise. Le vocabulaire, les visuels et la promesse doivent lui parler à
-    lui.
+- **Page d'accueil écrite** (`packages/ttt-web/src/pages/HomePage.tsx`, 3 septembre 2026),
+  mobile d'abord, avec le design system maison, sans promettre de QR code ni d'import.
+  Reste à faire : le `Header` déborde à droite sur un écran de 390 px (bouton
+  « Inscription » coupé), défaut antérieur à la page.
 
 ## Dette technique, sans plan assigné
 

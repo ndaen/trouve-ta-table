@@ -1,5 +1,5 @@
 import {Route, Routes, useLocation} from "react-router"
-import App from './App.tsx'
+import HomePage from '@/pages/HomePage.tsx'
 import Header from "@/components/navigation/Header.tsx"
 import Auth from "@/pages/GuestRoutes/Auth.tsx"
 import {GuestOnlyRoute} from '@/components/navigation/ProtectedRoutes.tsx'
@@ -18,7 +18,7 @@ function AppPublicContent() {
         <>
             {shouldShowHeader && <Header/>}
             <Routes>
-                <Route path="/" element={<App/>}/>
+                <Route path="/" element={<HomePage/>}/>
                 <Route path="/auth" element={
                     <GuestOnlyRoute>
                         <Auth/>
