@@ -1,91 +1,108 @@
 import {useNavigate} from "react-router";
-import {DynamicIcon, type IconName} from "lucide-react/dynamic";
+import {DynamicIcon} from "lucide-react/dynamic";
 import Button from "@/components/ui/buttons/Button.tsx";
-import '@/assets/styles/home.css';
+import {useReveal} from "@/hook/useReveal.ts";
+import SeatingPlan from "@/components/landing/SeatingPlan.tsx";
+import Marquee from "@/components/landing/PlaceCardsMarquee.tsx";
+import QrCard from "@/components/landing/QrCard.tsx";
+import PhoneDemo from "@/components/landing/PhoneDemo.tsx";
+import ChapterRail from "@/components/landing/ChapterRail.tsx";
+import '@/assets/styles/landing.css';
 
-const steps: { icon: IconName; title: string; text: string }[] = [
-    {
-        icon: 'calendar-heart',
-        title: 'Créez votre mariage',
-        text: 'Un nom, une date. Votre plan de table a un endroit où vivre, et vous pouvez y revenir quand vous voulez.',
-    },
-    {
-        icon: 'armchair',
-        title: 'Composez vos tables',
-        text: 'Donnez un nom et une capacité à chaque table. Vous voyez d\'un coup d\'œil ce qui est plein et ce qui reste libre.',
-    },
-    {
-        icon: 'users',
-        title: 'Placez vos invités',
-        text: 'Ajoutez vos proches, notez leurs régimes alimentaires, puis assignez-les à une table. Déplacez-les autant de fois qu\'il faut.',
-    },
+const chapters = [
+    {id: 'avant', label: 'Avant'},
+    {id: 'la-veille', label: 'La veille'},
+    {id: 'le-jour-j', label: 'Le jour J'},
 ];
 
 export default function HomePage() {
     const navigate = useNavigate();
+    const plan = useReveal<HTMLElement>(0.15);
+    const qr = useReveal<HTMLElement>(0.15);
+    const day = useReveal<HTMLElement>(0.15);
+    const cta = useReveal<HTMLElement>();
 
     return (
-        <main className="home">
-            <section className="home-hero">
-                <p className="home-eyebrow">Plan de table pour votre mariage</p>
-                <h1 className="home-title">
-                    Chaque invité trouve sa place.<br/>
-                    <span className="home-title-accent">Vous aussi.</span>
-                </h1>
-                <p className="home-lead">
-                    Composez vos tables, placez vos proches, changez d'avis sans tout refaire.
-                    Le jour J, vos invités tapent leur nom et découvrent leur table.
-                </p>
-                <div className="home-actions">
-                    <Button size="lg" variant="btn-secondary" icon="heart"
-                            onClick={() => navigate('/auth?tab=register')}>
-                        Créer mon plan de table
-                    </Button>
-                    <Button size="lg" variant="btn-outline" onClick={() => navigate('/auth')}>
-                        J'ai déjà un compte
-                    </Button>
+        <main className="dv dv-full">
+            {/* Hero : la promesse, et le plan qui se remplit */}
+            <section className="dv-plan-hero">
+                <div className="dv-plan-copy">
+                    <p className="dv-eyebrow">Plan de table pour votre mariage</p>
+                    <h1 className="dv-plan-title">
+                        <span className="dv-line">Vous placez.</span>
+                        <span className="dv-line">Ils scannent.</span>
+                        <span className="dv-line dv-line-accent">Tout le monde s'assoit.</span>
+                    </h1>
+                    <p className="dv-lead">
+                        Composez vos tables pendant des semaines, changez d'avis autant qu'il faut.
+                        Le jour J, chaque invité tape son nom sur son téléphone et trouve sa place.
+                    </p>
+                    <div className="dv-actions">
+                        <Button size="lg" variant="btn-secondary" onClick={() => navigate('/auth?tab=register')}>
+                            Créer mon plan de table
+                        </Button>
+                        <Button size="lg" variant="btn-ghost" onClick={() => navigate('/auth')}>
+                            J'ai déjà un compte
+                        </Button>
+                    </div>
+                    <p className="dv-note">Gratuit. Aucune carte bancaire demandée.</p>
                 </div>
-                <p className="home-note">Gratuit. Aucune carte bancaire demandée.</p>
+                <SeatingPlan/>
             </section>
 
-            <section className="home-steps" aria-labelledby="home-steps-title">
-                <h2 id="home-steps-title" className="home-section-title">Trois étapes, pas une de plus</h2>
-                <ol className="home-steps-list">
-                    {steps.map((step, index) => (
-                        <li key={step.title} className="card home-step">
-                            <div className="home-step-head">
-                                <span className="home-step-number">{index + 1}</span>
-                                <DynamicIcon name={step.icon} size={22} aria-hidden="true"/>
-                            </div>
-                            <h3 className="home-step-title">{step.title}</h3>
-                            <p className="home-step-text">{step.text}</p>
-                        </li>
-                    ))}
-                </ol>
-            </section>
+            <ChapterRail chapters={chapters}/>
 
-            <section className="home-guest" aria-labelledby="home-guest-title">
-                <div className="home-guest-copy">
-                    <h2 id="home-guest-title" className="home-section-title">Le jour J, personne ne cherche</h2>
-                    <p className="home-guest-text">
-                        Vos invités ouvrent la page de recherche de votre mariage sur leur téléphone,
-                        tapent leur nom, et voient leur table. Pas de compte à créer, pas de liste
-                        imprimée à parcourir à l'entrée de la salle.
+            {/* 1. Avant : le plan de table */}
+            <section id="avant" ref={plan} className="dv-reveal dv-chapter">
+                <div className="dv-chapter-head">
+                    <p className="dv-eyebrow">Avant · pour les mariés</p>
+                    <h2>Un plan qui accepte que vous changiez d'avis</h2>
+                    <p className="dv-chapter-lead">
+                        Une table, c'est un nom et une capacité. Vous y glissez vos proches, vous notez qui
+                        ne mange pas de viande, et vous déplacez qui vous voulez jusqu'à la veille.
                     </p>
                 </div>
-                <div className="card home-guest-demo" aria-hidden="true">
-                    <p className="home-guest-demo-title">Trouve ta table</p>
-                    <p className="home-guest-demo-hint">Entrez votre nom pour découvrir votre placement</p>
-                    <div className="home-guest-demo-input">Camille Dupont</div>
-                    <div className="home-guest-demo-result">
-                        <DynamicIcon name="armchair" size={18}/>
-                        <span>Table <strong>Les Cyprès</strong></span>
-                    </div>
+                <div className="dv-marquees">
+                    <Marquee/>
+                    <Marquee reverse/>
                 </div>
+                <ul className="dv-chapter-points">
+                    <li><DynamicIcon name="armchair" size={18}/> Le plein et le libre se voient d'un coup d'œil</li>
+                    <li><DynamicIcon name="leaf" size={18}/> Régimes et allergies notés sur chaque invité</li>
+                    <li><DynamicIcon name="history" size={18}/> Revenez-y pendant des semaines, rien ne se perd</li>
+                </ul>
             </section>
 
-            <section className="home-cta">
-                <h2 className="home-section-title">Prêts à placer tout le monde ?</h2>
+            {/* 2. La veille : le QR code */}
+            <section id="la-veille" ref={qr} className="dv-reveal dv-chapter dv-chapter-qr">
+                <div className="dv-chapter-head">
+                    <p className="dv-eyebrow">La veille · pour les mariés <span className="dv-soon">Bientôt</span></p>
+                    <h2>Un QR code à poser à l'entrée</h2>
+                    <p className="dv-chapter-lead">
+                        Imprimez-le sur un carton, un chevalet ou le menu. Il ouvre la page de recherche de
+                        votre mariage, et rien d'autre. Pas d'application à installer pour vos invités.
+                    </p>
+                </div>
+                <QrCard/>
+            </section>
+
+            {/* 3. Le jour J : le téléphone */}
+            <section id="le-jour-j" ref={day} className="dv-reveal dv-phone-hero dv-chapter-day">
+                <div className="dv-phone-copy">
+                    <p className="dv-eyebrow dv-eyebrow-light">Le jour J · pour les invités</p>
+                    <h2 className="dv-phone-title">
+                        Ils tapent leur nom.<br/>Ils s'assoient.
+                    </h2>
+                    <p className="dv-lead dv-lead-light">
+                        Pas de liste à l'entrée, pas de plan affiché qu'on lit à dix. Même avec un réseau
+                        saturé et cent vingt personnes qui scannent en même temps.
+                    </p>
+                </div>
+                <PhoneDemo/>
+            </section>
+
+            <section ref={cta} className="dv-reveal dv-plan-cta">
+                <h2>Votre plan vous attend.</h2>
                 <Button size="lg" variant="btn-secondary" icon="arrow-right"
                         onClick={() => navigate('/auth?tab=register')}>
                     Commencer mon plan de table
